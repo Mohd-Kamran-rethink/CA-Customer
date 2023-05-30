@@ -35,17 +35,15 @@ class TransactionController extends Controller
         else if ($user->role == 'deposit_banker') {
             $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
                 ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
-                ->select('transactions.*', 'bank_details.holder_name as holder_name')
-                ->when($status!='null', function ($query, $status) {
-                    $query->where(function ($query) use ($status) {
-                        $query->Where('transactions.status', '=', $status);
-                    });
+                ->when($status != null, function ($query) use ($status) {
+                    $query->where('transactions.status', '=', $status);
                 })
                 ->when($search != null, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
                         $query->where('transactions.utr_no', 'like', '%' . $search . '%');
                     });
                 })
+                ->select('transactions.*', 'bank_details.holder_name as holder_name')
                 ->orderBy('id','desc')
                 ->paginate(30);
         }
@@ -54,10 +52,8 @@ class TransactionController extends Controller
             $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
             ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
             ->select('transactions.*', 'bank_details.holder_name as holder_name')
-            ->when($status!='null', function ($query, $status) {
-                $query->where(function ($query) use ($status) {
-                    $query->Where('transactions.status', '=', $status);
-                });
+            ->when($status != null, function ($query) use ($status) {
+                $query->where('transactions.status', '=', $status);
             })
             ->when($search != null, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
