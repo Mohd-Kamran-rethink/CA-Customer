@@ -44,10 +44,7 @@ class AuthController extends Controller
             return redirect('/')->with(['msg-error-username' => "Email is not registered with us"]);
         }
     }
-    public function dashboard(Request $req)
-    {
-        return view('Admin.Dashboard.index');
-    }
+    
     public function logout()
     {
        $result= session()->remove('user');
