@@ -52,7 +52,7 @@ class TransactionController extends Controller
             $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
             ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
             ->select('transactions.*', 'bank_details.holder_name as holder_name')
-            ->when($status != null, function ($query) use ($status) {
+            ->when($status != 'null', function ($query) use ($status) {
                 $query->where('transactions.status', '=', $status);
             })
             ->when($search != null, function ($query) use ($search) {
