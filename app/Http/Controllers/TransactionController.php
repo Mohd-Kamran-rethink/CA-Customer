@@ -33,7 +33,7 @@ class TransactionController extends Controller
             return view('Admin.Dashboard.index');
         }
         else if ($user->role == 'deposit_banker') {
-            $transactions = DB::table('transactions')->where('type', '=', 'Deposit')->where('status', '=', 'Pending')
+            $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
                 ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
                 ->select('transactions.*', 'bank_details.holder_name as holder_name')
                 ->when($status!='null', function ($query, $status) {
