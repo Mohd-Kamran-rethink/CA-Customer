@@ -103,4 +103,13 @@ Route::middleware('CommonMiddleware')->prefix('transactions')->group(function ()
     Route::get('/change-status/{id}',[TransactionController::class,'acceptPendingDepositForm'])->name('acceptPendingDepositForm');
     Route::post('/change-status',[TransactionController::class,'changeStatus'])->name('changeStatus');
     Route::post('/change-status/cancel',[TransactionController::class,'rejectApproal'])->name('rejectApproal');
-});  
+    // withdraw
+    Route::get('/withdraw/add',[TransactionController::class,'withdrawAddForm'])->name('withdrawAddForm');
+    Route::post('/withdraw/add',[TransactionController::class,'withdrawAdd'])->name('withdrawAdd');
+    Route::get('withdraw/edit/{id}',[TransactionController::class,'withdrawEditForm'])->name('withdrawEditForm');
+    Route::post('withdraw/edit',[TransactionController::class,'withdrawEdit'])->name('withdrawEdit');
+    Route::get('/change-status-withdraw/{id}',[TransactionController::class,'acceptPendingWithdrawForm'])->name('acceptPendingWithdrawForm');
+    Route::post('/change-status-withdraw',[TransactionController::class,'changeWithdrawStatus'])->name('changeWithdrawStatus');
+}); 
+Route::get('/clients/add',[UserController::class,'addClient'])->name('addClient');
+Route::get('/bankaccount/add',[BannkController::class,'bankAccouAddAjax'])->name('bankAccouAddAjax');

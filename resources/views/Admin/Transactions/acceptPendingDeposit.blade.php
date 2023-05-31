@@ -27,11 +27,14 @@
                     @csrf
                     <div class="row">
                         <input type="hidden" name="hiddenid" value="{{ isset($transaction) ? $transaction->id : '' }}">
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Client</label>
+                        <div class="col-6 d-flex">
+                            <div class=" " style="width: -webkit-fill-available;" id="client-ajax-dropdown">
+                                <label>Clients <span style="color:red">*</span></label>
                                 <select name="client" id="" class="form-control">
-                                    <option value="">--Choose--</option>
+                                    <option value="0">--Choose--</option>
+                                    @foreach ($clients as $item)
+                                        <option value="{{$item->id}}">{{$item->name}}</option>
+                                    @endforeach
                                 </select>
                                 @error('client')
                                     <span class="text-danger">
@@ -39,11 +42,15 @@
                                     </span>
                                 @enderror
                             </div>
+                            <div class=" ml-3">
+                                <label style="visibility: hidden"> Client <span style="color:red">*</span></label>
+                                <button onclick="openClientModel()"  class="btn btn-primary">Add Client</button>
+                            </div>
                         </div>
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Date <span style="color:red">*</span></label>
-                                <input type="date" name="date"
+                                <input readonly type="date" name="date"
                                     value="{{ isset($transaction) ? $transaction->date : $todaysdate }}" id="date"
                                     placeholder="100" class="form-control" data-validation="required">
                                 @error('date')
@@ -56,7 +63,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Amount <span style="color:red">*</span></label>
-                                <input oninput="sumAmountBonus()" type="number" name="amount"
+                                <input readonly oninput="sumAmountBonus()" type="number" name="amount"
                                     value="{{ isset($transaction) ? $transaction->amount : old('amount') }}" id="amount"
                                     placeholder="100" class="form-control" data-validation="required">
                                 @error('amount')
@@ -81,8 +88,8 @@
                         </div>
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
-                                <label>Bonus <span style="color:red">*</span></label>
-                                <input oninput="sumAmountBonus()" type="number" name="bonus"
+                                <label>Bonus </label>
+                                <input readonly oninput="sumAmountBonus()" type="number" name="bonus"
                                     value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
                                     placeholder="100" class="form-control">
                                 @error('bonus')
@@ -95,7 +102,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>UTR No <span style="color:red">*</span></label>
-                                <input readonly type="number" name="utr"
+                                <input  readonly type="number" name="utr"
                                     value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}" id="utr"
                                     placeholder="UTR Number" class="form-control" data-validation="required">
                                 @error('utr')
@@ -162,7 +169,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ url('/transactions/change-status/cancel') }}" method="POST">
+                <form action="{{ url('/transactions/change-status/cancel') }}" method="POST" id="statsus-change-form">
                     @csrf
                     <input type="hidden" name="hiddenId" id="hiddenId">
                     <div class="modal-body">
@@ -171,14 +178,33 @@
                             placeholder="Write something"></textarea>
                     </div>
                     <div class="modal-footer ">
-                        <button type="submit" class="btn btn-danger">Cancel</button>
+                        <button onclick="submitStatusChange()" type="submit" class="btn btn-danger">Cancel</button>
                         <button type="button" data-dismiss="modal" aria-label="Close"
                             class="btn btn-default">Close</button>
                 </form>
             </div>
         </div>
     </div>
+     
     <script>
+        function openClientModel()
+        {
+            $('#client-modal').modal('show');
+        }
+        function submitStatusChange()
+        {
+            let submitButton = $('#submit-button')
+            let cancel_note = $('#cancel_note')
+            event.preventDefault();
+            if(cancel_note.val().length==0)
+            {
+                $('#cancel_note_error').show()
+            }
+            else
+            {
+                $('#statsus-change-form').submit();
+            }
+        }
         function openCancelModal(id) {
             $('#cancel-transaction').modal('show');
             $('#hiddenId').val(id)

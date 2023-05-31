@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>{{ isset($transaction) ? 'Edit Transaction' : 'Add Transaction' }}</h1>
+                    <h1>{{ isset($transaction) ? 'Withdraw Status Change' : '' }}</h1>
                     <h6 class="text-danger">* Items marked with an asterisk are required fields and must be completed</h6>
                 </div>
             </div>
@@ -23,28 +23,28 @@
         <div class="card">
 
             <div class="card-body">
-                <form action="{{ isset($transaction) ? url('transactions/edit') : url('transactions/add') }}" method="POST"
+                <form action="{{ isset($transaction) ? url('transactions/change-status-withdraw') : '' }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <input type="hidden" name="hiddenid" value="{{ isset($transaction) ? $transaction->id : '' }}">
                         <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Client</label>
-                                <select name="client" id="" class="form-control">
-                                    <option value="">--Choose--</option>
+                            <div class="form-group" id="client-ajax-dropdown">
+                                <label>Clients <span style="color:red">*</span></label>
+                                <select readonly name="client"  class="form-control">
+                                    <option value="0">--Choose--</option>
+                                    @foreach ($clients as $item)
+                                        <option
+                                            {{ isset($transaction) && $transaction->client_id == $item->id ? 'selected' : (old('client') == $item->id ? 'selected' : '') }}
+                                            value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
                                 </select>
-                                @error('client')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Date <span style="color:red">*</span></label>
-                                <input type="date" name="date"
+                                <input readonly type="date" name="date"
                                     value="{{ isset($transaction) ? $transaction->date : $todaysdate }}" id="date"
                                     placeholder="100" class="form-control" data-validation="required">
                                 @error('date')
@@ -57,7 +57,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Amount <span style="color:red">*</span></label>
-                                <input oninput="sumAmountBonus()" type="number" name="amount"
+                                <input readonly oninput="sumAmountBonus()" type="number" name="amount"
                                     value="{{ isset($transaction) ? $transaction->amount : old('amount') }}" id="amount"
                                     placeholder="100" class="form-control" data-validation="required">
                                 @error('amount')
@@ -83,7 +83,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Bonus </label>
-                                <input oninput="sumAmountBonus()" type="number" name="bonus"
+                                <input readonly oninput="sumAmountBonus()" type="number" name="bonus"
                                     value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
                                     placeholder="100" class="form-control">
                                 @error('bonus')
@@ -95,10 +95,11 @@
                         </div>
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
-                                <label>UTR No <span style="color:red">*</span></label>
-                                <input type="number" name="utr"
-                                    value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}" id="utr"
-                                    placeholder="UTR Number" class="form-control" data-validation="required">
+                                <label>UTR No <span style="color:red">
+                                        {{ session('user')->role === 'withdrawrer' ? '' : '*' }}</span></label>
+                                <input {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }} type="number"
+                                    name="utr" value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}"
+                                    id="utr" placeholder="UTR Number" class="form-control" data-validation="required">
                                 @error('utr')
                                     <span class="text-danger">
                                         {{ $message }}
@@ -110,8 +111,8 @@
                             <div class="form-group">
                                 <label>Total<span style="color:red">*</span></label>
                                 <input type="number" name="total"
-                                    value="{{ isset($transaction) ? $transaction->total : old('total') }}"
-                                    id="total" readonly class="form-control" data-validation="required">
+                                    value="{{ isset($transaction) ? $transaction->total : old('total') }}" id="total"
+                                    readonly class="form-control" data-validation="required">
                                 @error('total')
                                     <span class="text-danger">
                                         {{ $message }}
@@ -123,13 +124,15 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Bank Account<span style="color:red">*</span></label>
-                                <select  name="bank_account" class="form-control" >
+                                <select name="bank_account" class="form-control">
                                     <option value="">--Choose--</option>
                                     @foreach ($banks as $item)
-                                    <option {{ isset($transaction) && $transaction->bank_account == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }} value="{{ $item->id }}">{{ $item->holder_name }}</option>
+                                        <option
+                                            {{ isset($transaction) && $transaction->bank_account == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }}
+                                            value="{{ $item->id }}">{{ $item->holder_name }}</option>
                                     @endforeach
                                 </select>
-                                    
+
                                 @error('bank_account')
                                     <span class="text-danger">
                                         {{ $message }}
@@ -143,16 +146,62 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-info">Save</button>
-                            <a href="{{ url('/dashboard') }}" type="button" class="btn btn-default">Cancel</a>
+                            <button type="submit" class="btn btn-info">Accept</button>
+                            <button onclick="openCancelModal({{ $transaction->id }})" type="button"
+                                class="btn btn-default">Cancel</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </section>
-
+    <div class="modal fade show" id="cancel-transaction" style=" padding-right: 17px;" aria-modal="true"
+        role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Are you sure you want to cancel this transaction?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form action="{{ url('/transactions/change-status/cancel') }}" method="POST" id="statsus-change-form">
+                    @csrf
+                    <input type="hidden" name="hiddenId" id="hiddenId">
+                    <div class="modal-body">
+                        <label for="">Cancel Note </label>
+                        <textarea name="cancel_note" id="cancel_note" cols="30" rows="3" class="form-control"
+                            placeholder="Write something"></textarea>
+                        <span style="color:red;display: none" id="cancel_note_error">Pleace write cancel note!</span>
+                    </div>
+                    <div class="modal-footer ">
+                        <button onclick="submitStatusChange()" type="submit" id="submit-button"
+                            class="btn btn-danger">Cancel</button>
+                        <button type="button" data-dismiss="modal" aria-label="Close"
+                            class="btn btn-default">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+   
     <script>
+        function submitStatusChange() {
+            let submitButton = $('#submit-button')
+            let cancel_note = $('#cancel_note')
+            event.preventDefault();
+            if (cancel_note.val().length == 0) {
+                $('#cancel_note_error').show()
+            } else {
+                $('#statsus-change-form').submit();
+            }
+        }
+
+
+        function openCancelModal(id) {
+            $('#cancel-transaction').modal('show');
+            $('#hiddenId').val(id)
+        }
+
         function sumAmountBonus() {
             let amount = parseFloat($('#amount').val());
             let bonus = parseFloat($('#bonus').val());

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     //NOTE:: There will be 7 roles in the global CA in this project we are only using 5 roles 
-    // i.e customer_care_manager,deposit_banker,withdrawal_banker,depositer,withdrawer 
+    // i.e customer_care_manager,deposit_banker,withdrawal_banker,depositer,withdrawrer 
 
     public function loginView()
     {
@@ -24,13 +24,12 @@ class AuthController extends Controller
     public function login(Request $req)
     {
         // roles allowerd in CA-customer project
-        $allowedRoles = ['customer_care_manager', 'deposit_banker', 'withdrawal_banker', 'depositer', 'withdrawer'];
+        $allowedRoles = ['customer_care_manager', 'deposit_banker', 'withdrawal_banker', 'depositer', 'withdrawrer'];
         $req->validate([
             'email' => 'required',
             'password' => 'required'
         ]);
         $user = User::where('email', '=', $req->email)->first();
-        
         if ($user && in_array($user->role, $allowedRoles)) {
             if (Hash::check($req->password, $user->password)) {
                 session()->put('user', $user);

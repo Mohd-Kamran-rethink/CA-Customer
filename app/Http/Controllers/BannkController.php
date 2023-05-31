@@ -79,4 +79,42 @@ class BannkController extends Controller
             }
        
     }
+    public function bankAccouAddAjax(Request $req)
+    {
+        $req->validate([
+            'account_number' => 'required|unique:bank_details,account_number',
+            'bank_name' => 'required',
+            'name' => 'required',
+            'ifcs_code' => 'required',
+            'phone' => 'required',
+            'email' => 'required',
+            'address' => 'required',
+        ]);
+           
+        $bank = new BankDetail();
+        $bank->holder_name = $req->name;
+        $bank->bank_name = $req->bank_name;
+        $bank->account_number = $req->account_number;
+        $bank->ifsc= $req->ifcs_code;
+        $bank->phone = $req->phone;
+        $bank->email = $req->email;
+        $bank->address = $req->address;
+        $result=$bank->save();
+        if($result)
+        {
+            $banks=BankDetail::get();
+            $html = '<label class="form-label" for="form3Example1n1">Clients</label>
+            <select name="client"  class="form-control">
+            <option value="0">--Choose--</option>
+            
+            ';
+
+        foreach ($banks as $item) {
+            $html .= '<option value=' . $item->id . '>' . $item->holder_name . '-('.$item->account_number.')</option>';
+        }
+        '</select>';
+        return $html;    
+    }
+        
+    }
     }

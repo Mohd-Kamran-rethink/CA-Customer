@@ -76,7 +76,7 @@
                         </div>
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
-                                <label>Franchises <span style="color:red">*</span></label>
+                                <label>Franchises</label>
                                 <select id="" class="form-control" name="franchises_id">
                                     <option value="">--Choose</option>
                                     @foreach ($franchises as $item)

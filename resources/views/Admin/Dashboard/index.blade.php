@@ -19,6 +19,7 @@
             @endif
         </div>
     </section>
+    @if (session('user')->role != 'customer_care_manager')
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -37,6 +38,7 @@
             </div>
         </div>
     </section>
+    @endif
     {{-- cards --}}
     {{-- transactions for deposit_banker --}}
 
@@ -48,27 +50,40 @@
                     <form action="{{ url('dashboard') }}" method="POST">
                         @csrf
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-2">
+                                <label for="" style="visibility: hidden">s</label>
                                 <input type="text" value="{{ isset($search) ? $search : '' }}"
                                     name="table_search" class="form-control float-right" placeholder="Search"
                                     id="searchInput">
                             </div>
-                            <div class="col-3 input-group">
+                            <div class="col-2 ">
+                                <label for="" style="visibility: hidden">sdf</label>
                                 <select name="status_name" type="text" class="form-control">
-                                    <option value="null">--Filter-By-Status--</option>
                                     <option {{$status=='Approve'?"selected":''}} value="Approve">Approved</option>
                                     <option {{$status=='Cancel'?"selected":''}} value="Cancel">Canceled</option>
                                     <option {{$status=='Pending'?'selected':''}} value="Pending">Pending</option>
                                 </select>
                             </div>
-                            <div class="col-4">
-                                <button class="btn btn-success">Filter</button>
+                            <div class="col-2">
+                                <label for="" >From</label>
+                                <input type="date" name="start_date" class="form-control" value="{{$start_date}}" >   
+                            </div>
+                            <div class="col-2">
+                                <label for="" >To</label>
+                                <input type="date" name="end_date" class="form-control"  value="{{$end_date}}">   
+                            </div>
+                            <div class="col-4 pt-2">
+                                <button class="btn btn-success mt-4">Filter</button>
                             </div>
                             @if (session('user')->role === 'deposit_banker')
-                            <div class="col">
-                                <a href="{{ url('transactions/add') }}" class="btn btn-primary float-right">Add Transaction</a>
-                            </div>
-                        @endif
+                                <div class="col">
+                                    <a href="{{ url('transactions/add') }}" class="btn btn-primary float-right">Add Transaction</a>
+                                </div>
+                                @elseif(session('user')->role === 'withdrawrer')
+                                <div class="col">
+                                    <a href="{{ url('transactions/withdraw/add') }}" class="btn btn-primary float-right">Add Withdraw Request</a>
+                                </div>
+                             @endif
                         </div>
 
                     </form>
@@ -105,15 +120,29 @@
                                                     <td>{{ $item->status }}</td>
                                                     <td>{{ $item->created_at }}</td>
                                                     <td>
-                                                        @if (session('user')->role === 'deposit_banker')
+                                                        {{-- for deposit functionlaity --}}
+                                                        @if (session('user')->role === 'deposit_banker' && $item->status=='Pending')
                                                             <a href="{{ url('transactions/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
                                                             <button title="Delete"
                                                                 onclick="deleteModal({{ $item->id }})"
                                                                 class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                                                        @elseif(session('user')->role === 'depositer' || session('user')->role === 'withdrawrer')
+                                                        @elseif(session('user')->role === 'depositer' && $item->status=='Pending')
                                                             <a href="{{ url('transactions/change-status/' . $item->id) }}"
+                                                                title="Change Status" class="btn btn-primary">Change
+                                                                Status</a>
+                                                        @endif
+                                                        {{-- for withdrawal functionality --}}
+                                                        @if (session('user')->role === 'withdrawrer'  && $item->status=='Pending')
+                                                            <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
+                                                                title="Edit" class="btn btn-primary"><i
+                                                                    class="fa fa-pen"></i></a>
+                                                            <button title="Delete"
+                                                                onclick="deleteModal({{ $item->id }})"
+                                                                class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                                        @elseif(session('user')->role === 'withdrawal_banker' && $item->status=='Pending')
+                                                            <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>
                                                         @endif

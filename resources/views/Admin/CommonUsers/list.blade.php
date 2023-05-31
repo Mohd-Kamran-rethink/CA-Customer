@@ -25,7 +25,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="mb-3 d-flex justify-content-between align-items-centers">
-                    <form action="{{ url('managers') }}" method="GET" id="search-form">
+                    <form action="{{ $route}}" method="GET" id="search-form">
                         <div class="input-group input-group-sm" style="width: 150px;">
                             <input type="text" value="{{ isset($searchTerm) ? $searchTerm : '' }}" name="table_search"
                                 class="form-control float-right" placeholder="Search" id="searchInput">

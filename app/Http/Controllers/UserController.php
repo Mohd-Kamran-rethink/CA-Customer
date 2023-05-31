@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Client;
 use App\Franchise;
 use App\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-     //NOTE:: There will be 7 roles in the global CA in this project we are only using 5 roles 
+    //NOTE:: There will be 7 roles in the global CA in this project we are only using 5 roles 
     // i.e customer_care_manager,deposit_banker,withdrawal_banker,depositer,withdrawer
-   
+
     // uncommon functions for search
     public function ManagerView(Request $req)
     {
@@ -38,9 +40,9 @@ class UserController extends Controller
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
-        return view('Admin.Manager.list', compact('managers','searchTerm'));
+        return view('Admin.Manager.list', compact('managers', 'searchTerm'));
     }
-   
+
     // list deposit banker
     public function depositbanker(Request $req)
     {
@@ -55,24 +57,23 @@ class UserController extends Controller
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
-        $role='deposit_banker';
-        $heading='Deposit Banker';
-        $route='deposit-banker';
-        return view('Admin.CommonUsers.list', compact('route','users','searchTerm','role','heading'));
+        $role = 'deposit_banker';
+        $heading = 'Deposit Banker';
+        $route = 'deposit-banker';
+        return view('Admin.CommonUsers.list', compact('route', 'users', 'searchTerm', 'role', 'heading'));
     }
     public function depositbankerAdd(Request $req)
     {
-       $franchises=Franchise::get();
-        $role='deposit_banker';
-        $heading='Deposit Banker';
-        $route='deposit-banker';
+        $franchises = Franchise::get();
+        $role = 'deposit_banker';
+        $heading = 'Deposit Banker';
+        $route = 'deposit-banker';
         $id = $req->query('id');
-        $user=null;
-        if ($id) 
-        {
+        $user = null;
+        if ($id) {
             $user = User::where("role", '=', 'deposit_banker')->find($id);
         }
-        return view('Admin.CommonUsers.add', compact('user','franchises','route','role','heading'));
+        return view('Admin.CommonUsers.add', compact('user', 'franchises', 'route', 'role', 'heading'));
     }
     // list wirhdraeal banker
     public function withdrawlBanker(Request $req)
@@ -88,24 +89,23 @@ class UserController extends Controller
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
-        $role='withdrawal_banker';
-        $heading='Withdrawal Banker';
-        $route='withdrawal-banker';
-        return view('Admin.CommonUsers.list', compact('route','users','searchTerm','role','heading'));
+        $role = 'withdrawal_banker';
+        $heading = 'Withdrawal Banker';
+        $route = 'withdrawal-banker';
+        return view('Admin.CommonUsers.list', compact('route', 'users', 'searchTerm', 'role', 'heading'));
     }
     public function withdrawlBankerAdd(Request $req)
     {
-        $franchises=Franchise::get();
-        $role='withdrawal_banker';
-        $heading='Withdrawal Banker';
-        $route='withdrawal-banker';
+        $franchises = Franchise::get();
+        $role = 'withdrawal_banker';
+        $heading = 'Withdrawal Banker';
+        $route = 'withdrawal-banker';
         $id = $req->query('id');
-        $user=null;
-        if ($id) 
-        {
+        $user = null;
+        if ($id) {
             $user = User::where("role", '=', 'withdrawal_banker')->find($id);
         }
-        return view('Admin.CommonUsers.add', compact('user','franchises','route','role','heading'));
+        return view('Admin.CommonUsers.add', compact('user', 'franchises', 'route', 'role', 'heading'));
     }
     // list depositers banker
     public function depositers(Request $req)
@@ -121,26 +121,25 @@ class UserController extends Controller
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
-        $role='depositer';
-        $heading='Depositer';
-        $route='depositers';
-        return view('Admin.CommonUsers.list', compact('route','users','searchTerm','role','heading'));
+        $role = 'depositer';
+        $heading = 'Depositer';
+        $route = 'depositers';
+        return view('Admin.CommonUsers.list', compact('route', 'users', 'searchTerm', 'role', 'heading'));
     }
-    public function depositersAdd (Request $req)
+    public function depositersAdd(Request $req)
     {
-       $franchises=Franchise::get();
-        $role='depositer';
-        $heading='Depositer';
-        $route='depositers';
+        $franchises = Franchise::get();
+        $role = 'depositer';
+        $heading = 'Depositer';
+        $route = 'depositers';
         $id = $req->query('id');
-        $user=null;
-        if ($id) 
-        {
+        $user = null;
+        if ($id) {
             $user = User::where("role", '=', 'depositer')->find($id);
         }
-        return view('Admin.CommonUsers.add', compact('user','franchises','route','role','heading'));
+        return view('Admin.CommonUsers.add', compact('user', 'franchises', 'route', 'role', 'heading'));
     }
-       // list withdrawrers banker
+    // list withdrawrers banker
     public function withdrawrers(Request $req)
     {
         $searchTerm = $req->query('table_search');
@@ -154,26 +153,25 @@ class UserController extends Controller
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
-        $role='withdrawrer';
-        $heading='Withdrawrers';
-        $route='withdrawrers';
-        return view('Admin.CommonUsers.list', compact('route','users','searchTerm','role','heading'));
+        $role = 'withdrawrer';
+        $heading = 'Withdrawrers';
+        $route = 'withdrawrers';
+        return view('Admin.CommonUsers.list', compact('route', 'users', 'searchTerm', 'role', 'heading'));
     }
-    public function withdrawrersAdd (Request $req)
+    public function withdrawrersAdd(Request $req)
     {
-       $franchises=Franchise::get();
-        $role='withdrawrer';
-        $heading='Withdrawrers';
-        $route='withdrawrers';
+        $franchises = Franchise::get();
+        $role = 'withdrawrer';
+        $heading = 'Withdrawrers';
+        $route = 'withdrawrers';
         $id = $req->query('id');
-        $user=null;
-        if ($id) 
-        {
+        $user = null;
+        if ($id) {
             $user = User::where("role", '=', 'withdrawrer')->find($id);
         }
-        return view('Admin.CommonUsers.add', compact('user','franchises','route','role','heading'));
-    }  
-        
+        return view('Admin.CommonUsers.add', compact('user', 'franchises', 'route', 'role', 'heading'));
+    }
+
 
     // common functions for manager and agents
     public function add(Request $req)
@@ -194,16 +192,15 @@ class UserController extends Controller
         $user->email = $req->email;
         $user->password = Hash::make($req->password);
         $user->role = $req->role;
-        if ($req->role!='customer_care_manager') {
-            $user->franchise_id =$req->franchises_id;
+        if ($req->role != 'customer_care_manager') {
+            $user->franchise_id = $req->franchises_id;
         }
         $result = $user->save();
-        if ($result ) {
-                return redirect()->back()->with(['msg-success' => 'Added successfully']);
-            } else {
-                return redirect()->back()->with(['msg-error'=>'Something went wrong']);   
-            }
-        
+        if ($result) {
+            return redirect()->back()->with(['msg-success' => 'Added successfully']);
+        } else {
+            return redirect()->back()->with(['msg-error' => 'Something went wrong']);
+        }
     }
 
     public function edit(Request $req)
@@ -229,33 +226,62 @@ class UserController extends Controller
         if ($req->password) {
             $currentUser->password = Hash::make($req->password);
         }
-        if ($currentUser->role!='customer_care_manager') {
-            $currentUser->franchise_id =$req->franchises_id;
+        if ($currentUser->role != 'customer_care_manager') {
+            $currentUser->franchise_id = $req->franchises_id;
         }
         $result = $currentUser->save();
-        if ($result ) {
-                return redirect()->back()->with(['msg-success' => 'Updated successfully']);
-            } else {
-                return redirect()->back()->with(['msg-error'=>'Something went wrong']);   
-            }
-        
+        if ($result) {
+            return redirect()->back()->with(['msg-success' => 'Updated successfully']);
+        } else {
+            return redirect()->back()->with(['msg-error' => 'Something went wrong']);
+        }
     }
     public function delete(Request $req)
     {
         $User = User::where("role", '=', $req->role)->find($req->deleteId);
         $result = $User->delete();
+
+        if ($result) {
+            return redirect()->back()->with(['msg-success' => 'Deleted successfully']);
+        } else {
+            return redirect()->back()->with(['msg-error' => 'Something went wrong']);
+        }
+    }
+    // client form
+    public function addClientForm()
+    {
+        return view('Admin.Client.add');
+    }
+    public function addClient(Request $req)
+    {
+        $html = '';
+        $validator = Validator::make($req->all(), [
+            'name' => 'required',
+            'ca_id' => 'required|unique:clients,ca_id',
+            'number' => 'required|unique:clients,number',
+        ]);
         
-            if ($result ) {
-                return redirect()->back()->with(['msg-success' => 'Deleted successfully']);
-            } else {
-                return redirect()->back()->with(['msg-error'=>'Something went wrong']);   
-            }
-       
+        if ($validator->fails()) {
+            return response()->json(['msg-error' => $validator->errors()], 422);
+        }
+        $client = new Client();
+        $client->name = $req->name;
+        $client->number = $req->number;
+        $client->ca_id = $req->ca_id;
+        $result = $client->save();
+        $clients = Client::get();
+        $html = '<label class="form-label" for="form3Example1n1">Clients</label>
+            <select name="client"  class="form-control">
+            <option value="0">--Choose--</option>
+            
+            ';
+
+        foreach ($clients as $item) {
+            $html .= '<option value=' . $item->id . '>' . $item->name . '</option>';
+        }
+        '</select>';
+        if ($result) {
+            return $html;
+        }
     }
 }
-
-        
-        
-
-    
-    

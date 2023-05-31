@@ -32,9 +32,9 @@
                         </a>
                     </li>
                     <li
-                        class="nav-item {{ Request::is('managers') || Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
+                        class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
                         <a href="#"
-                            class="nav-link {{ Request::is('managers') || Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'active' : '' }}">
+                            class="nav-link {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-users"></i>
                             <p>
                                 Agents
@@ -42,7 +42,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview"
-                            style="display: {{ Request::is('managers') || Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'block' : 'none' }}">
+                            style="display: {{  Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'block' : 'none' }}">
 
 
                             <li class="nav-item  ">
