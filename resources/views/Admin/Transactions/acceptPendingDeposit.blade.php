@@ -44,7 +44,7 @@
                             </div>
                             <div class=" ml-3">
                                 <label style="visibility: hidden"> Client <span style="color:red">*</span></label>
-                                <button onclick="openClientModel()"  class="btn btn-primary">Add Client</button>
+                                <button onclick="openClientModel()" type="button" class="btn btn-primary">Add Client</button>
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-6">
