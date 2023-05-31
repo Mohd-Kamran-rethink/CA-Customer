@@ -59,7 +59,7 @@
                                 <label>Amount <span style="color:red">*</span></label>
                                 <input readonly oninput="sumAmountBonus()" type="number" name="amount"
                                     value="{{ isset($transaction) ? $transaction->amount : old('amount') }}" id="amount"
-                                    placeholder="100" class="form-control" data-validation="required">
+                                     class="form-control" data-validation="required">
                                 @error('amount')
                                     <span class="text-danger">
                                         {{ $message }}
@@ -85,7 +85,7 @@
                                 <label>Bonus </label>
                                 <input readonly oninput="sumAmountBonus()" type="number" name="bonus"
                                     value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
-                                    placeholder="100" class="form-control">
+                                     class="form-control">
                                 @error('bonus')
                                     <span class="text-danger">
                                         {{ $message }}
