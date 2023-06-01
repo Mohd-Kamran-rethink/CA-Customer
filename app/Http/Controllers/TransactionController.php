@@ -42,7 +42,9 @@ class TransactionController extends Controller
         } else if ($user->role == 'deposit_banker'||$user->role == 'depositer') {
             $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
                 ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
-                ->where('transactions.status', '=', $status)
+                ->when($status !== 'null', function ($query) use ($status) {
+                    return $query->where('transactions.status', '=', $status);
+                })
                 ->when($search != null, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
                         $query->where('transactions.utr_no', 'like', '%' . $search . '%')
@@ -60,9 +62,11 @@ class TransactionController extends Controller
         } 
          else if ($user->role == 'withdrawrer' ||$user->role == 'withdrawal_banker') {
             $transactions = DB::table('transactions')->where('type', '=', 'Withdraw')
-                ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
+                ->leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
                 ->select('transactions.*', 'bank_details.holder_name as holder_name')
-                ->where('transactions.status', '=', $status)
+                ->when($status !== 'null', function ($query) use ($status) {
+                    return $query->where('transactions.status', '=', $status);
+                })
                 ->when($search != null, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
                         $query->where('transactions.utr_no', 'like', '%' . $search . '%')
@@ -85,7 +89,7 @@ class TransactionController extends Controller
     {
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
-        $banks = BankDetail::get();
+        $banks = BankDetail::whereNull('customer_id')->get();
         return view('Admin.Transactions.add', compact('todaysdate', 'currentDateTime', 'banks'));
     }
     public function add(Request $req)
@@ -214,7 +218,7 @@ class TransactionController extends Controller
             'client' => 'required|not_in:0',
             'amount' => 'required',
             'total' => 'required',
-            'bank_account' => 'required|not_in:0',
+            'client_bank_account' => 'required|not_in:0',
         ]);
         $withdrawrer = session('user');
         $transaction = new Transaction();
@@ -223,7 +227,7 @@ class TransactionController extends Controller
         $transaction->bonus = $req->bonus;
         $transaction->client_id = $req->client;
         $transaction->total = $req->total;
-        $transaction->bank_account = $req->bank_account;
+        $transaction->customer_bank_id = $req->client_bank_account;
         $transaction->withdrawrer_id = $withdrawrer->id;
         $transaction->type = 'Withdraw';
         $transaction->status = 'Pending';
@@ -236,33 +240,33 @@ class TransactionController extends Controller
     }
     public function withdrawEditForm($id)
     {
-        $transaction = Transaction::find($id);
+        $transaction = Transaction::leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
+        ->select('transactions.*', 'bank_details.holder_name as holder_name')->find($id);
         $clients = Client::where('isDeleted', '=', 'No')->get();
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
-        $banks = BankDetail::get();
+        
+        $banks = BankDetail::where('customer_id','=',$transaction->client_id)->get();
         return view('Admin.Transactions.addWithdrawRequest', compact('transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
     }
     public function withdrawEdit(Request $req)
     {
         $req->validate([
-            'client' => 'required|not_in:0',
             'amount' => 'required',
             'total' => 'required',
-            'bank_account' => 'required|not_in:0',
+            'client_bank_account' => 'required|not_in:0',
         ]);
         $withdrawrer = session('user');
         $transaction = Transaction::find($req->hiddenid);
         $transaction->date = $req->date;
         $transaction->amount = $req->amount;
         $transaction->bonus = $req->bonus;
-        $transaction->client_id = $req->client;
         $transaction->total = $req->total;
-        $transaction->bank_account = $req->bank_account;
+        $transaction->customer_bank_id = $req->client_bank_account;
         $transaction->withdrawrer_id = $withdrawrer->id;
         $transaction->type = 'Withdraw';
         $transaction->status = 'Pending';
-        $result = $transaction->save();
+        $result = $transaction->update();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Withdraw Request added successfully']);
         } else {
@@ -271,11 +275,12 @@ class TransactionController extends Controller
     }
     public function acceptPendingWithdrawForm($id)
     {
-        $transaction = Transaction::find($id);
+        $transaction = Transaction::leftjoin('bank_details', 'transactions.customer_bank_id', '=', 'bank_details.id')
+        ->select('transactions.*', 'bank_details.holder_name as holder_name','bank_details.bank_name as customer_bank_name','bank_details.account_number as customer_account_number','bank_details.ifsc as customer_ifsc','bank_details.phone as customer_phone')->find($id);
         $clients = Client::where('isDeleted', '=', 'No')->get();
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
-        $banks = BankDetail::get();
+        $banks = BankDetail::whereNull('customer_id')->get();
         return view('Admin.Transactions.acceptPendingWithdraw', compact('transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
     }
     // chaneg status for withdraw

@@ -113,3 +113,4 @@ Route::middleware('CommonMiddleware')->prefix('transactions')->group(function ()
 }); 
 Route::get('/clients/add',[UserController::class,'addClient'])->name('addClient');
 Route::get('/bankaccount/add',[BannkController::class,'bankAccouAddAjax'])->name('bankAccouAddAjax');
+Route::get('/render-client-account',[BannkController::class,'renderClientAccounts'])->name('renderClientAccounts');

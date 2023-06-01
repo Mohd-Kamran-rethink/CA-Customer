@@ -69,7 +69,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>IFSC Code <span style="color:red">*</span></label>
-                                <input type="number" name="ifcs_code" value="{{isset($bank)?$bank->ifsc:old('ifcs_code')}}" id="phone" placeholder="100"
+                                <input type="text" name="ifcs_code" value="{{isset($bank)?$bank->ifsc:old('ifcs_code')}}" id="phone" placeholder="100"
                                      class="form-control"
                                     data-validation="required">
                                     @error('ifcs_code')

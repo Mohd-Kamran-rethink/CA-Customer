@@ -42,7 +42,13 @@
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed control-sidebar-slide-open sidebar-mini ">
-
+<style>
+    .select2-selection {
+                padding: 18px !important;
+                display: flex !important;
+                align-items: center !important;
+            }
+</style>
     <!-- Page Wrapper -->
     <div id="wrapper">
         @include('Layouts.sidebar')
@@ -196,7 +202,9 @@
     <script src="{{ asset('AdminTheme/mainjs/MainJSfile.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script>
+        $('.searchOptions').select2();
+    </script>
 </body>
 
 </html>

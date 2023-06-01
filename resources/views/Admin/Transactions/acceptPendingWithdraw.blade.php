@@ -141,9 +141,45 @@
 
                             </div>
                         </div>
-
-
                     </div>
+                            {{-- customer bank deatils --}}
+                            {{-- <h5 class="font-weight-bold">Customer Bank Details</h5> --}}
+                            {{-- <span class="font-weight-bold">Account Holder Name: </span>{{$transaction->holder_name}} <br>
+                            <span class="font-weight-bold">Bank Name: </span>{{$transaction->customer_bank_name}} <br>
+                            <span class="font-weight-bold">Account Number: </span>{{$transaction->customer_account_number}} <br>
+                            <span class="font-weight-bold">IFSC Code: </span>{{$transaction->customer_ifsc}} <br>
+                            <span class="font-weight-bold">Phone Number: </span>{{$transaction->customer_phone}} <br> --}}
+                            <table class="table mt-4 mb-4">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Customer Bank Details</th>
+                                    {{-- <th scope="col">Value</th> --}}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td>Account Holder Name</td>
+                                    <td>{{$transaction->holder_name}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>Bank Name</td>
+                                    <td>{{$transaction->customer_bank_name}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>Account Number</td>
+                                    <td>{{$transaction->customer_account_number}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>IFSC Code</td>
+                                    <td>{{$transaction->customer_ifsc}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>Phone Number</td>
+                                    <td>9876543210</td>
+                                  </tr>
+                                  <!-- Add more rows for additional bank details -->
+                                </tbody>
+                              </table>
                     <div class="row mt-2">
                         <div class="col-12">
                             <button type="submit" class="btn btn-info">Accept</button>
@@ -169,7 +205,7 @@
                     @csrf
                     <input type="hidden" name="hiddenId" id="hiddenId">
                     <div class="modal-body">
-                        <label for="">Cancel Note </label>
+                        <label for="">Cancel Note <span style="color:red">*</span></label>
                         <textarea name="cancel_note" id="cancel_note" cols="30" rows="3" class="form-control"
                             placeholder="Write something"></textarea>
                         <span style="color:red;display: none" id="cancel_note_error">Pleace write cancel note!</span>

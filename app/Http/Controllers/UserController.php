@@ -271,13 +271,12 @@ class UserController extends Controller
         $result = $client->save();
         $clients = Client::get();
         $html = '<label class="form-label" for="form3Example1n1">Clients</label>
-            <select name="client"  class="form-control">
+            <select onchange="renderClients()" id="selected-client" name="client"  class="form-control searchOptions">
             <option value="0">--Choose--</option>
-            
             ';
 
         foreach ($clients as $item) {
-            $html .= '<option value=' . $item->id . '>' . $item->name . '</option>';
+            $html .= '<option value=' . $item->id . ' data-client='.$item->id.' data-number=' .$item->number.'>' . $item->number  .'('.$item->name.')</option>';
         }
         '</select>';
         if ($result) {

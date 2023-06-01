@@ -30,10 +30,10 @@
                         <div class="col-6 d-flex">
                             <div class=" " style="width: -webkit-fill-available;" id="client-ajax-dropdown">
                                 <label>Clients <span style="color:red">*</span></label>
-                                <select name="client" id="" class="form-control">
+                                <select name="client" id="" class="form-control searchOptions">
                                     <option value="0">--Choose--</option>
                                     @foreach ($clients as $item)
-                                        <option value="{{$item->id}}">{{$item->name}}</option>
+                                        <option value="{{$item->id}}">{{$item->number}}({{$item->name}})</option>
                                     @endforeach
                                 </select>
                                 @error('client')

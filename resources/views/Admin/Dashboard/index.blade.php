@@ -59,6 +59,7 @@
                             <div class="col-2 ">
                                 <label for="" style="visibility: hidden">sdf</label>
                                 <select name="status_name" type="text" class="form-control">
+                                    <option  value="null">--Filter by status--</option>
                                     <option {{$status=='Approve'?"selected":''}} value="Approve">Approved</option>
                                     <option {{$status=='Cancel'?"selected":''}} value="Cancel">Canceled</option>
                                     <option {{$status=='Pending'?'selected':''}} value="Pending">Pending</option>
