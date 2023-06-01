@@ -182,7 +182,7 @@
                         <label for="">Cancel Note <span style="color:red">*</span></label>
                         <textarea name="cancel_note" id="cancel_note" cols="30" rows="3" class="form-control"
                             placeholder="Write something"></textarea>
-                        <span style="color:red;display: none" id="cancel_note_error">Pleace write cancel note!</span>
+                        <span style="color:red;display: none" id="cancel_note_error">Please write cancel note!</span>
                     </div>
                     <div class="modal-footer ">
                         <button onclick="submitStatusChange()" type="submit" id="submit-button"
