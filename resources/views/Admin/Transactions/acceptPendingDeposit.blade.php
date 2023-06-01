@@ -89,7 +89,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Bonus </label>
-                                <input readonly oninput="sumAmountBonus()" type="number" name="bonus"
+                                <input  oninput="sumAmountBonus()" type="number" name="bonus"
                                     value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
                                      class="form-control">
                                 @error('bonus')
@@ -173,12 +173,13 @@
                     @csrf
                     <input type="hidden" name="hiddenId" id="hiddenId">
                     <div class="modal-body">
-                        <label for="">Cancel Note </label>
-                        <textarea name="cancel_note" id="" cols="30" rows="3" class="form-control"
+                        <label for="">Cancel Note <span style="color:red">*</span></label>
+                        <textarea name="cancel_note" id="cancel_note" cols="30" rows="3" class="form-control"
                             placeholder="Write something"></textarea>
+                            <span style="color:red;display: none" id="cancel_note_error">Pleace write cancel note!</span>
                     </div>
                     <div class="modal-footer ">
-                        <button onclick="submitStatusChange()" type="submit" class="btn btn-danger">Cancel</button>
+                        <button id="submit-button" onclick="submitStatusChange()" type="submit" class="btn btn-danger">Cancel</button>
                         <button type="button" data-dismiss="modal" aria-label="Close"
                             class="btn btn-default">Close</button>
                 </form>
@@ -193,11 +194,12 @@
         }
         function submitStatusChange()
         {
+           
             let submitButton = $('#submit-button')
             let cancel_note = $('#cancel_note')
             event.preventDefault();
             if(cancel_note.val().length==0)
-            {
+            { console.log("first")
                 $('#cancel_note_error').show()
             }
             else

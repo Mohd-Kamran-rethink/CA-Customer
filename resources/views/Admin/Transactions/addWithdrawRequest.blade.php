@@ -94,20 +94,10 @@
                             </div>
 
                         </div>
-
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Created On <span style="color:red">*</span></label>
-                                <input readonly type="text" name="created_on"
+                        <input readonly type="hidden" name="created_on"
                                     value="{{ isset($transaction) ? $transaction->created_at : $currentDateTime }}"
                                     class="form-control" data-validation="required">
-                                @error('created_on')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+                                
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Amount <span style="color:red">*</span></label>
@@ -122,39 +112,15 @@
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>UTR No <span style="color:red">
-                                        {{ session('user')->role === 'withdrawrer' ? '' : '*' }}</span></label>
-                                <input {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }} type="text"
+                        <input {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }} type="hidden"
                                     name="utr" value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}"
                                     id="utr" placeholder="UTR Number" class="form-control" data-validation="required">
-                                @error('utr')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Bonus </label>
-                                <input oninput="sumAmountBonus()" type="number" name="bonus"
+                       
+                        <input oninput="sumAmountBonus()" type="hidden" name="bonus"
                                     value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
                                     class="form-control">
-                                @error('bonus')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6" style="visibility: none">
-                            <div class="form-group">
-
-
-                            </div>
-                        </div>
+                               
+                        
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Total<span style="color:red">*</span></label>

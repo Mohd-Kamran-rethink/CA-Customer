@@ -20,24 +20,57 @@
         </div>
     </section>
     @if (session('user')->role != 'customer_care_manager')
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3>{{ isset($transactions) ? count($transactions) ?? 0 : 0 }} </h3>
-                            <p>Transactions</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fa fa-credit-card"></i>
-                        </div>
+        @if (isset($transactions))
+            @php
+                $sum = 0;
+            @endphp
 
+            @foreach ($transactions as $transaction)
+                @php
+                    $type = $transaction->type;
+                    $sum += $transaction->total;
+                @endphp
+            @endforeach
+        @endif
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ isset($transactions) ? count($transactions) ?? 0 : 0 }} </h3>
+                                <p>Transactions</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                    {{-- for withdraw --}}
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-primary">
+                            <div class="inner">
+                               
+                                <h3>{{ number_format($sum) }}</h3>
+                                @if (session('user')->role == 'withdrawal_banker' || session('user')->role == 'withdrawrer')
+                                    <p>Withdrawer</p>
+                                @elseif(session('user')->role == 'deposit_banker' || session('user')->role == 'depositer')
+                                    <p>Depositer</p>
+                                @endif
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+
+
+        </section>
     @endif
     {{-- cards --}}
     {{-- transactions for deposit_banker --}}
@@ -52,43 +85,51 @@
                         <div class="row">
                             <div class="col-2">
                                 <label for="" style="visibility: hidden">s</label>
-                                <input type="text" value="{{ isset($search) ? $search : '' }}"
-                                    name="table_search" class="form-control float-right" placeholder="Search"
-                                    id="searchInput">
+                                <input type="text" value="{{ isset($search) ? $search : '' }}" name="table_search"
+                                    class="form-control float-right" placeholder="Search by UTR" id="searchInput">
                             </div>
+                            @if (session('user')->role === 'depositer')
+                                <div class="col-2">
+                                    <label for="" style="visibility: hidden">s</label>
+                                    <input type="text" value="{{ isset($amount_search) ? $amount_search : '' }}" name="amount_search"
+                                        class="form-control float-right" placeholder="Search by amount" id="searchInput">
+                                </div>
+                            @endif
                             <div class="col-2 ">
                                 <label for="" style="visibility: hidden">sdf</label>
                                 <select name="status_name" type="text" class="form-control">
-                                    <option  value="null">--Filter by status--</option>
-                                    <option {{$status=='Approve'?"selected":''}} value="Approve">Approved</option>
-                                    <option {{$status=='Cancel'?"selected":''}} value="Cancel">Canceled</option>
-                                    <option {{$status=='Pending'?'selected':''}} value="Pending">Pending</option>
+                                    <option value="null">--Filter by status--</option>
+                                    <option {{ $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
+                                    <option {{ $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
+                                    <option {{ $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
                                 </select>
                             </div>
                             <div class="col-2">
-                                <label for="" >From</label>
-                                <input type="date" name="start_date" class="form-control" value="{{$start_date}}" >   
+                                <label for="">From</label>
+                                <input type="date" name="start_date" class="form-control" value="{{ $start_date }}">
                             </div>
                             <div class="col-2">
-                                <label for="" >To</label>
-                                <input type="date" name="end_date" class="form-control"  value="{{$end_date}}">   
+                                <label for="">To</label>
+                                <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
                             </div>
-                            <div class="col-4 pt-2">
+                            <div class="col-2 pt-2">
                                 <button class="btn btn-success mt-4">Filter</button>
                             </div>
                             @if (session('user')->role === 'deposit_banker')
                                 <div class="col">
-                                    <a href="{{ url('transactions/add') }}" class="btn btn-primary float-right">Add Transaction</a>
+                                    <a href="{{ url('transactions/add') }}" class="btn btn-primary float-right">Add
+                                        Transaction</a>
                                 </div>
-                                @elseif(session('user')->role === 'withdrawrer')
+                            @elseif(session('user')->role === 'withdrawrer')
                                 <div class="col">
-                                    <a href="{{ url('transactions/withdraw/add') }}" class="btn btn-primary float-right">Add Withdraw Request</a>
+                                    <a href="{{ url('transactions/withdraw/add') }}"
+                                        class="btn btn-primary float-right">Add Withdraw Request</a>
                                 </div>
-                             @endif
+                            @endif
                         </div>
 
                     </form>
-                   
+
                     <div class="row mt-4">
                         <div class="col-12">
                             <div class="card">
@@ -122,27 +163,27 @@
                                                     <td>{{ $item->created_at }}</td>
                                                     <td>
                                                         {{-- for deposit functionlaity --}}
-                                                        @if (session('user')->role === 'deposit_banker' && $item->status=='Pending')
+                                                        @if (session('user')->role === 'deposit_banker' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
                                                             <button title="Delete"
                                                                 onclick="deleteModal({{ $item->id }})"
                                                                 class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                                                        @elseif(session('user')->role === 'depositer' && $item->status=='Pending')
+                                                        @elseif(session('user')->role === 'depositer' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/change-status/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>
                                                         @endif
                                                         {{-- for withdrawal functionality --}}
-                                                        @if (session('user')->role === 'withdrawrer'  && $item->status=='Pending')
+                                                        @if (session('user')->role === 'withdrawrer' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
                                                             <button title="Delete"
                                                                 onclick="deleteModal({{ $item->id }})"
                                                                 class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                                                        @elseif(session('user')->role === 'withdrawal_banker' && $item->status=='Pending')
+                                                        @elseif(session('user')->role === 'withdrawal_banker' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>

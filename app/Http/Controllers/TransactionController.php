@@ -17,6 +17,7 @@ class TransactionController extends Controller
 
         $search = null;
         $status = 'Pending';
+        $amount_search=null;
         $start_date = $req->start_date;
         $end_date = $req->end_date;
         // Default values if start date is not available
@@ -33,6 +34,10 @@ class TransactionController extends Controller
         if (isset($req->status_name)) {
             $status = $req->status_name;
         }
+        if (isset($req->amount_search)) {
+            
+            $amount_search = $req->amount_search;
+        }
         // getting user details
         $sesstionId = session('user')->id;
         $user = User::find($sesstionId);
@@ -47,9 +52,12 @@ class TransactionController extends Controller
                 })
                 ->when($search != null, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
-                        $query->where('transactions.utr_no', 'like', '%' . $search . '%')
-                            ->orWhere('transactions.amount', '=', $search)
-                            ->orWhere('transactions.total', '=', $search);
+                        $query->where('transactions.utr_no', 'like', '%' . $search . '%');
+                     });
+                })
+                ->when($amount_search, function ($query) use ($amount_search) {
+                    $query->where(function ($query) use ($amount_search) {
+                        $query->where('transactions.total', $amount_search);
                     });
                 })
                 ->select('transactions.*', 'bank_details.holder_name as holder_name')
@@ -82,7 +90,7 @@ class TransactionController extends Controller
                 ->paginate(30);
         
         }
-        return view('Admin.Dashboard.index', compact('transactions', 'status', 'search','start_date','end_date'));
+        return view('Admin.Dashboard.index', compact('amount_search','transactions', 'status', 'search','start_date','end_date'));
     }
     // deposit work functions
     public function addForm()
