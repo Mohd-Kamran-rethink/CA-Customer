@@ -51,7 +51,7 @@
                                 <label>Phone <span style="color:red">*</span></label>
                                 <input type="number" name="phone"
                                     value="{{ isset($user) ? $user->phone : old('phone') }}" id="phone"
-                                    placeholder="972873818"  class="form-control"
+                                      class="form-control"
                                     data-validation="required">
                                 @error('phone')
                                     <span class="text-danger">

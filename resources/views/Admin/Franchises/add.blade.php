@@ -43,7 +43,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Monthly Target <span style="color:red">*</span></label>
-                                <input type="number" name="monthly_target" value="{{isset($franchise)?$franchise->monthly_target:old('monthly_target')}}" id="phone" placeholder="100"
+                                <input type="number" name="monthly_target" value="{{isset($franchise)?$franchise->monthly_target:old('monthly_target')}}" id="phone"
                                      class="form-control"
                                     data-validation="required">
                                     @error('monthly_target')
@@ -57,7 +57,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Number of users <span style="color:red">*</span></label>
-                                <input type="number" name="users_count" value="{{isset($franchise)?$franchise->users_count:old('users_count')}}" id="phone" placeholder="100"
+                                <input type="number" name="users_count" value="{{isset($franchise)?$franchise->users_count:old('users_count')}}" id="phone"
                                      class="form-control"
                                     data-validation="required">
                                     @error('users_count')

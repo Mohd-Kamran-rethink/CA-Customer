@@ -96,7 +96,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>UTR No <span style="color:red">*</span></label>
-                                <input type="number" name="utr"
+                                <input type="text" name="utr"
                                     value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}" id="utr"
                                     placeholder="UTR Number" class="form-control" data-validation="required">
                                 @error('utr')

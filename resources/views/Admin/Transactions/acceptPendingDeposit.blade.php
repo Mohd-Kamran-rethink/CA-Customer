@@ -102,7 +102,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>UTR No <span style="color:red">*</span></label>
-                                <input  readonly type="number" name="utr"
+                                <input  readonly type="text" name="utr"
                                     value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}" id="utr"
                                     placeholder="UTR Number" class="form-control" data-validation="required">
                                 @error('utr')

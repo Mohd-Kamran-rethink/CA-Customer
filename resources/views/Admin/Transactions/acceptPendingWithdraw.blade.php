@@ -97,7 +97,7 @@
                             <div class="form-group">
                                 <label>UTR No <span style="color:red">
                                         {{ session('user')->role === 'withdrawrer' ? '' : '*' }}</span></label>
-                                <input {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }} type="number"
+                                <input {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }} type="text"
                                     name="utr" value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}"
                                     id="utr" placeholder="UTR Number" class="form-control" data-validation="required">
                                 @error('utr')
