@@ -36,7 +36,7 @@
                         <input type="hidden" name="role" value="{{$role}}">
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
-                                <label>Manager Name <span style="color:red">*</span></label>
+                                <label>Name <span style="color:red">*</span></label>
                                 <input type="text" name="name" placeholder="John" class="form-control"
                                     data-validation="required" value="{{ isset($user) ? $user->name : old('name') }}">
                                 @error('name')
@@ -84,11 +84,6 @@
                                     @endforeach
                                 </select>
 
-                                @error('email')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
                             </div>
                         </div>
 

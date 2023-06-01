@@ -176,6 +176,22 @@ class UserController extends Controller
     // common functions for manager and agents
     public function add(Request $req)
     {
+        if($req->role=='deposit_banker')
+        {
+            $redirect_url='deposit-banker';
+        }
+        elseif ($req->role=='depositer')
+        {
+            $redirect_url='depositers';
+        }
+        elseif($req->role=='withdrawrer')
+        {
+            $redirect_url='withdrawrers';
+        }
+        elseif($req->role=='withdrawal_banker')
+        {
+            $redirect_url='withdrawal-banker';
+        }
         $req->validate([
             'name' => 'required|unique:users,name',
             'phone' => 'required|unique:users,phone',
@@ -197,9 +213,9 @@ class UserController extends Controller
         }
         $result = $user->save();
         if ($result) {
-            return redirect()->back()->with(['msg-success' => 'Added successfully']);
+            return redirect($redirect_url)->with(['msg-success' => 'Added successfully']);
         } else {
-            return redirect()->back()->with(['msg-error' => 'Something went wrong']);
+            return redirect($redirect_url)->with(['msg-error' => 'Something went wrong']);
         }
     }
 
