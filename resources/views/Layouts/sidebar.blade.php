@@ -102,7 +102,26 @@
                         </a>
                     </li>
                 @endif()
-
+                @if(session('user')->role=='deposit_banker')
+                <li class="nav-item  ">
+                    <a href="{{ url('/transactions/add') }}" class="nav-link {{ Request::is('transactions/add') ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-credit-card"></i>
+                        <p>
+                            Add Transaction
+                        </p>
+                    </a>
+                </li>
+                @endif
+                @if(session('user')->role=='withdrawrer')
+                <li class="nav-item  ">
+                    <a href="{{ url('/transactions/withdraw/add') }}" class="nav-link {{ Request::is('transactions/withdraw/add') ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-credit-card"></i>
+                        <p>
+                            Add Withdraw Request
+                        </p>
+                    </a>
+                </li>
+                @endif
 
             </ul>
         </nav>

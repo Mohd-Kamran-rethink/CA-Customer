@@ -121,20 +121,12 @@
                                     class="form-control">
                                
                         
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Total<span style="color:red">*</span></label>
-                                <input type="number" name="total"
+                        
+                                
+                                <input type="hidden" name="total"
                                     value="{{ isset($transaction) ? $transaction->total : old('total') }}" id="total"
                                     readonly class="form-control" data-validation="required">
-                                @error('total')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-
-                            </div>
-                        </div>
+                               
 
 
 

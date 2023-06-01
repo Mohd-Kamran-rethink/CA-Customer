@@ -77,9 +77,12 @@ class TransactionController extends Controller
                 })
                 ->when($search != null, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
-                        $query->where('transactions.utr_no', 'like', '%' . $search . '%')
-                            ->orWhere('transactions.amount', '=', $search)
-                            ->orWhere('transactions.total', '=', $search);
+                        $query->where('transactions.utr_no', 'like', '%' . $search . '%');
+                     });
+                })
+                ->when($amount_search, function ($query) use ($amount_search) {
+                    $query->where(function ($query) use ($amount_search) {
+                        $query->where('transactions.total', $amount_search);
                     });
                 })
                 ->when($start_date != null, function ($query) use ($start_date, $end_date) {
@@ -95,10 +98,16 @@ class TransactionController extends Controller
     // deposit work functions
     public function addForm()
     {
-        $todaysdate = Carbon::now()->startOfDay()->toDateString();
-        $currentDateTime = Carbon::now()->startOfDay();
-        $banks = BankDetail::whereNull('customer_id')->get();
-        return view('Admin.Transactions.add', compact('todaysdate', 'currentDateTime', 'banks'));
+       if(session('user')->role=='deposit_banker')
+       {
+
+           $todaysdate = Carbon::now()->startOfDay()->toDateString();
+           $currentDateTime = Carbon::now()->startOfDay();
+           $banks = BankDetail::whereNull('customer_id')->get();
+           return view('Admin.Transactions.add', compact('todaysdate', 'currentDateTime', 'banks'));
+        }
+        else return redirect()->back();
+       
     }
     public function add(Request $req)
     {
@@ -174,12 +183,14 @@ class TransactionController extends Controller
     }
     public function acceptPendingDepositForm($id)
     {
+      
         $clients = Client::where('isDeleted', '=', 'No')->get();
         $transaction = Transaction::find($id);
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
         $banks = BankDetail::get();
         return view('Admin.Transactions.acceptPendingDeposit', compact('clients', 'transaction', 'todaysdate', 'currentDateTime', 'banks'));
+       
     }
     // change status for deposit
     public function changeStatus(Request $req)
@@ -214,11 +225,15 @@ class TransactionController extends Controller
     // withdraw work functions
     public function withdrawAddForm()
     {
+        if(session('user')->role=='withdrawrer')
+       {
         $clients = Client::where('isDeleted', '=', 'No')->get();
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
         $banks = BankDetail::get();
         return view('Admin.Transactions.addWithdrawRequest', compact('clients', 'todaysdate', 'currentDateTime', 'banks'));
+       }
+       else return redirect()->back();
     }
     public function withdrawAdd(Request $req)
     {

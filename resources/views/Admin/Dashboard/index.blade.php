@@ -88,13 +88,12 @@
                                 <input type="text" value="{{ isset($search) ? $search : '' }}" name="table_search"
                                     class="form-control float-right" placeholder="Search by UTR" id="searchInput">
                             </div>
-                            @if (session('user')->role === 'depositer')
+                           
                                 <div class="col-2">
                                     <label for="" style="visibility: hidden">s</label>
                                     <input type="text" value="{{ isset($amount_search) ? $amount_search : '' }}" name="amount_search"
                                         class="form-control float-right" placeholder="Search by amount" id="searchInput">
                                 </div>
-                            @endif
                             <div class="col-2 ">
                                 <label for="" style="visibility: hidden">sdf</label>
                                 <select name="status_name" type="text" class="form-control">
@@ -115,17 +114,7 @@
                             <div class="col-2 pt-2">
                                 <button class="btn btn-success mt-4">Filter</button>
                             </div>
-                            @if (session('user')->role === 'deposit_banker')
-                                <div class="col">
-                                    <a href="{{ url('transactions/add') }}" class="btn btn-primary float-right">Add
-                                        Transaction</a>
-                                </div>
-                            @elseif(session('user')->role === 'withdrawrer')
-                                <div class="col">
-                                    <a href="{{ url('transactions/withdraw/add') }}"
-                                        class="btn btn-primary float-right">Add Withdraw Request</a>
-                                </div>
-                            @endif
+                            
                         </div>
 
                     </form>
