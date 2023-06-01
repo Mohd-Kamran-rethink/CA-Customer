@@ -176,6 +176,7 @@ class UserController extends Controller
     // common functions for manager and agents
     public function add(Request $req)
     {
+        
         if($req->role=='deposit_banker')
         {
             $redirect_url='deposit-banker';
@@ -191,6 +192,9 @@ class UserController extends Controller
         elseif($req->role=='withdrawal_banker')
         {
             $redirect_url='withdrawal-banker';
+        }
+        else{
+            $redirect_url='managers';
         }
         $req->validate([
             'name' => 'required|unique:users,name',
