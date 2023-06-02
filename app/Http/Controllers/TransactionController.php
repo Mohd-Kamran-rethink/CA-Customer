@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\BankDetail;
 use App\Client;
+use App\Lead;
+use App\LeadStatusOption;
 use App\Transaction;
 use App\User;
 use Carbon\Carbon;
@@ -203,6 +205,7 @@ class TransactionController extends Controller
             'bank_account' => 'required|not_in:0',
             'client' => 'required|not_in:0',
         ]);
+        
         $depositer = session('user');
         $transaction =  Transaction::find($req->hiddenid);
         $transaction->date = $req->date;
@@ -215,6 +218,20 @@ class TransactionController extends Controller
         $transaction->client_id = $req->client;
         $transaction->type = 'Deposit';
         $transaction->status = 'Approve';
+        // before save update lead status
+        $client=Client::find($req->client);
+        $status=LeadStatusOption::where('name','=','Deposited')->first();
+        $client_lead=Lead::where('number','=',$client->number)->latest()->first();
+        if($client_lead)
+        {
+            $client->agent_id=$client_lead->agent_id;
+            $client_lead->status_id=$status->id;
+            $client_lead->current_status=$status->name;
+            $client_lead->update();
+            $client->update();
+        }
+
+            
         $result = $transaction->save();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Transaction approved successfully']);
