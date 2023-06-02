@@ -22,15 +22,18 @@
                         </p>
                     </a>
                 </li>
-                @if(session('user')->role=='customer_care_manager')
-                    <li class="nav-item ">
-                        <a href="{{ url('/managers') }}" class="nav-link {{ Request::is('managers') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-users"></i>
-                            <p>
-                                Managers
-                            </p>
-                        </a>
-                    </li>
+                @if (session('user')->role == 'customer_care_manager')
+                    @if (session('user')->is_admin == 'Yes')
+                        <li class="nav-item ">
+                            <a href="{{ url('/managers') }}"
+                                class="nav-link {{ Request::is('managers') ? 'active' : '' }}">
+                                <i class="nav-icon fa fa-users"></i>
+                                <p>
+                                    Managers
+                                </p>
+                            </a>
+                        </li>
+                    @endif
                     <li
                         class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
                         <a href="#"
@@ -42,7 +45,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview"
-                            style="display: {{  Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'block' : 'none' }}">
+                            style="display: {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'block' : 'none' }}">
 
 
                             <li class="nav-item  ">
@@ -85,7 +88,8 @@
                         </ul>
                     </li>
                     <li class="nav-item ">
-                        <a href="{{ url('/franchises') }}" class="nav-link {{ Request::is('franchises') ? 'active' : '' }}">
+                        <a href="{{ url('/franchises') }}"
+                            class="nav-link {{ Request::is('franchises') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-building"></i>
                             <p>
                                 Franchises
@@ -93,7 +97,8 @@
                         </a>
                     </li>
                     <li class="nav-item ">
-                        <a href="{{ url('/bank-accounts') }}" class="nav-link {{ Request::is('bank-accounts') ? 'active' : '' }}">
+                        <a href="{{ url('/bank-accounts') }}"
+                            class="nav-link {{ Request::is('bank-accounts') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-money">&#x1F4B0;
                             </i>
                             <p>
@@ -102,25 +107,27 @@
                         </a>
                     </li>
                 @endif()
-                @if(session('user')->role=='deposit_banker')
-                <li class="nav-item  ">
-                    <a href="{{ url('/transactions/add') }}" class="nav-link {{ Request::is('transactions/add') ? 'active' : '' }}">
-                        <i class="nav-icon fa fa-credit-card"></i>
-                        <p>
-                            Add Transaction
-                        </p>
-                    </a>
-                </li>
+                @if (session('user')->role == 'deposit_banker')
+                    <li class="nav-item  ">
+                        <a href="{{ url('/transactions/add') }}"
+                            class="nav-link {{ Request::is('transactions/add') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-credit-card"></i>
+                            <p>
+                                Add Transaction
+                            </p>
+                        </a>
+                    </li>
                 @endif
-                @if(session('user')->role=='withdrawrer')
-                <li class="nav-item  ">
-                    <a href="{{ url('/transactions/withdraw/add') }}" class="nav-link {{ Request::is('transactions/withdraw/add') ? 'active' : '' }}">
-                        <i class="nav-icon fa fa-credit-card"></i>
-                        <p>
-                            Add Withdraw Request
-                        </p>
-                    </a>
-                </li>
+                @if (session('user')->role == 'withdrawrer')
+                    <li class="nav-item  ">
+                        <a href="{{ url('/transactions/withdraw/add') }}"
+                            class="nav-link {{ Request::is('transactions/withdraw/add') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-credit-card"></i>
+                            <p>
+                                Add Withdraw Request
+                            </p>
+                        </a>
+                    </li>
                 @endif
 
             </ul>

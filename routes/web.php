@@ -27,14 +27,12 @@ Route::get('/logout',[AuthController::class,'logout'])->name('logout')->middlewa
 Route::post('user/delete',[UserController::class,'delete'])->name('delete');    
 
 // MANAGER CRUD
-Route::middleware('ValidateManager')->prefix('/managers')->group(function () {
+Route::middleware('superManager')->prefix('/managers')->group(function () {
     Route::get('/',[UserController::class,'listManager'])->name('listManager');
     Route::get('/add',[UserController::class,'ManagerView'])->name('ManagerView');
     Route::post('/add',[UserController::class,'add'])->name('add');
     Route::get('/edit',[UserController::class,'ManagerView'])->name('ManagerView');
     Route::post('/edit',[UserController::class,'edit'])->name('edit');
-    // delete will be common to use
-    Route::get('/edit',[UserController::class,'ManagerView'])->name('ManagerView');
 });
 
 // deposit-banker   
