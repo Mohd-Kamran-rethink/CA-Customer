@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\BankDetail;
 use App\Client;
 use App\Lead;
+use App\LeadStatus;
 use App\LeadStatusOption;
 use App\Transaction;
 use App\User;
@@ -229,6 +230,11 @@ class TransactionController extends Controller
             $client_lead->current_status=$status->name;
             $client_lead->update();
             $client->update();
+            $leadStatus=new LeadStatus();
+            $leadStatus->status_id=$status->id;
+            $leadStatus->lead_id=$client_lead->id;
+            $leadStatus->save();
+
         }
 
             
