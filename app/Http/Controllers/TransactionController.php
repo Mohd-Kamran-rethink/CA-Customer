@@ -47,7 +47,24 @@ class TransactionController extends Controller
         $user = User::find($sesstionId);
         // conditional data rendereing
         if ($user->role == 'customer_care_manager') {
-            return view('Admin.Dashboard.index');
+            $depositers=User::where('role','=','deposit_banker')->get()->count();
+            $depositBanker =User::where('role','=','depositer')->get()->count();
+            $withdraweres=User::where('role','=','withdrawrer')->get()->count();
+            $withdrawrerBanker =User::where('role','=','withdrawal_banker')->get()->count();
+            // todays
+            $today = now()->format('Y-m-d');
+            $ApproveDepoistTranToday = Transaction::where('type', 'Deposit')->where('status', 'Approve')->whereDate('created_at', $today)->get();
+            $ApprovedDepoistToday= $ApproveDepoistTranToday->sum('amount');
+            $ApprovewithTranToday = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->whereDate('created_at', $today)->get();
+            $ApprovedWithdrawToday= $ApprovewithTranToday->sum('amount');
+            // total
+            $ApproveDepoistTranTotal = Transaction::where('type', 'Deposit')->where('status', 'Approve')->get();
+            $ApprovedDepoistTotal= $ApproveDepoistTranTotal->sum('amount');
+            $ApprovewithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->get();
+            $ApprovedWithdrawTotal= $ApprovewithTranTotal->sum('amount');
+            
+            return view('Admin.Dashboard.index',compact('ApprovedWithdrawTotal','ApprovedDepoistTotal','ApprovedWithdrawToday','ApprovedDepoistToday','depositers','depositBanker','withdraweres','withdrawrerBanker'));
+            // ends
         } else if ($user->role == 'deposit_banker'||$user->role == 'depositer') {
             $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
                 ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')

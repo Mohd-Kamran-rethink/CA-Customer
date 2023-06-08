@@ -1,6 +1,5 @@
 @extends('Admin.index')
 @section('content')
-
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -24,7 +23,6 @@
             @php
                 $sum = 0;
             @endphp
-
             @foreach ($transactions as $transaction)
                 @php
                     $type = $transaction->type;
@@ -44,15 +42,12 @@
                             <div class="icon">
                                 <i class="fa fa-credit-card"></i>
                             </div>
-
                         </div>
                     </div>
                     {{-- for withdraw --}}
-
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-primary">
                             <div class="inner">
-                               
                                 <h3>{{ number_format($sum) }}</h3>
                                 @if (session('user')->role == 'withdrawal_banker' || session('user')->role == 'withdrawrer')
                                     <p>Withdrawer</p>
@@ -63,23 +58,18 @@
                             <div class="icon">
                                 <i class="fa fa-credit-card"></i>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </section>
     @endif
     {{-- cards --}}
     {{-- transactions for deposit_banker --}}
-
     @if (session('user')->role != 'customer_care_manager')
         <section class="content">
             <div class="card">
                 <div class="card-body">
-
                     <form action="{{ url('dashboard') }}" method="POST">
                         @csrf
                         <div class="row">
@@ -88,12 +78,12 @@
                                 <input type="text" value="{{ isset($search) ? $search : '' }}" name="table_search"
                                     class="form-control float-right" placeholder="Search by UTR" id="searchInput">
                             </div>
-                           
-                                <div class="col-2">
-                                    <label for="" style="visibility: hidden">s</label>
-                                    <input type="text" value="{{ isset($amount_search) ? $amount_search : '' }}" name="amount_search"
-                                        class="form-control float-right" placeholder="Search by amount" id="searchInput">
-                                </div>
+                            <div class="col-2">
+                                <label for="" style="visibility: hidden">s</label>
+                                <input type="text" value="{{ isset($amount_search) ? $amount_search : '' }}"
+                                    name="amount_search" class="form-control float-right" placeholder="Search by amount"
+                                    id="searchInput">
+                            </div>
                             <div class="col-2 ">
                                 <label for="" style="visibility: hidden">sdf</label>
                                 <select name="status_name" type="text" class="form-control">
@@ -114,11 +104,8 @@
                             <div class="col-2 pt-2">
                                 <button class="btn btn-success mt-4">Filter</button>
                             </div>
-                            
                         </div>
-
                     </form>
-
                     <div class="row mt-4">
                         <div class="col-12">
                             <div class="card">
@@ -184,7 +171,6 @@
                                                     <td colspan="10" class="text-center">No data</td>
                                                 </tr>
                                             @endforelse
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -227,4 +213,135 @@
             $('#deleteInput').val(id);
         }
     </script>
+    {{-- for customercar manager --}}
+    @if (session('user')->role == 'customer_care_manager')
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ $depositBanker ?? 0 }} </h3>
+                                <p>Deposit Bankers</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+                    {{--  --}}
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-danger">
+                            <div class="inner">
+                                <h3>{{ $depositers ?? 0 }} </h3>
+                                <p>Depositers</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ $withdraweres ?? 0 }} </h3>
+                                <p>Withdrawrers</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-primary">
+                            <div class="inner">
+                                <h3>{{ $withdrawrerBanker ?? 0 }} </h3>
+                                <p>Withdrawal Bankers</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        {{-- daily --}}
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Financial Report (Daily)</h1>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h4>{{ $ApprovedDepoistToday ?? 0 }} </h4>
+                                <p>Total Todays's Deposit</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-danger">
+                            <div class="inner">
+                                <h4>{{ $ApprovedWithdrawToday ?? 0 }} </h4>
+                                <p>Total Todays's Withdaws</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {{-- total --}}
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Financial Report (Total)</h1>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h4>{{ $ApprovedDepoistTotal ?? 0 }} </h4>
+                                <p>Total Deposit</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-danger">
+                            <div class="inner">
+                                <h4>{{ $ApprovedWithdrawTotal ?? 0 }} </h4>
+                                <p>Total Withdaws</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
 @endsection

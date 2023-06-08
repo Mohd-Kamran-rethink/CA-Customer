@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/',[AuthController::class,'loginView'])->name('loginView');
 Route::post('/login',[AuthController::class,'login'])->name('login');
 Route::get('/logout',[AuthController::class,'logout'])->name('logout')->middleware('CommonMiddleware');
+// Transactions
+Route::get('/dashboard',[TransactionController::class,'dashboard'])->name('dashboard')->middleware('CommonMiddleware');
+Route::post('/dashboard',[TransactionController::class,'dashboard'])->name('dashboard')->middleware('CommonMiddleware');
 
 // common user route
 Route::post('user/delete',[UserController::class,'delete'])->name('delete');    
@@ -88,9 +91,6 @@ Route::middleware('ValidateManager')->prefix('bank-accounts')->group(function ()
     Route::post('/delete',[BannkController::class,'delete'])->name('delete');
 });   
 
-// Transactions
-Route::get('/dashboard',[TransactionController::class,'dashboard'])->name('dashboard')->middleware('CommonMiddleware');
-Route::post('/dashboard',[TransactionController::class,'dashboard'])->name('dashboard')->middleware('CommonMiddleware');
 
 Route::middleware('CommonMiddleware')->prefix('transactions')->group(function () {
     Route::get('/add',[TransactionController::class,'addForm'])->name('addForm');

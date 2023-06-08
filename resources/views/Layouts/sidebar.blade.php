@@ -54,6 +54,7 @@
                                     <p>
                                         Deposit Banker
                                     </p>
+                                    <span class="badge badge-info right">{{$depositBanker??0}}</span>
                                 </a>
                             </li>
                             <li class="nav-item  ">
@@ -62,6 +63,8 @@
                                     <p>
                                         Withdrawal Banker
                                     </p>
+                                    <span class="badge badge-info right">{{$withdrawrerBanker??0}}</span>
+
                                 </a>
                             </li>
                             <li class="nav-item  ">
@@ -70,15 +73,19 @@
                                     <p>
                                         Depositers
                                     </p>
+                                    <span class="badge badge-info right">{{$depositers??0}}</span>
+
                                 </a>
                             </li>
                             <li class="nav-item  ">
                                 <a href="{{ url('/withdrawrers') }}"
                                     class="nav-link {{ Request::is('withdrawrers') ? 'active' : '' }}">
-
                                     <p>
                                         Withdrawrers
                                     </p>
+                                    <span class="badge badge-info right">{{$withdraweres??0}}</span>
+
+                                    
                                 </a>
                             </li>
 
@@ -91,6 +98,8 @@
                             <p>
                                 Franchises
                             </p>
+                            <span class="badge badge-info right">{{$franchiese??0}}</span>
+
                         </a>
                     </li>
                     <li class="nav-item ">
