@@ -35,9 +35,9 @@
                         </li>
                     @endif
                     <li
-                        class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
+                        class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
                         <a href="#"
-                            class="nav-link {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'active' : '' }}">
+                            class="nav-link {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-users"></i>
                             <p>
                                 Agents
@@ -45,13 +45,12 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview"
-                            style="display: {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('deposit-banker') || Request::is('withdrawrers') ? 'block' : 'none' }}">
+                            style="display: {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'block' : 'none' }}">
 
 
                             <li class="nav-item  ">
                                 <a href="{{ url('/deposit-banker') }}"
                                     class="nav-link {{ Request::is('deposit-banker') ? 'active' : '' }}">
-
                                     <p>
                                         Deposit Banker
                                     </p>
@@ -60,7 +59,6 @@
                             <li class="nav-item  ">
                                 <a href="{{ url('/withdrawal-banker') }}"
                                     class="nav-link {{ Request::is('withdrawal-banker') ? 'active' : '' }}">
-
                                     <p>
                                         Withdrawal Banker
                                     </p>
@@ -69,7 +67,6 @@
                             <li class="nav-item  ">
                                 <a href="{{ url('/depositers') }}"
                                     class="nav-link {{ Request::is('depositers') ? 'active' : '' }}">
-
                                     <p>
                                         Depositers
                                     </p>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BankDetail;
 use App\Client;
+use App\DepositHistory;
 use App\Lead;
 use App\LeadStatus;
 use App\LeadStatusOption;
@@ -226,12 +227,19 @@ class TransactionController extends Controller
         if($client_lead)
         {
             $client->agent_id=$client_lead->agent_id;
+            $client->deposit_amount=$req->amount;
             $client_lead->status_id=$status->id;
             $client_lead->current_status=$status->name;
             $client_lead->update();
             $client->update();
+            $depositHistory=new DepositHistory();
             $leadStatus=new LeadStatus();
+            $depositHistory->type="Deposit";
+            $depositHistory->client_id=$client->id;
+            $depositHistory->amount=$req->amount;
+            $depositHistory->save();
             $leadStatus->status_id=$status->id;
+            $leadStatus->lead_id=$client_lead->id;
             $leadStatus->lead_id=$client_lead->id;
             $leadStatus->save();
 

@@ -31,7 +31,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Account Holder Name<span style="color:red">*</span></label>
-                                <input  type="text" name="name" placeholder="Account Holder Name"
+                                <input  type="text" name="name" 
                                     class="form-control"  value="{{isset($bank)?$bank->holder_name:old('name')}}">
                                     @error('name')
                                     <span class="text-danger">
@@ -43,7 +43,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Bank Name<span style="color:red">*</span></label>
-                                <input  type="text" name="bank_name" placeholder="ABC Bank"
+                                <input  type="text" name="bank_name"
                                     class="form-control"  value="{{isset($bank)?$bank->bank_name:old('bank_name')}}">
                                     @error('bank_name')
                                     <span class="text-danger">
@@ -55,7 +55,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Account Number <span style="color:red">*</span></label>
-                                <input type="number" name="account_number" value="{{isset($bank)?$bank->account_number:old('accout_number')}}" id="phone" placeholder="100"
+                                <input type="number" name="account_number" value="{{isset($bank)?$bank->account_number:old('accout_number')}}" id="phone" 
                                      class="form-control"
                                     data-validation="required">
                                     @error('account_number')
@@ -69,7 +69,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>IFSC Code <span style="color:red">*</span></label>
-                                <input type="text" name="ifcs_code" value="{{isset($bank)?$bank->ifsc:old('ifcs_code')}}" id="phone" placeholder="100"
+                                <input type="text" name="ifcs_code" value="{{isset($bank)?$bank->ifsc:old('ifcs_code')}}" id="phone" 
                                      class="form-control"
                                     data-validation="required">
                                     @error('ifcs_code')
@@ -83,7 +83,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Phone <span style="color:red">*</span></label>
-                                <input type="number" name="phone" value="{{isset($bank)?$bank->phone:old('phone')}}" id="phone" placeholder="+91 0128882223"
+                                <input type="number" name="phone" value="{{isset($bank)?$bank->phone:old('phone')}}" id="phone" 
                                      class="form-control"
                                     data-validation="required">
                                     @error('phone')
@@ -97,7 +97,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Email </label>
-                                <input type="email" name="email" value="{{isset($bank)?$bank->email:old('email')}}" id="email" placeholder="+91 0128882223"
+                                <input type="email" name="email" value="{{isset($bank)?$bank->email:old('email')}}" id="email" 
                                      class="form-control"
                                     data-validation="required">
                                     @error('email')
@@ -111,7 +111,7 @@
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Address </label>
-                               <textarea name="address"  class="form-control" id="" cols="20" rows="4" placeholder="Address">{{isset($bank)?$bank->address:old('address')}}</textarea>
+                               <textarea name="address"  class="form-control" id="" cols="20" rows="4" >{{isset($bank)?$bank->address:old('address')}}</textarea>
                                     @error('address')
                                     <span class="text-danger">
                                         {{$message}}
