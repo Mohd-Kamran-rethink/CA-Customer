@@ -50,9 +50,9 @@
                             <div class="inner">
                                 <h3>{{ number_format($sum) }}</h3>
                                 @if (session('user')->role == 'withdrawal_banker' || session('user')->role == 'withdrawrer')
-                                    <p>Withdrawer</p>
+                                    <p>Withdraws</p>
                                 @elseif(session('user')->role == 'deposit_banker' || session('user')->role == 'depositer')
-                                    <p>Depositer</p>
+                                    <p>Deposits</p>
                                 @endif
                             </div>
                             <div class="icon">
@@ -61,7 +61,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>  
         </section>
     @endif
     {{-- cards --}}
