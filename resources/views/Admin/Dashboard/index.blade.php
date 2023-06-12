@@ -263,7 +263,28 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-primary">
+                            <div class="inner">
+                                <h3>{{ $PendingDepoistTranTotal ?? 0 }} </h3>
+                                <p>Pending Deposit</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-primary">
+                            <div class="inner">
+                                <h3>{{ $PendinhwithTranTotal ?? 0 }} </h3>
+                                <p>Pending Withdrawal</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

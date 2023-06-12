@@ -33,6 +33,42 @@
                                 </p>
                             </a>
                         </li>
+                        {{-- <li
+                            class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
+                            <a href="#"
+                                class="nav-link {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'active' : '' }}">
+                                <i class="nav-icon fa fa-users"></i>
+                                <p>
+                                    Transaction
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview"
+                                style="display: {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'block' : 'none' }}">
+
+
+                                <li class="nav-item  ">
+                                    <a href="{{ url('/transactions') }}"
+                                        class="nav-link {{ Request::is('transactions') ? 'active' : '' }}">
+                                        <p>
+                                            Pending Deposit
+                                        </p>
+                                        <span class="badge badge-info right">{{ $pendingDeposit ?? 0 }}</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item  ">
+                                    <a href="{{ url('/transactions') }}"
+                                        class="nav-link {{ Request::is('transactions') ? 'active' : '' }}">
+                                        <p>
+                                            Pending Withdrawal
+                                        </p>
+                                        <span class="badge badge-info right">{{ $pendingDeposit ?? 0 }}</span>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li> --}}
                     @endif
                     <li
                         class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
@@ -54,7 +90,7 @@
                                     <p>
                                         Deposit Banker
                                     </p>
-                                    <span class="badge badge-info right">{{$depositBanker??0}}</span>
+                                    <span class="badge badge-info right">{{ $depositBanker ?? 0 }}</span>
                                 </a>
                             </li>
                             <li class="nav-item  ">
@@ -63,7 +99,7 @@
                                     <p>
                                         Withdrawal Banker
                                     </p>
-                                    <span class="badge badge-info right">{{$withdrawrerBanker??0}}</span>
+                                    <span class="badge badge-info right">{{ $withdrawrerBanker ?? 0 }}</span>
 
                                 </a>
                             </li>
@@ -73,7 +109,7 @@
                                     <p>
                                         Depositers
                                     </p>
-                                    <span class="badge badge-info right">{{$depositers??0}}</span>
+                                    <span class="badge badge-info right">{{ $depositers ?? 0 }}</span>
 
                                 </a>
                             </li>
@@ -83,14 +119,16 @@
                                     <p>
                                         Withdrawrers
                                     </p>
-                                    <span class="badge badge-info right">{{$withdraweres??0}}</span>
+                                    <span class="badge badge-info right">{{ $withdraweres ?? 0 }}</span>
 
-                                    
+
                                 </a>
                             </li>
 
                         </ul>
                     </li>
+                    {{-- trans --}}
+
                     <li class="nav-item ">
                         <a href="{{ url('/franchises') }}"
                             class="nav-link {{ Request::is('franchises') ? 'active' : '' }}">
@@ -98,7 +136,7 @@
                             <p>
                                 Franchises
                             </p>
-                            <span class="badge badge-info right">{{$franchiese??0}}</span>
+                            <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span>
 
                         </a>
                     </li>
@@ -112,7 +150,8 @@
                             </p>
                         </a>
                     </li>
-                @endif()
+                @endif
+
                 @if (session('user')->role == 'deposit_banker')
                     <li class="nav-item  ">
                         <a href="{{ url('/transactions/add') }}"
