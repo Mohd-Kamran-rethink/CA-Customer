@@ -62,8 +62,11 @@ class TransactionController extends Controller
             $ApprovedDepoistTotal= $ApproveDepoistTranTotal->sum('amount');
             $ApprovewithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->get();
             $ApprovedWithdrawTotal= $ApprovewithTranTotal->sum('amount');
-            
-            return view('Admin.Dashboard.index',compact('ApprovedWithdrawTotal','ApprovedDepoistTotal','ApprovedWithdrawToday','ApprovedDepoistToday','depositers','depositBanker','withdraweres','withdrawrerBanker'));
+
+            // todays bonu
+            $todaysBonus=$ApproveDepoistTranToday->sum('bonus');
+           $totalBonus= $ApproveDepoistTranTotal->sum('bonus');
+            return view('Admin.Dashboard.index',compact('totalBonus','todaysBonus','ApprovedWithdrawTotal','ApprovedDepoistTotal','ApprovedWithdrawToday','ApprovedDepoistToday','depositers','depositBanker','withdraweres','withdrawrerBanker'));
             // ends
         } else if ($user->role == 'deposit_banker'||$user->role == 'depositer') {
             $transactions = DB::table('transactions')->where('type', '=', 'Deposit')

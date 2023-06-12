@@ -302,6 +302,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h4>{{ $todaysBonus ?? 0 }} </h4>
+                                <p>Total Todays's Bonus</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -334,6 +345,17 @@
                             <div class="inner">
                                 <h4>{{ $ApprovedWithdrawTotal ?? 0 }} </h4>
                                 <p>Total Withdaws</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h4>{{ $totalBonus ?? 0 }} </h4>
+                                <p>Total bonus</p>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-credit-card"></i>
