@@ -66,7 +66,7 @@ class TransactionController extends Controller
 
             // todays bonu
             $todaysBonus=$ApproveDepoistTranToday->sum('bonus');
-           $totalBonus= $ApproveDepoistTranTotal->sum('bonus');
+            $totalBonus= $ApproveDepoistTranTotal->sum('bonus');
             return view('Admin.Dashboard.index',compact('totalBonus','todaysBonus','ApprovedWithdrawTotal','ApprovedDepoistTotal','ApprovedWithdrawToday','ApprovedDepoistToday','depositers','depositBanker','withdraweres','withdrawrerBanker'));
             // ends
         } else if ($user->role == 'deposit_banker'||$user->role == 'depositer') {

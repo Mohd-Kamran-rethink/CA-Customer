@@ -41,7 +41,7 @@
                                     <span class="text-danger">{{ session('msg-error-password') }}</span>
                                 @endif
                             </div>
-                            <span class="mb-3"> <a href="#" style="text-decoration: none">Forgot Password?</a></span>
+                            {{-- <span class="mb-3"> <a href="#" style="text-decoration: none">Forgot Password?</a></span> --}}
 
                             <div class="mt-3 float-right">
                                 <button type="submit" class="btn btn-primary " style="float:right">Login</button>
