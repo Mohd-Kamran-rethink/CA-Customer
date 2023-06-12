@@ -21,7 +21,6 @@
     </section>
     <section class="content">
         <div class="card">
-
             <div class="card-body">
                 <form action="{{ url('transactions/change-status') }}" method="POST" enctype="multipart/form-data">
                     @csrf

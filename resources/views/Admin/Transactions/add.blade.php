@@ -21,8 +21,7 @@
     </section>
     <section class="content">
         <div class="card">
-
-            <div class="card-body">
+                <div class="card-body">
                 <form action="{{ isset($transaction) ? url('transactions/edit') : url('transactions/add') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf

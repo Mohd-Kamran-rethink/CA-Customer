@@ -34,8 +34,8 @@ class userData extends ServiceProvider
             }
             $depositBanker=1;
             $depositers=1;
-            $depositers=User::where('role','=','deposit_banker')->get()->count();
-            $depositBanker =User::where('role','=','depositer')->get()->count();
+            $depositers=User::where('role','=','depositer')->get()->count();
+            $depositBanker =User::where('role','=','deposit_banker')->get()->count();
             $withdraweres=User::where('role','=','withdrawrer')->get()->count();
             $withdrawrerBanker =User::where('role','=','withdrawal_banker')->get()->count();
             $franchiese =Franchise::get()->count();
