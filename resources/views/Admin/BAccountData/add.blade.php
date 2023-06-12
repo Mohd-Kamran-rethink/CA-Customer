@@ -110,7 +110,7 @@
                         </div>
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
-                                <label>Address </label>
+                                <label>Address<span style="color:red">*</span> </label>
                                <textarea name="address"  class="form-control" id="" cols="20" rows="4" >{{isset($bank)?$bank->address:old('address')}}</textarea>
                                     @error('address')
                                     <span class="text-danger">
