@@ -247,7 +247,7 @@ class TransactionController extends Controller
         if($client_lead)
         {
             $client->agent_id=$client_lead->agent_id;
-            $client->deposit_amount=$req->amount;
+            $client->deposit_amount=$req->total;
             $client_lead->status_id=$status->id;
             $client_lead->current_status=$status->name;
             $client_lead->update();
@@ -256,7 +256,7 @@ class TransactionController extends Controller
             $leadStatus=new LeadStatus();
             $depositHistory->type="Deposit";
             $depositHistory->client_id=$client->id;
-            $depositHistory->amount=$req->amount;
+            $depositHistory->amount=$req->total;
             $depositHistory->save();
             $leadStatus->status_id=$status->id;
             $leadStatus->lead_id=$client_lead->id;
