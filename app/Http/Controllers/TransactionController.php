@@ -252,20 +252,19 @@ class TransactionController extends Controller
             $client_lead->current_status=$status->name;
             $client_lead->update();
             $client->update();
-           
+            $depositHistory=new DepositHistory();
             $leadStatus=new LeadStatus();
-           
+            $depositHistory->type="Deposit";
+            $depositHistory->client_id=$client->id;
+            $depositHistory->amount=$req->total;
+            $depositHistory->save();
             $leadStatus->status_id=$status->id;
             $leadStatus->lead_id=$client_lead->id;
             $leadStatus->lead_id=$client_lead->id;
             $leadStatus->save();
 
         }
-        $depositHistory=new DepositHistory();
-        $depositHistory->type="Deposit";
-        $depositHistory->client_id=$client->id;
-        $depositHistory->amount=$req->total;
-        $depositHistory->save();
+
             
         $result = $transaction->save();
         if ($result) {
