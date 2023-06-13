@@ -86,8 +86,10 @@
                             </div>
                             <div class="col-2 ">
                                 <label for="" style="visibility: hidden">sdf</label>
-                                <select name="status_name" type="text" class="form-control">
+                                <select {{((session('user')->role === 'deposit_banker')||(session('user')->role === 'withdrawrer'))?'':'disabled'}} name="status_name" type="text" class="form-control">
                                     <option value="null">--Filter by status--</option>
+                                    
+                                    
                                     <option {{ $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
                                     <option {{ $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
                                     <option {{ $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
@@ -143,9 +145,9 @@
                                                             <a href="{{ url('transactions/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
-                                                            <button title="Delete"
+                                                            {{-- <button title="Delete"
                                                                 onclick="deleteModal({{ $item->id }})"
-                                                                class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                                                class="btn btn-danger"><i class="fa fa-trash"></i></button> --}}
                                                         @elseif(session('user')->role === 'depositer' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/change-status/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
@@ -156,9 +158,9 @@
                                                             <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
-                                                            <button title="Delete"
+                                                            {{-- <button title="Delete"
                                                                 onclick="deleteModal({{ $item->id }})"
-                                                                class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                                                class="btn btn-danger"><i class="fa fa-trash"></i></button> --}}
                                                         @elseif(session('user')->role === 'withdrawal_banker' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
