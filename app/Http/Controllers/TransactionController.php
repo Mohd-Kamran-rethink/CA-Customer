@@ -312,6 +312,32 @@ class TransactionController extends Controller
         $transaction->withdrawrer_id = $withdrawrer->id;
         $transaction->type = 'Withdraw';
         $transaction->status = 'Pending';
+        // send sms
+        $client=Client::find($req->client);
+        $curl = curl_init();
+$receiverNumber=$client->number;
+$message="hello";
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://103.241.136.228/api/mt/SendSMS?APIKey=0lDK5f3S5kyUc9gRUiUTUg&senderid=RRSMSG&channel=2&DCS=0&flashsms=0&number='.$receiverNumber.'&text=Your%20login%20OTP%20code%20is%20'.$message.'%20RP&route=1',CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'GET',
+          CURLOPT_HTTPHEADER => array(
+            'User-Agent: PostmanRuntime/7.31.3',
+            'device_type: android',
+            'version: 1.0',
+            'lang: en',
+            'device_token: 123123123',
+            'user_token: ie9611bbbe9ce6bc572666a63',
+            'id: 6'
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
         $result = $transaction->save();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Withdraw Request added successfully']);
