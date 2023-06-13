@@ -409,4 +409,15 @@ class TransactionController extends Controller
             return redirect('/dashboard')->with(['msg-error' => 'Something went wrong']);
         }
     }
+    public function listPendingDeposit(Request $req) {
+        $transactions = Transaction::where('type', 'Deposit')->where('status', 'Pending')->get();
+        $heading="Pending Deposits";
+        return view('Admin.Transactions.transAdmin',compact('heading','transactions'));
+    }
+    public function pendingWithdraw() {
+
+        $transactions = Transaction::where('type', 'Withdraw')->where('status', 'Pending')->get();
+        $heading="Pending Withdraw";
+        return view('Admin.Transactions.transAdmin',compact('heading','transactions'));
+    }
 }

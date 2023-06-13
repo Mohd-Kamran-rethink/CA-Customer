@@ -33,13 +33,13 @@
                                 </p>
                             </a>
                         </li>
-                        {{-- <li
+                        <li
                             class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
                             <a href="#"
                                 class="nav-link {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'active' : '' }}">
-                                <i class="nav-icon fa fa-users"></i>
+                                <i class="nav-icon fa fa-credit-card"></i>
                                 <p>
-                                    Transaction
+                                  Pending Transaction
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
@@ -48,8 +48,8 @@
 
 
                                 <li class="nav-item  ">
-                                    <a href="{{ url('/transactions') }}"
-                                        class="nav-link {{ Request::is('transactions') ? 'active' : '' }}">
+                                    <a href="{{ url('/transactions/pending-deposit') }}"
+                                        class="nav-link {{ Request::is('transactions/pending-deposit') ? 'active' : '' }}">
                                         <p>
                                             Pending Deposit
                                         </p>
@@ -57,18 +57,16 @@
                                     </a>
                                 </li>
                                 <li class="nav-item  ">
-                                    <a href="{{ url('/transactions') }}"
-                                        class="nav-link {{ Request::is('transactions') ? 'active' : '' }}">
+                                    <a href="{{ url('/transactions/pending-withdraw') }}"
+                                        class="nav-link {{ Request::is('transactions/pending-withdraw') ? 'active' : '' }}">
                                         <p>
-                                            Pending Withdrawal
+                                            Pending Withdraws
                                         </p>
-                                        <span class="badge badge-info right">{{ $pendingDeposit ?? 0 }}</span>
+                                        <span class="badge badge-info right">{{ $pendingWithdraw ?? 0 }}</span>
                                     </a>
                                 </li>
-
-
                             </ul>
-                        </li> --}}
+                        </li>
                     @endif
                     <li
                         class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">

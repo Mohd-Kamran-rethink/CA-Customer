@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Franchise;
+use App\Transaction;
 use App\User;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
@@ -40,6 +41,10 @@ class userData extends ServiceProvider
             $withdrawrerBanker =User::where('role','=','withdrawal_banker')->get()->count();
             $franchiese =Franchise::get()->count();
 
+            $pendingWithdraw =Transaction::where('type', 'Withdraw')->where('status', 'Pending')->get()->count();
+            $pendingDeposit =Transaction::where('type', 'Deposit')->where('status', 'Pending')->get()->count();
+            $franchiese =Franchise::get()->count();
+
             $view->with([
               'user' => $userData??null,
               'Datas'=>"hello",
@@ -47,7 +52,10 @@ class userData extends ServiceProvider
               'depositers'=>$depositers,
               'withdraweres'=>$withdraweres,
               'withdrawrerBanker'=>$withdrawrerBanker,
-              'franchiese'=>$franchiese
+              'franchiese'=>$franchiese,
+              'pendingDeposit'=>$pendingDeposit,
+              'pendingWithdraw'=>$pendingWithdraw
+
 ]);
         });
         

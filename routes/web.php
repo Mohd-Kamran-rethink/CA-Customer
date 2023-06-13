@@ -108,7 +108,17 @@ Route::middleware('CommonMiddleware')->prefix('transactions')->group(function ()
     Route::post('withdraw/edit',[TransactionController::class,'withdrawEdit'])->name('withdrawEdit');
     Route::get('/change-status-withdraw/{id}',[TransactionController::class,'acceptPendingWithdrawForm'])->name('acceptPendingWithdrawForm');
     Route::post('/change-status-withdraw',[TransactionController::class,'changeWithdrawStatus'])->name('changeWithdrawStatus');
+    // for manager
+
+
+
+
 }); 
+
+// admin transaction
+Route::get('/transactions/pending-deposit',[TransactionController::class,'listPendingDeposit'])->name('listPendingDeposit')->middleware('ValidateManager');
+Route::get('/transactions/pending-withdraw',[TransactionController::class,'pendingWithdraw'])->name('pendingWithdraw')->middleware('ValidateManager');
+
 Route::get('/clients/add',[UserController::class,'addClient'])->name('addClient');
 Route::get('/bankaccount/add',[BannkController::class,'bankAccouAddAjax'])->name('bankAccouAddAjax');
 Route::get('/render-client-account',[BannkController::class,'renderClientAccounts'])->name('renderClientAccounts');
