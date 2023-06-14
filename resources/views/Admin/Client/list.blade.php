@@ -25,7 +25,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="mb-3 d-flex justify-content-between align-items-centers">
-                   
+
                 </div>
                 <div class="row">
                     <div class="col-12">
@@ -47,9 +47,9 @@
                                                 <td>{{ $item->name }}</td>
                                                 <td>{{ $item->number }}</td>
                                                 <td>{{ $item->ca_id }}</td>
-                                               
+
                                             </tr>
-                                            @empty
+                                        @empty
                                             <tr>
                                                 <td colspan="10" class="text-center">No data</td>
                                             </tr>
@@ -58,7 +58,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                           
+
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
         </div>
     </div>
     <script>
-        const searchData =()=>{
+        const searchData = () => {
             event.preventDefault();
             const url = new URL(window.location.href);
 

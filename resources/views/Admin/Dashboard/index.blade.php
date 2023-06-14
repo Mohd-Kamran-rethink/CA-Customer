@@ -266,7 +266,7 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
-                        <div class="small-box bg-primary">
+                        <div class="small-box bg-info">
                             <div class="inner">
                                 <h3>{{ count($PendingDepoistTranTotal) ?? 0 }} </h3>
                                 <p>Pending Deposit</p>
@@ -277,13 +277,25 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
-                        <div class="small-box bg-primary">
+                        <div class="small-box bg-danger">
                             <div class="inner">
                                 <h3>{{ count($PendinhwithTranTotal) ?? 0 }} </h3>
                                 <p>Pending Withdrawal</p>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- clients --}}
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ $clients ?? 0 }} </h3>
+                                <p>Total Clients</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-users"></i>
                             </div>
                         </div>
                     </div>
