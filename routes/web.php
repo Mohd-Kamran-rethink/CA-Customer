@@ -122,3 +122,4 @@ Route::get('/transactions/pending-withdraw',[TransactionController::class,'pendi
 Route::get('/clients/add',[UserController::class,'addClient'])->name('addClient');
 Route::get('/bankaccount/add',[BannkController::class,'bankAccouAddAjax'])->name('bankAccouAddAjax');
 Route::get('/render-client-account',[BannkController::class,'renderClientAccounts'])->name('renderClientAccounts');
+Route::get('/clients',[UserController::class,'clientList'])->name('clientList');

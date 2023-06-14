@@ -303,4 +303,9 @@ class UserController extends Controller
             return $html;
         }
     }
+
+    public function clientList() {
+        $clients=Client::get();
+        return view('Admin.Client.list',compact('clients'));
+    }
 }
