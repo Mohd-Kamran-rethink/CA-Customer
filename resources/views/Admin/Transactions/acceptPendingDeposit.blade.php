@@ -32,7 +32,8 @@
                                 <select name="client" id="" class="form-control searchOptions">
                                     <option value="0">--Choose--</option>
                                     @foreach ($clients as $item)
-                                        <option value="{{$item->id}}">{{$item->number}}({{$item->name}})</option>
+                                        <option value="{{ $item->id }}">{{ $item->number }}({{ $item->name }})
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('client')
@@ -43,7 +44,8 @@
                             </div>
                             <div class=" ml-3">
                                 <label style="visibility: hidden"> Client <span style="color:red">*</span></label>
-                                <button onclick="openClientModel()" type="button" class="btn btn-primary">Add Client</button>
+                                <button onclick="openClientModel()" type="button" class="btn btn-primary">Add
+                                    Client</button>
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-6">
@@ -59,13 +61,25 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-6">
+                        <div class="col-xs-12 col-md-3">
                             <div class="form-group">
                                 <label>Amount <span style="color:red">*</span></label>
                                 <input readonly oninput="sumAmountBonus()" type="number" name="amount"
                                     value="{{ isset($transaction) ? $transaction->amount : old('amount') }}" id="amount"
-                                     class="form-control" data-validation="required">
+                                    class="form-control" data-validation="required">
                                 @error('amount')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-3">
+                            <div class="form-group">
+                                <label>Bonus %</label>
+                                <input oninput="calculateBonuspercent(this.value)" step="any" id="bonus_percent" class="form-control"
+                                    data-validation="required">
+                                @error('bonus_percent')
                                     <span class="text-danger">
                                         {{ $message }}
                                     </span>
@@ -88,9 +102,9 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Bonus </label>
-                                <input  oninput="sumAmountBonus()" type="number" name="bonus"
+                                <input oninput="sumAmountBonus()" type="number" step="any" name="bonus"
                                     value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
-                                     class="form-control">
+                                    class="form-control">
                                 @error('bonus')
                                     <span class="text-danger">
                                         {{ $message }}
@@ -101,7 +115,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>UTR No <span style="color:red">*</span></label>
-                                <input  readonly type="text" name="utr"
+                                <input readonly type="text" name="utr"
                                     value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}" id="utr"
                                     placeholder="UTR Number" class="form-control" data-validation="required">
                                 @error('utr')
@@ -118,6 +132,26 @@
                                     value="{{ isset($transaction) ? $transaction->total : old('total') }}" id="total"
                                     readonly class="form-control" data-validation="required">
                                 @error('total')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="form-group">
+                                <label>Exchange<span style="color:red">*</span></label>
+                                <select name="exchange_id" class="form-control">
+                                    <option value="">--Choose--</option>
+                                    @foreach ($exchanges as $item)
+                                        <option
+                                            {{ isset($transaction) && $transaction->exchange_id == $item->id ? 'selected' : (old('excahnge_id') == $item->id ? 'selected' : '') }}
+                                            value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+
+                                @error('exchange_id')
                                     <span class="text-danger">
                                         {{ $message }}
                                     </span>
@@ -151,7 +185,8 @@
                     <div class="row mt-2">
                         <div class="col-12">
                             <button type="submit" class="btn btn-info">Accept</button>
-                            <button onclick="openCancelModal({{$transaction->id}})" type="button" class="btn btn-default">Cancel</button>
+                            <button onclick="openCancelModal({{ $transaction->id }})" type="button"
+                                class="btn btn-default">Cancel</button>
                         </div>
                     </div>
                 </form>
@@ -175,37 +210,36 @@
                         <label for="">Cancel Note <span style="color:red">*</span></label>
                         <textarea name="cancel_note" id="cancel_note" cols="30" rows="3" class="form-control"
                             placeholder="Write something"></textarea>
-                            <span style="color:red;display: none" id="cancel_note_error">Please write cancel note!</span>
+                        <span style="color:red;display: none" id="cancel_note_error">Please write cancel note!</span>
                     </div>
                     <div class="modal-footer ">
-                        <button id="submit-button" onclick="submitStatusChange()" type="submit" class="btn btn-danger">Cancel</button>
+                        <button id="submit-button" onclick="submitStatusChange()" type="submit"
+                            class="btn btn-danger">Cancel</button>
                         <button type="button" data-dismiss="modal" aria-label="Close"
                             class="btn btn-default">Close</button>
                 </form>
             </div>
         </div>
     </div>
-     
+
     <script>
-        function openClientModel()
-        {
+        function openClientModel() {
             $('#client-modal').modal('show');
         }
-        function submitStatusChange()
-        {
-           
+
+        function submitStatusChange() {
+
             let submitButton = $('#submit-button')
             let cancel_note = $('#cancel_note')
             event.preventDefault();
-            if(cancel_note.val().length==0)
-            { console.log("first")
+            if (cancel_note.val().length == 0) {
+                console.log("first")
                 $('#cancel_note_error').show()
-            }
-            else
-            {
+            } else {
                 $('#statsus-change-form').submit();
             }
         }
+
         function openCancelModal(id) {
             $('#cancel-transaction').modal('show');
             $('#hiddenId').val(id)
@@ -216,6 +250,14 @@
             let bonus = parseFloat($('#bonus').val());
             let total = $('#total');
             total.val((amount || 0) + (bonus || 0));
+        }
+
+        function calculateBonuspercent(percent) {
+            let amountinput = $('#amount');
+            let bonusinput = $('#bonus');
+            let total = $('#total');
+            bonusinput.val((amountinput.val() * percent) / 100)
+            total.val(parseFloat(amountinput.val())+parseFloat((amountinput.val() * percent) / 100));
         }
     </script>
 @endsection

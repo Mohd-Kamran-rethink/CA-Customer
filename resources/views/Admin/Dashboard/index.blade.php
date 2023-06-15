@@ -61,7 +61,7 @@
                         </div>
                     </div>
                 </div>
-            </div>  
+            </div>
         </section>
     @endif
     {{-- cards --}}
@@ -86,10 +86,12 @@
                             </div>
                             <div class="col-2 ">
                                 <label for="" style="visibility: hidden">sdf</label>
-                                <select {{((session('user')->role === 'deposit_banker')||(session('user')->role === 'withdrawrer'))?'':'disabled'}} name="status_name" type="text" class="form-control">
+                                <select
+                                    {{ session('user')->role === 'deposit_banker' || session('user')->role === 'withdrawrer' ? '' : 'disabled' }}
+                                    name="status_name" type="text" class="form-control">
                                     <option value="null">--Filter by status--</option>
-                                    
-                                    
+
+
                                     <option {{ $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
                                     <option {{ $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
                                     <option {{ $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
@@ -141,27 +143,27 @@
                                                     <td>{{ $item->created_at }}</td>
                                                     <td>
                                                         {{-- for deposit functionlaity --}}
-                                                        @if (session('user')->role === 'deposit_banker' && $item->status == 'Pending')
+                                                        @if (session('user')->role === 'deposit_banker' )
                                                             <a href="{{ url('transactions/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
-                                                            {{-- <button title="Delete"
-                                                                onclick="deleteModal({{ $item->id }})"
-                                                                class="btn btn-danger"><i class="fa fa-trash"></i></button> --}}
-                                                        @elseif(session('user')->role === 'depositer' && $item->status == 'Pending')
+                                                            <button onclick="cancelDeposit({{ $item->id }})"
+                                                                title="Change Status" class="btn btn-danger"
+                                                                type="button">Cancel</button>
+                                                        @elseif(session('user')->role === 'depositer' )
                                                             <a href="{{ url('transactions/change-status/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>
                                                         @endif
                                                         {{-- for withdrawal functionality --}}
-                                                        @if (session('user')->role === 'withdrawrer' && $item->status == 'Pending')
+                                                        @if (session('user')->role === 'withdrawrer')
                                                             <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
-                                                            {{-- <button title="Delete"
-                                                                onclick="deleteModal({{ $item->id }})"
-                                                                class="btn btn-danger"><i class="fa fa-trash"></i></button> --}}
-                                                        @elseif(session('user')->role === 'withdrawal_banker' && $item->status == 'Pending')
+                                                                    <button onclick="cancelDeposit({{ $item->id }})"
+                                                                        title="Change Status" class="btn btn-danger"
+                                                                        type="button">Cancel</button>
+                                                        @elseif(session('user')->role === 'withdrawal_banker')
                                                             <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>
@@ -185,6 +187,31 @@
                 </div>
             </div>
         </section>
+        {{-- cancel deposit --}}
+        <div class="modal fade show" id="depositer-cancel" style=" padding-right: 17px;" aria-modal="true" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Cancel transaction</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form action="{{ url('transactions/depositer/recancel') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="transID" id="transID">
+                        <div class="modal-body">
+                            <h4>Are you sure you want to cancel this transaction?</h4>
+                        </div>
+                        <div class="modal-footer ">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="button" data-dismiss="modal" aria-label="Close"
+                                class="btn btn-default">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{--  --}}
         <div class="modal fade show" id="modal-default" style=" padding-right: 17px;" aria-modal="true" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -201,9 +228,9 @@
                             <h4>Are you sure you want to delete this transaction?</h4>
                         </div>
                         <div class="modal-footer ">
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Yes</button>
                             <button type="button" data-dismiss="modal" aria-label="Close"
-                                class="btn btn-default">Cancel</button>
+                                class="btn btn-default">No</button>
                     </form>
                 </div>
             </div>
@@ -213,6 +240,11 @@
         function deleteModal(id) {
             $('#modal-default').modal('show');
             $('#deleteInput').val(id);
+        }
+
+        function cancelDeposit(id) {
+            $('#depositer-cancel').modal('show')
+            $('#transID').val(id)
         }
     </script>
     {{-- for customercar manager --}}

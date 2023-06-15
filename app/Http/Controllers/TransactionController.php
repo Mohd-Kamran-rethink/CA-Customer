@@ -6,6 +6,7 @@ use App\BankDetail;
 use App\Client;
 use App\Deposit;
 use App\DepositHistory;
+use App\Exchange;
 use App\Lead;
 use App\LeadStatus;
 use App\LeadStatusOption;
@@ -215,7 +216,8 @@ class TransactionController extends Controller
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
         $banks = BankDetail::get();
-        return view('Admin.Transactions.acceptPendingDeposit', compact('clients', 'transaction', 'todaysdate', 'currentDateTime', 'banks'));
+        $exchanges=Exchange::where('is_active','=','Yes')->get();
+        return view('Admin.Transactions.acceptPendingDeposit', compact('exchanges','clients', 'transaction', 'todaysdate', 'currentDateTime', 'banks'));
     }
     // change status for deposit
     public function changeStatus(Request $req)
@@ -227,6 +229,7 @@ class TransactionController extends Controller
             'total' => 'required',
             'bank_account' => 'required|not_in:0',
             'client' => 'required|not_in:0',
+            'exchange_id' => 'required|not_in:0'
         ]);
 
         $depositer = session('user');
@@ -239,6 +242,7 @@ class TransactionController extends Controller
         $transaction->bank_account = $req->bank_account;
         $transaction->depositer_id = $depositer->id;
         $transaction->client_id = $req->client;
+        $transaction->exchange_id = $req->exchange_id;
         $transaction->type = 'Deposit';
         $transaction->status = 'Approve';
         // before save update lead status
@@ -252,22 +256,30 @@ class TransactionController extends Controller
             $client_lead->current_status = $status->name;
             $client_lead->update();
             $client->update();
-
             $leadStatus = new LeadStatus();
-
             $leadStatus->status_id = $status->id;
             $leadStatus->lead_id = $client_lead->id;
             $leadStatus->lead_id = $client_lead->id;
             $leadStatus->save();
         }
+        $transaction->save();
+        $exchange=Exchange::find($req->exchange_id);
+        
+        
+        
         $depositHistory = new Deposit();
         $depositHistory->type = "Deposit";
+        $depositHistory->transaction_id = $transaction->id;
+        $depositHistory->exchange_id = $req->exchange_id;
         $depositHistory->agent_id = session('user')->id;
         $depositHistory->client_id = $client->id;
         $depositHistory->deposit_amount = $req->total;
+        $depositHistory->opening_balance =$exchange->coin;
+        $depositHistory->bonus = $req->bonus;
+        
         $depositHistory->save();
-
-        $result = $transaction->save();
+        $exchange->coin=$exchange->coin+$req->total;
+        $result = $exchange->update();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Transaction approved successfully']);
         } else {
@@ -281,8 +293,9 @@ class TransactionController extends Controller
             $clients = Client::where('isDeleted', '=', 'No')->get();
             $todaysdate = Carbon::now()->startOfDay()->toDateString();
             $currentDateTime = Carbon::now()->startOfDay();
-            $banks = BankDetail::get();
-            return view('Admin.Transactions.addWithdrawRequest', compact('clients', 'todaysdate', 'currentDateTime', 'banks'));
+            $banks = BankDetail::whereNotNull('customer_id')->get();
+            $exchanges=Exchange::get();
+            return view('Admin.Transactions.addWithdrawRequest', compact('exchanges','clients', 'todaysdate', 'currentDateTime', 'banks'));
         } else return redirect()->back();
     }
     public function withdrawAdd(Request $req)
@@ -292,6 +305,7 @@ class TransactionController extends Controller
             'amount' => 'required',
             'total' => 'required',
             'client_bank_account' => 'required|not_in:0',
+            'exchange_id'=>'required|not_in:0',
         ]);
         $withdrawrer = session('user');
         $transaction = new Transaction();
@@ -302,6 +316,7 @@ class TransactionController extends Controller
         $transaction->total = $req->total;
         $transaction->customer_bank_id = $req->client_bank_account;
         $transaction->withdrawrer_id = $withdrawrer->id;
+        $transaction->exchange_id = $req->exchange_id;
         $transaction->type = 'Withdraw';
         $transaction->status = 'Pending';
         // send sms
@@ -344,9 +359,9 @@ class TransactionController extends Controller
         $clients = Client::where('isDeleted', '=', 'No')->get();
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
-
+        $exchanges=Exchange::where('is_active','=','Yes')->get();
         $banks = BankDetail::where('customer_id', '=', $transaction->client_id)->get();
-        return view('Admin.Transactions.addWithdrawRequest', compact('transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
+        return view('Admin.Transactions.addWithdrawRequest', compact('exchanges','transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
     }
     public function withdrawEdit(Request $req)
     {
@@ -396,7 +411,6 @@ class TransactionController extends Controller
         $transaction =  Transaction::find($req->hiddenid);
         $transaction->date = $req->date;
         $transaction->amount = $req->amount;
-        $transaction->bonus = $req->bonus;
         $transaction->utr_no = $req->utr;
         $transaction->total = $req->total;
         $transaction->bank_account = $req->bank_account;
@@ -404,6 +418,23 @@ class TransactionController extends Controller
         $transaction->type = 'Withdraw';
         $transaction->status = 'Approve';
         $result = $transaction->save();
+        $exchange=Exchange::find($transaction->exchange_id);
+        
+        $deposit=new Deposit();
+        $deposit->agent_id=session('user')->id;
+        $deposit->exchange_id=$transaction->exchange_id;
+        $deposit->transaction_id=$transaction->id;
+        $deposit->client_id=$transaction->client_id;
+        $deposit->deposit_amount=$req->total;
+        $deposit->bonus=$req->bonus;
+        $deposit->opening_balance= $exchange->coin;
+        $deposit->type="withdraw";
+        $deposit->save();
+        $exchange->coin=$exchange->coin-$req->total;
+        $result = $exchange->save();
+        
+
+        
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Withdraw approved successfully']);
         } else {
@@ -439,5 +470,30 @@ class TransactionController extends Controller
         $transactions = Transaction::where('type', 'Withdraw')->where('status', 'Pending')->get();
         $heading = "Pending Withdraw";
         return view('Admin.Transactions.transAdmin', compact('heading', 'transactions'));
+    }
+
+    // canceled
+    public function depsoiterCancel(Request $req) {
+        $transaction=Transaction::find($req->transID);
+        
+        if(session('user')->role='withdrawrer')
+        {
+            $transaction->status='Cancel';
+            $transaction->update();
+        }
+        else
+        {
+            $transaction->client_id='';
+            $transaction->bonus='';
+        }
+        $transaction->status='Cancel';
+        $transaction->update();
+        $depositHistory = Deposit::where('transaction_id','=',$transaction->id)->first();
+        if($depositHistory)
+        {
+            $depositHistory->delete();
+        }
+        return redirect('/dashboard')->with(['msg-success' => 'Transaction has been cancelled']);
+        
     }
 }

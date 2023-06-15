@@ -84,7 +84,7 @@
                                 @foreach ($banks as $item)
                                     <option
                                         {{ isset($transaction) && $transaction->bank_account == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }}
-                                        value="{{ $item->id }}">{{ $item->holder_name }}</option>
+                                        value="{{ $item->id }}">{{ $item->account_number }}- ({{$item->holder_name}})</option>
                                 @endforeach
                             </select>
 

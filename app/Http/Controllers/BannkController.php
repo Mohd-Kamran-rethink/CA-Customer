@@ -10,7 +10,7 @@ class BannkController extends Controller
 
     public function list()
     {
-        $banks = BankDetail::paginate(20);
+        $banks = BankDetail::whereNull('customer_id')->paginate(20);
         return view('Admin.BAccountData.list', compact('banks'));
     }
     public function addForm($id = null)

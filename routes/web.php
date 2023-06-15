@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannkController;
+use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\franchises;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -82,7 +83,7 @@ Route::middleware('ValidateManager')->prefix('withdrawrers')->group(function () 
      Route::post('/delete',[franchises::class,'delete'])->name('delete');
 });   
 //bank-accounts   
-Route::middleware('ValidateManager')->prefix('bank-accounts')->group(function () {
+Route::prefix('bank-accounts')->group(function () {
     Route::get('',[BannkController::class,'list'])->name('list');
     Route::get('/add',[BannkController::class,'addForm'])->name('addForm');
     Route::post('/add',[BannkController::class,'add'])->name('add');
@@ -108,12 +109,23 @@ Route::middleware('CommonMiddleware')->prefix('transactions')->group(function ()
     Route::post('withdraw/edit',[TransactionController::class,'withdrawEdit'])->name('withdrawEdit');
     Route::get('/change-status-withdraw/{id}',[TransactionController::class,'acceptPendingWithdrawForm'])->name('acceptPendingWithdrawForm');
     Route::post('/change-status-withdraw',[TransactionController::class,'changeWithdrawStatus'])->name('changeWithdrawStatus');
+    Route::post('depositer/recancel',[TransactionController::class,'depsoiterCancel'])->name('depsoiterCancel');
     // for manager
-
-
-
-
 }); 
+
+// exchanges
+
+Route::middleware('ValidateManager')->prefix('exchanges')->group(function () {
+    Route::get('',[ExchangeController::class,'list'])->name('list');
+    Route::get('/add',[ExchangeController::class,'addForm'])->name('addForm');
+    Route::post('/add',[ExchangeController::class,'add'])->name('add');
+    Route::get('/edit/{id}',[ExchangeController::class,'addForm'])->name('addForm');
+    Route::post('/edit',[ExchangeController::class,'edit'])->name('edit');
+    Route::post('/delete',[ExchangeController::class,'delete'])->name('delete');
+    Route::get('/view-details',[ExchangeController::class,'viewDetails'])->name('viewDetails');
+});
+
+
 
 // admin transaction
 Route::get('/transactions/pending-deposit',[TransactionController::class,'listPendingDeposit'])->name('listPendingDeposit')->middleware('ValidateManager');

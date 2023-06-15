@@ -94,6 +94,24 @@
                             </div>
 
                         </div>
+                        <div class="col-md-6">
+                            <div style="width: -webkit-fill-available;" id="exchange_id">
+                                <label>Exchange<span style="color:red">*</span></label>
+                                <select   name="exchange_id" class="form-control">
+                                    <option value="0">--Choose--</option>
+                                    @foreach ($exchanges as $item)
+                                    <option {{isset($transaction)&&$item->id==$transaction->exchange_id?'selected':''}}  value='{{$item->id }}'>{{$item->name}} </option>
+                                    @endforeach
+                                </select>
+                                    
+                                @error('exchange_id')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                            
+                        </div>
                         <input readonly type="hidden" name="created_on"
                                     value="{{ isset($transaction) ? $transaction->created_at : $currentDateTime }}"
                                     class="form-control" data-validation="required">
