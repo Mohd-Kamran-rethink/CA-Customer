@@ -54,7 +54,7 @@
                                             <th>IFSC Code</th>
                                             <th>Address</th>
                                             <th>Phone</th>
-                                            <th>Email</th>
+                                            <th>Total Amount</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -68,17 +68,23 @@
                                                 <td>{{ $item->ifsc }}</td>
                                                 <td>{{ $item->address }}</td>
                                                 <td>{{ $item->phone }}</td>
-                                                <td>{{ $item->email }}</td>
+                                                <td>{{ $item->amount }}</td>
                                                 <td>
-                                                    @if (session('user')->phone !== $item->phone)
+                                                    <a href="{{ url('bank-accounts/deposit-money/' . $item->id) }}"
+                                                        title="Deposit money" class="btn btn-primary">Deposit</a>
+                                                    <a href="{{ url('bank-accounts/withdraw-money/' . $item->id) }}"
+                                                        title="withdraw" class="btn btn-secondary">Withdraw</a>
+
+
+                                                    @if (session('user')->role == 'customer_care_manager')
+                                                        <a href="{{ url('bank-accounts/details/?id=' . $item->id) }}"
+                                                            title="View Transaction details" class="btn btn-success">View
+                                                            Details</a>
                                                         <a href="{{ url('bank-accounts/edit/' . $item->id) }}"
                                                             title="Edit" class="btn btn-primary"><i
                                                                 class="fa fa-pen"></i></a>
-                                                        @if (session('user')->role == 'customer_care_manager')
-                                                            <button title="Delete"
-                                                                onclick="manageModal({{ $item->id }})"
-                                                                class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                                                        @endif
+                                                        <button title="Delete" onclick="manageModal({{ $item->id }})"
+                                                            class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                                     @endif
                                                 </td>
                                             </tr>

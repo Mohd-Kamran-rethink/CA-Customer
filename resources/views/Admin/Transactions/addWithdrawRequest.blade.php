@@ -210,7 +210,7 @@
 
                             </div>
                         </div>
-                        <div class="col-12">
+                        {{-- <div class="col-12">
                             <div class="form-group">
                                 <label>Phone <span style="color:red">*</span></label>
                                 <input type="number" name="phone"
@@ -219,7 +219,7 @@
 
 
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-12">
                             <div class="form-group">
                                 <label>Email </label>
@@ -230,13 +230,13 @@
 
                             </div>
                         </div>
-                        <div class="col-12">
+                        {{-- <div class="col-12">
                             <div class="form-group">
                                 <label>Address <span style="color:red">*</span></label>
                                 <textarea name="address" class="form-control" id="address" cols="20" rows="4">{{ isset($bank) ? $bank->address : old('address') }}</textarea>
 
                             </div>
-                        </div>
+                        </div> --}}
 
 
 
@@ -278,9 +278,9 @@
                 let ifcs_code = $('#ifcs_code').val('')
                 let phone = $('#phone').val('')
                 let selectedOption = $("#selected-client option:selected");
-                let selectedNumber = selectedOption.data("number");
+                // let selectedNumber = selectedOption.data("number");
                 let client_id = selectedOption.data("client");
-                $('#phone').val(selectedNumber);
+                // $('#phone').val(selectedNumber);
                 $('#hidden_client_id').val(client_id);
                 $('#bank-modal').modal('show');
             }

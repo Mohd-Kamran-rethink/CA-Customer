@@ -58,6 +58,7 @@
                             </select>
 
                         </div>
+                        
                         <div class="">
                             <label for="" style="visibility: hidden;">filter</label>
                             <button class="btn btn-success form-control" onclick="searchData()">Filter</button>
@@ -74,7 +75,7 @@
                                     <thead>
                                         <tr>
                                             <th>S.No.</th>
-                                            <th>Client name</th>
+                                            <th>Client Name</th>
                                             <th>Approved By</th>
                                             <th>Type</th>
                                             <th>Total Amount</th>
@@ -151,12 +152,12 @@
             const url = new URL(window.location.href);
             const from_date = $('#from_date').val();
             const to_date = $('#to_date').val();
-            const client_id = $('#client_id').val();
             const type = $('#type').val();
+            const client_id = $('#client_id').val();
             url.searchParams.set('to_date', to_date);
             url.searchParams.set('from_date', from_date ?? '');
-            url.searchParams.set('client_id', client_id ?? '');
             url.searchParams.set('type', type ?? '');
+            url.searchParams.set('client_id', client_id ?? '');
             $('#search-form').attr('action', url.toString()).submit();
         }
     </script>

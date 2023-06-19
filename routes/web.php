@@ -90,6 +90,14 @@ Route::prefix('bank-accounts')->group(function () {
     Route::get('/edit/{id}',[BannkController::class,'addForm'])->name('addForm');
     Route::post('/edit',[BannkController::class,'edit'])->name('edit');
     Route::post('/delete',[BannkController::class,'delete'])->name('delete');
+    // deposit money
+    Route::get('deposit-money/{id}',[BannkController::class,'adddepositForm'])->name('adddepositForm');
+    Route::post('/deposit',[BannkController::class,'addDeposit'])->name('addDeposit');
+    Route::get('/withdraw-money/{id}',[BannkController::class,'addWithdrawForm'])->name('addWithdrawForm');
+    Route::post('/withdraw',[BannkController::class,'addWithdraw'])->name('addWithdraw');
+    // view detai;s
+    Route::get('/details',[BannkController::class,'viewDetails'])->name('viewDetails');
+    
 });   
 
 
@@ -110,6 +118,7 @@ Route::middleware('CommonMiddleware')->prefix('transactions')->group(function ()
     Route::get('/change-status-withdraw/{id}',[TransactionController::class,'acceptPendingWithdrawForm'])->name('acceptPendingWithdrawForm');
     Route::post('/change-status-withdraw',[TransactionController::class,'changeWithdrawStatus'])->name('changeWithdrawStatus');
     Route::post('depositer/recancel',[TransactionController::class,'depsoiterCancel'])->name('depsoiterCancel');
+    Route::post('withdrawrer/recancel',[TransactionController::class,'withdrawCancel'])->name('withdrawCancel');
     // for manager
 }); 
 
@@ -123,6 +132,10 @@ Route::middleware('ValidateManager')->prefix('exchanges')->group(function () {
     Route::post('/edit',[ExchangeController::class,'edit'])->name('edit');
     Route::post('/delete',[ExchangeController::class,'delete'])->name('delete');
     Route::get('/view-details',[ExchangeController::class,'viewDetails'])->name('viewDetails');
+    Route::get('/add-money',[ExchangeController::class,'addMoneyForm'])->name('addMoneyForm');
+    Route::post('/add-money',[ExchangeController::class,'addMoney'])->name('addMoney');
+    Route::get('/withdraw-money',[ExchangeController::class,'withdrawMoneyForm'])->name('withdrawMoneyForm');
+    Route::post('/withdraw-money',[ExchangeController::class,'withdrawMoney'])->name('withdrawMoney');
 });
 
 
@@ -130,7 +143,6 @@ Route::middleware('ValidateManager')->prefix('exchanges')->group(function () {
 // admin transaction
 Route::get('/transactions/pending-deposit',[TransactionController::class,'listPendingDeposit'])->name('listPendingDeposit')->middleware('ValidateManager');
 Route::get('/transactions/pending-withdraw',[TransactionController::class,'pendingWithdraw'])->name('pendingWithdraw')->middleware('ValidateManager');
-
 Route::get('/clients/add',[UserController::class,'addClient'])->name('addClient');
 Route::get('/bankaccount/add',[BannkController::class,'bankAccouAddAjax'])->name('bankAccouAddAjax');
 Route::get('/render-client-account',[BannkController::class,'renderClientAccounts'])->name('renderClientAccounts');

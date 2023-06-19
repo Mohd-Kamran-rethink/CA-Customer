@@ -144,16 +144,7 @@
                             </p>
                         </a>
                     </li>
-                    <li class="nav-item ">
-                        <a href="{{ url('/transfers') }}"
-                            class="nav-link {{ Request::is('transfers') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-credit-card">
-                            </i>
-                            <p>
-                                Transfer
-                            </p>
-                        </a>
-                    </li>
+
                     <li class="nav-item ">
                         <a href="{{ url('/franchises') }}"
                             class="nav-link {{ Request::is('franchises') ? 'active' : '' }}">
@@ -165,7 +156,7 @@
 
                         </a>
                     </li>
-
+                   
                 @endif
 
                 @if (session('user')->role == 'deposit_banker')
@@ -199,7 +190,7 @@
                             <i class="nav-icon fa fa-money">&#x1F4B0;
                             </i>
                             <p>
-                                Add Bank
+                                Banks
                             </p>
                         </a>
                     </li>

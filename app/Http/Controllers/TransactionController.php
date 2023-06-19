@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use App\BankDetail;
 use App\Client;
-use App\Deposit;
-use App\DepositHistory;
 use App\Exchange;
 use App\Lead;
 use App\LeadStatus;
 use App\LeadStatusOption;
 use App\Transaction;
+use App\TransactionHistory;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -56,14 +55,14 @@ class TransactionController extends Controller
             // todays
             $today = now()->format('Y-m-d');
             $ApproveDepoistTranToday = Transaction::where('type', 'Deposit')->where('status', 'Approve')->whereDate('created_at', $today)->get();
-            $ApprovedDepoistToday = $ApproveDepoistTranToday->sum('amount');
+            $ApprovedDepoistToday = $ApproveDepoistTranToday->sum('total');
             $ApprovewithTranToday = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->whereDate('created_at', $today)->get();
-            $ApprovedWithdrawToday = $ApprovewithTranToday->sum('amount');
+            $ApprovedWithdrawToday = $ApprovewithTranToday->sum('total');
             // total
             $ApproveDepoistTranTotal = Transaction::where('type', 'Deposit')->where('status', 'Approve')->get();
-            $ApprovedDepoistTotal = $ApproveDepoistTranTotal->sum('amount');
+            $ApprovedDepoistTotal = $ApproveDepoistTranTotal->sum('total');
             $ApprovewithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->get();
-            $ApprovedWithdrawTotal = $ApprovewithTranTotal->sum('amount');
+            $ApprovedWithdrawTotal = $ApprovewithTranTotal->sum('total');
 
             // pending
             $PendingDepoistTranTotal = Transaction::where('type', 'Deposit')->where('status', 'Pending')->get();
@@ -73,8 +72,8 @@ class TransactionController extends Controller
             $todaysBonus = $ApproveDepoistTranToday->sum('bonus');
             $totalBonus = $ApproveDepoistTranTotal->sum('bonus');
 
-            $clients=Client::get()->count();
-            return view('Admin.Dashboard.index', compact('clients','PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
+            $clients = Client::get()->count();
+            return view('Admin.Dashboard.index', compact('clients', 'PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
             // ends
         } else if ($user->role == 'deposit_banker' || $user->role == 'depositer') {
             $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
@@ -216,8 +215,8 @@ class TransactionController extends Controller
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
         $banks = BankDetail::get();
-        $exchanges=Exchange::where('is_active','=','Yes')->get();
-        return view('Admin.Transactions.acceptPendingDeposit', compact('exchanges','clients', 'transaction', 'todaysdate', 'currentDateTime', 'banks'));
+        $exchanges = Exchange::where('is_active', '=', 'Yes')->get();
+        return view('Admin.Transactions.acceptPendingDeposit', compact('exchanges', 'clients', 'transaction', 'todaysdate', 'currentDateTime', 'banks'));
     }
     // change status for deposit
     public function changeStatus(Request $req)
@@ -263,23 +262,43 @@ class TransactionController extends Controller
             $leadStatus->save();
         }
         $transaction->save();
-        $exchange=Exchange::find($req->exchange_id);
-        
-        
-        
-        $depositHistory = new Deposit();
+        $exchange = Exchange::find($req->exchange_id);
+        $bankDetails = BankDetail::find($transaction->bank_account);
+
+
+        // for exchange tranasactin history
+        $depositHistory = new TransactionHistory();
         $depositHistory->type = "Deposit";
         $depositHistory->transaction_id = $transaction->id;
         $depositHistory->exchange_id = $req->exchange_id;
         $depositHistory->agent_id = session('user')->id;
         $depositHistory->client_id = $client->id;
-        $depositHistory->deposit_amount = $req->total;
-        $depositHistory->opening_balance =$exchange->coin;
+        $depositHistory->amount = $req->total;
+        $depositHistory->opening_balance = $exchange->amount;
         $depositHistory->bonus = $req->bonus;
-        
         $depositHistory->save();
-        $exchange->coin=$exchange->coin+$req->total;
+        
+        //for bank transaction history 
+        $depositHistory2 = new TransactionHistory();
+        $depositHistory2->type = "Deposit";
+        $depositHistory2->transaction_id = $transaction->id;
+        $depositHistory2->bank_id = $bankDetails->id;
+        $depositHistory2->agent_id = session('user')->id;
+        $depositHistory2->client_id = $client->id;
+        $depositHistory2->amount = $req->total;
+        $depositHistory2->opening_balance = $bankDetails->amount;
+        $depositHistory2->bonus = $req->bonus;
+        $depositHistory2->save();
+
+
+
+        // increase bank total
+        $bankDetails->amount = $bankDetails->amount + $req->total;
+        //increase exchnage total 
+        $exchange->amount = $exchange->amount + $req->total;
+        $bankDetails->save();
         $result = $exchange->update();
+
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Transaction approved successfully']);
         } else {
@@ -294,8 +313,8 @@ class TransactionController extends Controller
             $todaysdate = Carbon::now()->startOfDay()->toDateString();
             $currentDateTime = Carbon::now()->startOfDay();
             $banks = BankDetail::whereNotNull('customer_id')->get();
-            $exchanges=Exchange::get();
-            return view('Admin.Transactions.addWithdrawRequest', compact('exchanges','clients', 'todaysdate', 'currentDateTime', 'banks'));
+            $exchanges = Exchange::get();
+            return view('Admin.Transactions.addWithdrawRequest', compact('exchanges', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
         } else return redirect()->back();
     }
     public function withdrawAdd(Request $req)
@@ -305,7 +324,7 @@ class TransactionController extends Controller
             'amount' => 'required',
             'total' => 'required',
             'client_bank_account' => 'required|not_in:0',
-            'exchange_id'=>'required|not_in:0',
+            'exchange_id' => 'required|not_in:0',
         ]);
         $withdrawrer = session('user');
         $transaction = new Transaction();
@@ -359,9 +378,9 @@ class TransactionController extends Controller
         $clients = Client::where('isDeleted', '=', 'No')->get();
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
-        $exchanges=Exchange::where('is_active','=','Yes')->get();
+        $exchanges = Exchange::where('is_active', '=', 'Yes')->get();
         $banks = BankDetail::where('customer_id', '=', $transaction->client_id)->get();
-        return view('Admin.Transactions.addWithdrawRequest', compact('exchanges','transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
+        return view('Admin.Transactions.addWithdrawRequest', compact('exchanges', 'transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
     }
     public function withdrawEdit(Request $req)
     {
@@ -418,23 +437,40 @@ class TransactionController extends Controller
         $transaction->type = 'Withdraw';
         $transaction->status = 'Approve';
         $result = $transaction->save();
-        $exchange=Exchange::find($transaction->exchange_id);
         
-        $deposit=new Deposit();
-        $deposit->agent_id=session('user')->id;
-        $deposit->exchange_id=$transaction->exchange_id;
-        $deposit->transaction_id=$transaction->id;
-        $deposit->client_id=$transaction->client_id;
-        $deposit->deposit_amount=$req->total;
-        $deposit->bonus=$req->bonus;
-        $deposit->opening_balance= $exchange->coin;
-        $deposit->type="withdraw";
-        $deposit->save();
-        $exchange->coin=$exchange->coin-$req->total;
-        $result = $exchange->save();
-        
+        $exchange = Exchange::find($transaction->exchange_id);
+        $bankDetails = BankDetail::find($transaction->bank_account);
 
+        //exchnage transaction
+        $deposit = new TransactionHistory();
+        $deposit->agent_id = session('user')->id;
+        $deposit->exchange_id = $transaction->exchange_id;
+        $deposit->transaction_id = $transaction->id;
+        $deposit->client_id = $transaction->client_id;
+        $deposit->amount = $req->total;
+        $deposit->bonus = $req->bonus;
+        $deposit->opening_balance = $exchange->amount;
+        $deposit->type = "withdraw";
+        $deposit->save();
+        //bank transaction history
+        $deposit2 = new TransactionHistory();
+        $deposit2->agent_id = session('user')->id;
+        $deposit2->bank_id = $req->bank_account;
+        $deposit2->transaction_id = $transaction->id;
+        $deposit2->client_id = $transaction->client_id;
+        $deposit2->amount = $req->total;
+        $deposit2->bonus = $req->bonus;
+        $deposit2->opening_balance = $bankDetails->amount;
+        $deposit2->type = "withdraw";
+        $deposit2->save();
         
+        $exchange->amount = $exchange->amount - $req->total;
+        $bankDetails->amount = $bankDetails->amount - $req->total;
+        $bankDetails->update();
+        $result = $exchange->update();
+
+
+
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Withdraw approved successfully']);
         } else {
@@ -473,27 +509,61 @@ class TransactionController extends Controller
     }
 
     // canceled
-    public function depsoiterCancel(Request $req) {
-        $transaction=Transaction::find($req->transID);
-        
-        if(session('user')->role='withdrawrer')
-        {
-            $transaction->status='Cancel';
+    public function depsoiterCancel(Request $req)
+    {
+        $transaction = Transaction::find($req->transID);
+        if (session('user')->role = 'withdrawrer') {
+            $transaction->status = 'Cancel';
             $transaction->update();
+        } else {
+            $transaction->client_id = '';
+            $transaction->total=$$transaction->total-$transaction->bonus;
+            $transaction->bonus = '';
+            
         }
-        else
-        {
-            $transaction->client_id='';
-            $transaction->bonus='';
-        }
-        $transaction->status='Cancel';
+        $transaction->status = 'Cancel';
+        $exchange = Exchange::find($transaction->exchange_id);
+        $bank = BankDetail::find($transaction->bank_account);
         $transaction->update();
-        $depositHistory = Deposit::where('transaction_id','=',$transaction->id)->first();
-        if($depositHistory)
-        {
-            $depositHistory->delete();
+        $depositHistory = TransactionHistory::where('transaction_id', '=', $transaction->id)->get();
+        if ($depositHistory) {
+            foreach ($depositHistory as $key => $item) {
+                $item->type = "deposit_revert";
+                $item->update();
+            }
         }
+        $exchange->amount = $exchange->amount - $transaction->total;
+        $bank->amount = $bank->amount - $transaction->total;
+        $exchange->update();
+        $bank->update();
         return redirect('/dashboard')->with(['msg-success' => 'Transaction has been cancelled']);
-        
+    }
+    // withdraw cancel
+    public function withdrawCancel(Request $req)
+    {
+        $transaction = Transaction::find($req->transID);
+        if (session('user')->role = 'withdrawrer') {
+            $transaction->status = 'Cancel';
+            $transaction->update();
+        } else {
+            $transaction->client_id = '';
+            $transaction->bonus = '';
+        }
+        $transaction->status = 'Cancel';
+        $exchange = Exchange::find($transaction->exchange_id);
+        $bank = BankDetail::find($transaction->bank_account);
+        $transaction->update();
+        $depositHistory = TransactionHistory::where('transaction_id', '=', $transaction->id)->get();
+        if ($depositHistory) {
+            foreach ($depositHistory as $key => $item) {
+                $depositHistory->type = "withdraw_revert";
+                $depositHistory->update();
+            }
+        }
+        $exchange->amount = $exchange->amount + $transaction->total;
+        $bank->amount = $bank->amount + $transaction->total;
+        $exchange->update();
+        $bank->update();
+        return redirect('/dashboard')->with(['msg-success' => 'Transaction has been cancelled']);
     }
 }
