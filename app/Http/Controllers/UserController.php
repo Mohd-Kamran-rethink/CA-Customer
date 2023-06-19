@@ -279,6 +279,7 @@ class UserController extends Controller
             'name' => 'required',
             'ca_id' => 'required|unique:clients,ca_id',
             'number' => 'required|unique:clients,number',
+            'exchange' => 'required|not_in:0',
         ]);
         
         if ($validator->fails()) {
@@ -288,6 +289,7 @@ class UserController extends Controller
         $client->name = $req->name;
         $client->number = $req->number;
         $client->ca_id = $req->ca_id;
+        $client->exchange_id = $req->exchange;
         $result = $client->save();
         $clients = Client::get();
         $html = '<label class="form-label" for="form3Example1n1">Clients</label>
@@ -300,7 +302,7 @@ class UserController extends Controller
         }
         '</select>';
         if ($result) {
-            return $html;
+            return ['client'=>$client,'data'=>$html];
         }
     }
 

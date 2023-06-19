@@ -86,9 +86,7 @@
                             </div>
                             <div class="col-2 ">
                                 <label for="" style="visibility: hidden">sdf</label>
-                                <select
-                                    {{ session('user')->role === 'deposit_banker' || session('user')->role === 'withdrawrer' ? '' : 'disabled' }}
-                                    name="status_name" type="text" class="form-control">
+                                <select {{-- {{ session('user')->role === 'deposit_banker' || session('user')->role === 'withdrawrer' ? '' : 'disabled' }} --}} name="status_name" type="text" class="form-control">
                                     <option value="null">--Filter by status--</option>
 
 
@@ -105,8 +103,14 @@
                                 <label for="">To</label>
                                 <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
                             </div>
-                            <div class="col-2 pt-2">
-                                <button class="btn btn-success mt-4">Filter</button>
+                            <div class="col-2 pt-2 ">
+                                <div class="row d-flex justify-content-around">
+                                    <button class="btn btn-success mt-4">Filter</button>
+                                    @if(session('user')->role=='deposit_banker')
+                                    <a href="{{ url('transactions/add') }}" class="btn btn-primary mt-4">Add</a>
+                                    @endif
+                                </div>
+
                             </div>
                         </div>
                     </form>
@@ -152,7 +156,7 @@
                                                                     title="Change Status" class="btn btn-danger"
                                                                     type="button">Cancel</button>
                                                             @endif
-                                                        @elseif(session('user')->role === 'depositer')
+                                                        @elseif(session('user')->role === 'depositer' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/change-status/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>
@@ -162,11 +166,11 @@
                                                             <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
-                                                                    @if ($item->status == 'Approve')
-                                                            <button onclick="cancelDeposit({{ $item->id }})"
-                                                                title="Change Status" class="btn btn-danger"
-                                                                type="button">Cancel</button>
-                                                                @endif
+                                                            @if ($item->status == 'Approve')
+                                                                <button onclick="cancelDeposit({{ $item->id }})"
+                                                                    title="Change Status" class="btn btn-danger"
+                                                                    type="button">Cancel</button>
+                                                            @endif
                                                         @elseif(session('user')->role === 'withdrawal_banker')
                                                             <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
@@ -202,7 +206,9 @@
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <form action="{{session('user')->role=='withdrawrer'?url('transactions/withdrawrer/recancel'): url('transactions/depositer/recancel') }}" method="POST">
+                    <form
+                        action="{{ session('user')->role == 'withdrawrer' ? url('transactions/withdrawrer/recancel') : url('transactions/depositer/recancel') }}"
+                        method="POST">
                         @csrf
                         <input type="hidden" name="transID" id="transID">
                         <div class="modal-body">

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannkController;
 use App\Http\Controllers\ExchangeController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\franchises;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -147,3 +148,12 @@ Route::get('/clients/add',[UserController::class,'addClient'])->name('addClient'
 Route::get('/bankaccount/add',[BannkController::class,'bankAccouAddAjax'])->name('bankAccouAddAjax');
 Route::get('/render-client-account',[BannkController::class,'renderClientAccounts'])->name('renderClientAccounts');
 Route::get('/clients',[UserController::class,'clientList'])->name('clientList');
+
+
+
+// expenses
+Route::middleware('ValidateManager')->prefix('expenses')->group(function () {
+    Route::get('',[ExpenseController::class,'list'])->name('list');
+    Route::get('/add',[ExpenseController::class,'addForm'])->name('addForm');
+    Route::post('/add',[ExpenseController::class,'add'])->name('add');
+});

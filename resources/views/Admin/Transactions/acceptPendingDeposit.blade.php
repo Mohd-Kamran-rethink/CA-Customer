@@ -24,163 +24,178 @@
             <div class="card-body">
                 <form action="{{ url('transactions/change-status') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" name="hiddenid" value="{{ isset($transaction) ? $transaction->id : '' }}">
                     <div class="row">
-                        <input type="hidden" name="hiddenid" value="{{ isset($transaction) ? $transaction->id : '' }}">
-                        <div class="col-6 d-flex">
-                            <div class=" " style="width: -webkit-fill-available;" id="client-ajax-dropdown">
-                                <label>Clients <span style="color:red">*</span></label>
-                                <select name="client" id="" class="form-control searchOptions">
-                                    <option value="0">--Choose--</option>
-                                    @foreach ($clients as $item)
-                                        <option value="{{ $item->id }}">{{ $item->number }}({{ $item->name }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('client')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class=" ml-3">
-                                <label style="visibility: hidden"> Client <span style="color:red">*</span></label>
-                                <button onclick="openClientModel()" type="button" class="btn btn-primary">Add
-                                    Client</button>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Date <span style="color:red">*</span></label>
-                                <input readonly type="date" name="date"
-                                    value="{{ isset($transaction) ? $transaction->date : $todaysdate }}" id="date"
-                                    placeholder="100" class="form-control" data-validation="required">
-                                @error('date')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-3">
-                            <div class="form-group">
-                                <label>Amount <span style="color:red">*</span></label>
-                                <input readonly oninput="sumAmountBonus()" type="number" name="amount"
-                                    value="{{ isset($transaction) ? $transaction->amount : old('amount') }}" id="amount"
-                                    class="form-control" data-validation="required">
-                                @error('amount')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-3">
-                            <div class="form-group">
-                                <label>Bonus %</label>
-                                <input oninput="calculateBonuspercent(this.value)" step="any" id="bonus_percent" class="form-control"
-                                    data-validation="required">
-                                @error('bonus_percent')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Created On <span style="color:red">*</span></label>
-                                <input readonly type="text" name="created_on"
-                                    value="{{ isset($transaction) ? $transaction->created_at : $currentDateTime }}"
-                                    id="phone" placeholder="100" class="form-control" data-validation="required">
-                                @error('created_on')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Bonus </label>
-                                <input oninput="sumAmountBonus()" type="number" step="any" name="bonus"
-                                    value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
-                                    class="form-control">
-                                @error('bonus')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>UTR No <span style="color:red">*</span></label>
-                                <input readonly type="text" name="utr"
-                                    value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}" id="utr"
-                                    placeholder="UTR Number" class="form-control" data-validation="required">
-                                @error('utr')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Total<span style="color:red">*</span></label>
-                                <input type="number" name="total"
-                                    value="{{ isset($transaction) ? $transaction->total : old('total') }}" id="total"
-                                    readonly class="form-control" data-validation="required">
-                                @error('total')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Exchange<span style="color:red">*</span></label>
-                                <select name="exchange_id" class="form-control">
-                                    <option value="">--Choose--</option>
-                                    @foreach ($exchanges as $item)
-                                        <option
-                                            {{ isset($transaction) && $transaction->exchange_id == $item->id ? 'selected' : (old('excahnge_id') == $item->id ? 'selected' : '') }}
-                                            value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-
-                                @error('exchange_id')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Bank Account<span style="color:red">*</span></label>
-                                <select readonly name="bank_account" class="form-control">
-                                    <option value="">--Choose--</option>
-                                    @foreach ($banks as $item)
-                                        <option
-                                            {{ isset($transaction) && $transaction->bank_account == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }}
-                                            value="{{ $item->id }}">{{ $item->holder_name }}</option>
-                                    @endforeach
-                                </select>
-
-                                @error('bank_account')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-8 col-md-6 col-lg-8">
+                                    <div class="" id="client-ajax-dropdown">
+                                        <label>Clients <span style="color:red">*</span></label>
+                                        <select tabindex="1" name="client" id="" class="form-control searchOptions"
+                                            onchange="handleClientChange(this)">
+                                            <option value="0">--Choose--</option>
+                                            @foreach ($clients as $item)
+                                                <option value="{{ $item->id }}"
+                                                    data-exchange-id="{{ $item->exchange_id }}">
+                                                    {{ $item->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('client')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-4 mt-4">
+                                    <div class=" mt-2 ml-3">
+                                        <label style="visibility: hidden">Client <span style="color:red">*</span></label>
+                                        <button onclick="openClientModel()" type="button" class="btn btn-primary">Add
+                                            Client</button>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <div class="form-group">
+                                        <label>Exchange<span style="color:red">*</span></label>
+                                        <select  name="exchange_id" class="form-control">
+                                            <option value="">--Choose--</option>
+                                            @foreach ($exchanges as $item)
+                                                <option
+                                                    {{ isset($transaction) && $transaction->exchange_id == $item->id ? 'selected' : (old('excahnge_id') == $item->id ? 'selected' : '') }}
+                                                    value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('exchange_id')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Amount <span style="color:red">*</span></label>
+                                        <input tabindex="2" readonly oninput="sumAmountBonus()" type="number" name="amount"
+                                            value="{{ isset($transaction) ? $transaction->amount : old('amount') }}"
+                                            id="amount" class="form-control" data-validation="required">
+                                        @error('amount')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Bonus %</label>
+                                        <input tabindex="3" oninput="calculateBonuspercent(this.value)" step="any" id="bonus_percent"
+                                            class="form-control" data-validation="required">
+                                        @error('bonus_percent')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Bonus</label>
+                                        <input tabindex="4" oninput="sumAmountBonus()" type="number" step="any" name="bonus"
+                                            value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}"
+                                            id="bonus" class="form-control">
+                                        @error('bonus')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Total<span style="color:red">*</span></label>
+                                        <input type="number" name="total"
+                                            value="{{ isset($transaction) ? $transaction->amount : old('total') }}"
+                                            id="total" readonly class="form-control" data-validation="required">
+                                        @error('total')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
 
+                        <div class="col-6">
+                                <div class="col-12 ">
+                                    <div class="form-group">
+                                        <label>Date <span style="color:red">*</span></label>
+                                        <input readonly type="date" name="date"
+                                            value="{{ isset($transaction) ? $transaction->date : $todaysdate }}"
+                                            id="date" placeholder="100" class="form-control"
+                                            data-validation="required">
+                                        @error('date')
+                                            <span class="text-danger">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Created On <span style="color:red">*</span></label>
+                                    <input readonly type="text" name="created_on"
+                                        value="{{ isset($transaction) ? $transaction->created_at : $currentDateTime }}"
+                                        id="phone" placeholder="100" class="form-control"
+                                        data-validation="required">
+                                    @error('created_on')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Bank Account<span style="color:red">*</span></label>
+                                    <select disabled readonly name="bank_account" class="form-control">
+                                        <option value="">--Choose--</option>
+                                        @foreach ($banks as $item)
+                                            <option
+                                                {{ isset($transaction) && $transaction->bank_account == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }}
+                                                value="{{ $item->id }}">{{ $item->holder_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('bank_account')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>UTR No <span style="color:red">*</span></label>
+                                    <input readonly type="text" name="utr"
+                                        value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}"
+                                        id="utr" placeholder="UTR Number" class="form-control"
+                                        data-validation="required">
+                                    @error('utr')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+
+
+                        </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
@@ -193,6 +208,90 @@
             </div>
         </div>
     </section>
+    {{-- client add pop up --}}
+    <div class="modal fade show" id="client-modal" style=" padding-right: 17px;" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Add Client</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form class="m-2" action="{{ url('/clients/add') }}" method="POST"id="client-add-form-popup">
+                    @csrf
+                    <div class="row">
+                        <input type="hidden" name="userId" value="{{ isset($client) ? $client->id : '' }}">
+                        <h5 style="color:red;display: none" class="px-2" id="client-error-note">Please fill all input
+                        </h5>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Exchange<span style="color:red">*</span></label>
+                                <select name="exchange" class="form-control" id="exchange">
+                                    <option value="0">--Choose--</option>
+                                    @foreach ($exchanges as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('exchange')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Client Name <span style="color:red">*</span></label>
+                                <input type="text" id="client_name" name="name" placeholder="John"
+                                    class="form-control" data-validation="required"
+                                    value="{{ isset($client) ? $client->name : old('name') }}">
+                                @error('name')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Phone <span style="color:red">*</span></label>
+                                <input {{ isset($client) ? 'readonly' : '' }} type="number" id="cliet_number"
+                                    name="number" value="{{ isset($client) ? $client->number : old('number') }}"
+                                    id="number" placeholder="972873818" class="form-control"
+                                    data-validation="required">
+                                <span id="client_name_error" class="text-danger">
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>ID Name <span style="color:red">*</span></label>
+                                <input type="text" id="client_ca_id" name="ca_id"
+                                    {{ isset($client) ? 'readonly' : '' }}
+                                    value="{{ isset($client) ? $client->ca_id : old('ca_id') }}" id="ca_id"
+                                    placeholder="ID Name" class="form-control">
+                                @error('ca_id')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <button onclick="submitClientAdd()" type="submit" id="submit-button"
+                                class="btn btn-info">Save</button>
+                            <button type="button" class="btn btn-primary " data-dismiss="modal" aria-label="Close">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="modal fade show" id="cancel-transaction" style=" padding-right: 17px;" aria-modal="true"
         role="dialog">
         <div class="modal-dialog">
@@ -221,7 +320,6 @@
             </div>
         </div>
     </div>
-
     <script>
         function openClientModel() {
             $('#client-modal').modal('show');
@@ -257,7 +355,64 @@
             let bonusinput = $('#bonus');
             let total = $('#total');
             bonusinput.val((amountinput.val() * percent) / 100)
-            total.val(parseFloat(amountinput.val())+parseFloat((amountinput.val() * percent) / 100));
+            total.val(parseFloat(amountinput.val()) + parseFloat((amountinput.val() * percent) / 100));
+        }
+    </script>
+    {{-- client add ajax --}}
+    <script>
+        function submitClientAdd() {
+            event.preventDefault();
+            let submitButton = $('#submit-button')
+            let client_name = $('#client_name').val();
+            let client_number = $('#cliet_number').val();
+            let client_ca_id = $('#client_ca_id').val();
+            let exchange = $('#exchange').val();
+
+            $.ajax({
+                url: BASE_URL + "/clients/add?name=" + client_name + "&number=" + client_number + "&ca_id=" +
+                    client_ca_id + "&exchange=" + exchange,
+                success: function(response) {
+                    if (response.client && response.data) {
+                        $('#client-modal').modal('hide');
+                        $("#client-ajax-dropdown").html(response.data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.errors) {
+
+                        // Loop through each error and display it on the respective input field
+                        $.each(response.errors, function(key, value) {
+                            console.log(key)
+                            var inputElement = $('#' + key);
+                            inputElement.addClass('is-invalid');
+                            inputElement.next('.invalid-feedback').html(value[0]);
+                        });
+                    } else {
+                        // Handle other error cases
+                    }
+                }
+            });
+        }
+    </script>
+    {{-- on clienet select select exchnage auto --}}
+    <script>
+        function handleClientChange(selectElement) {
+            let selectedOption = selectElement.options[selectElement.selectedIndex];
+            let exchangeId = selectedOption.getAttribute('data-exchange-id');
+            let exchangeSelect = document.querySelector('select[name="exchange_id"]');
+
+            // Loop through each option in the exchange select dropdown
+            for (let i = 0; i < exchangeSelect.options.length; i++) {
+                let option = exchangeSelect.options[i];
+
+                if (option.value === exchangeId) {
+                    // Set the selected attribute for the option with the given exchange ID
+                    option.selected = true;
+                    break;
+                }
+            }
+
         }
     </script>
 @endsection

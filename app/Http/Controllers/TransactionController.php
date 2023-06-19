@@ -137,25 +137,36 @@ class TransactionController extends Controller
     }
     public function add(Request $req)
     {
+        // new transaction create on submit add money to the bank
         $req->validate([
             'date' => 'required',
             'amount' => 'required',
             'utr' => 'required',
-            'total' => 'required',
             'bank_account' => 'required|not_in:0',
         ]);
         $deposit_banker = session('user');
         $transaction = new Transaction();
         $transaction->date = $req->date;
         $transaction->amount = $req->amount;
-        $transaction->bonus = $req->bonus;
         $transaction->utr_no = $req->utr;
-        $transaction->total = $req->total;
         $transaction->bank_account = $req->bank_account;
         $transaction->deposit_banker_id = $deposit_banker->id;
         $transaction->type = 'Deposit';
         $transaction->status = 'Pending';
         $result = $transaction->save();
+        // add money to banks and also show transaction history to the bank 
+        $bank=BankDetail::find($req->bank_account);
+        $depositHistory = new TransactionHistory();
+        $depositHistory->type = "Deposit";
+        $depositHistory->transaction_id = $transaction->id;
+        $depositHistory->bank_id = $bank->id;
+        $depositHistory->agent_id = session('user')->id;
+        $depositHistory->amount = $req->amount;
+        $depositHistory->opening_balance = $bank->amount;
+        $depositHistory->save();
+
+        $bank->amount=$bank->amount+$req->amount;
+        $bank->save();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Transaction added successfully']);
         } else {
@@ -226,7 +237,6 @@ class TransactionController extends Controller
             'amount' => 'required',
             'utr' => 'required',
             'total' => 'required',
-            'bank_account' => 'required|not_in:0',
             'client' => 'required|not_in:0',
             'exchange_id' => 'required|not_in:0'
         ]);
@@ -234,15 +244,12 @@ class TransactionController extends Controller
         $depositer = session('user');
         $transaction =  Transaction::find($req->hiddenid);
         $transaction->date = $req->date;
-        $transaction->amount = $req->amount;
         $transaction->bonus = $req->bonus;
         $transaction->utr_no = $req->utr;
         $transaction->total = $req->total;
-        $transaction->bank_account = $req->bank_account;
         $transaction->depositer_id = $depositer->id;
         $transaction->client_id = $req->client;
         $transaction->exchange_id = $req->exchange_id;
-        $transaction->type = 'Deposit';
         $transaction->status = 'Approve';
         // before save update lead status
         $client = Client::find($req->client);
@@ -263,12 +270,9 @@ class TransactionController extends Controller
         }
         $transaction->save();
         $exchange = Exchange::find($req->exchange_id);
-        $bankDetails = BankDetail::find($transaction->bank_account);
-
-
         // for exchange tranasactin history
         $depositHistory = new TransactionHistory();
-        $depositHistory->type = "Deposit";
+        $depositHistory->type = "Withdraw";
         $depositHistory->transaction_id = $transaction->id;
         $depositHistory->exchange_id = $req->exchange_id;
         $depositHistory->agent_id = session('user')->id;
@@ -278,25 +282,8 @@ class TransactionController extends Controller
         $depositHistory->bonus = $req->bonus;
         $depositHistory->save();
         
-        //for bank transaction history 
-        $depositHistory2 = new TransactionHistory();
-        $depositHistory2->type = "Deposit";
-        $depositHistory2->transaction_id = $transaction->id;
-        $depositHistory2->bank_id = $bankDetails->id;
-        $depositHistory2->agent_id = session('user')->id;
-        $depositHistory2->client_id = $client->id;
-        $depositHistory2->amount = $req->total;
-        $depositHistory2->opening_balance = $bankDetails->amount;
-        $depositHistory2->bonus = $req->bonus;
-        $depositHistory2->save();
-
-
-
-        // increase bank total
-        $bankDetails->amount = $bankDetails->amount + $req->total;
         //increase exchnage total 
-        $exchange->amount = $exchange->amount + $req->total;
-        $bankDetails->save();
+        $exchange->amount = $exchange->amount - $req->total;
         $result = $exchange->update();
 
         if ($result) {
