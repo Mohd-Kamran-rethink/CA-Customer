@@ -129,7 +129,7 @@ class BannkController extends Controller
             $client_id = $req->client_id;
             $banks = BankDetail::where('customer_id', '=', $client_id)->get();
             $html = '<label class="form-label" for="form3Example1n1">Client Bank Account <span style="color:red"> *</span></label>
-            <select name="client_bank_account"  class="form-control searchOptions">
+            <select tabindex="2" name="client_bank_account"  class="form-control searchOptions">
             <option value="0">--Choose--</option>
             
             ';

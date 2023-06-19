@@ -25,45 +25,58 @@
         <div class="card">
             <div class="card-body">
                 <div class="mb-3 d-flex justify-content-between align-items-centers">
-                    <form action="{{ url('reports/deposits') }}" method="GET" id="search-form"
+                    <form action="{{ url('clients/transactions/view-details') }}" method="GET" id="search-form"
                         class="filters d-flex flex-row col-11 pl-0">
 
-                        <div class="col-3 ">
+                        <div class="col-2 ">
                             <input name="id" type="hidden" value="{{ $id }}">
                             <label for="">From</label>
                             <input name="from_date" type="date" class="form-control from_date" id="from_date"
                                 value="{{ isset($startDate) ? $startDate : '' }}">
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <label for="">To</label>
                             <input name="to_date" type="date" class="form-control to_date" id="to_date"
                                 value="{{ isset($endDate) ? $endDate : '' }}">
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <label for="">Transaction Type</label>
                             <select class="form-control" name="type" id="type">
                                 <option value="">--Choose--</option>
-                                <option {{isset($type)&& $type=='withdraw'?'selected':''}} value="withdraw">Withdraw</option>
-                                <option {{isset($type)&& $type=='deposit'?'selected':''}} value="deposit">Deposit</option>
+                                <option {{ isset($type) && $type == 'withdraw' ? 'selected' : '' }} value="withdraw">
+                                    Withdraw
+                                </option>
+                                <option {{ isset($type) && $type == 'deposit' ? 'selected' : '' }} value="deposit">Deposit
+                                </option>
                             </select>
                         </div>
-                        <div class="col-3">
-                            <label for="">Client</label>
-                            <select class="form-control" name="client_id" id="client_id">
-                                <option value="null">--Choose--</option>
-                                @foreach ($clients as $item)
-                                    <option {{ isset($client_id) && $client_id == $item->id ? 'selected' : '' }}
-                                        value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
 
-                        </div>
-                        
+
                         <div class="">
                             <label for="" style="visibility: hidden;">filter</label>
                             <button class="btn btn-success form-control" onclick="searchData()">Filter</button>
                         </div>
+                        @php
+                            $totalDeposit = 0;
+                            $totalWithdraw = 0;
+                         @endphp
+                         @foreach($activites as $act)
+                         @php
+                             $totalAmount = $act->amount + $act->bonus;
+                             if ($act->type == 'Deposit') {
+                                 $totalDeposit += $totalAmount;
+                             } elseif ($act->type == 'Withdraw') {
+                                 $totalWithdraw += $totalAmount;
+                             }
+                         @endphp
+                         @endforeach
+                    <div class="col-6" style="display: flex;justify-content: flex-end;flex-direction: column;align-items: flex-end">
+                        <h6 class="font-weight-bold"> Total Deposit: {{$totalDeposit}}</h6>
+                        <h6 class="font-weight-bold"> Total Withdraw: {{$totalWithdraw}}</h6>
+                        <h6 class="font-weight-bold"> Difference: {{$totalDeposit-$totalWithdraw}}</h6>
+                    </div>
                     </form>
+
                     <div>
                     </div>
                 </div>
@@ -75,33 +88,26 @@
                                     <thead>
                                         <tr>
                                             <th>S.No.</th>
-                                            <th>Client Name</th>
-                                            <th>Approved By</th>
                                             <th>Type</th>
-                                            <th>Total Amount</th>
-                                            <th>Opening Balance</th>
-                                            <th>Created Date</th>
+                                            <th>Amount</th>
+                                            <th>Bonus</th>
+                                            <th>Total</th>
+                                            <th>Date</th>
                                         </tr>
                                     </thead>
+                                   
                                     <tbody>
-                                        @forelse($transactions as $item)
+                                        @forelse($activites as $item)
+                                            
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->client_name }}</td>
-                                                <td>{{ $item->approved_by }}</td>
                                                 <td style="text-transform: capitalize">
-                                                    {{-- @if(!$item->client_name)
-                                                        @if($item->type=='deposit')
-                                                            Transfer In
-                                                            @else
-                                                            Transfer Out
-                                                        @endif
-                                                    @else --}}
-                                                    {{$item->type }}
-                                                    {{-- @endif --}}
+
+                                                    {{ $item->type }}
                                                 </td>
                                                 <td>{{ $item->amount }}</td>
-                                                <td>{{ $item->opening_balance }}</td>
+                                                <td>{{ $item->bonus }}</td>
+                                                <td>{{ $item->amount + $item->bonus }}</td>
                                                 <td>{{ $item->created_at }}</td>
 
                                             </tr>
@@ -112,6 +118,7 @@
                                         @endforelse
 
                                     </tbody>
+                                    
                                 </table>
                             </div>
 
@@ -151,11 +158,9 @@
             const from_date = $('#from_date').val();
             const to_date = $('#to_date').val();
             const type = $('#type').val();
-            const client_id = $('#client_id').val();
             url.searchParams.set('to_date', to_date);
             url.searchParams.set('from_date', from_date ?? '');
             url.searchParams.set('type', type ?? '');
-            url.searchParams.set('client_id', client_id ?? '');
             $('#search-form').attr('action', url.toString()).submit();
         }
     </script>

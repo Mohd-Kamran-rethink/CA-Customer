@@ -20,6 +20,36 @@
         </div>
     </section>
     <section class="content">
+
+        <table class="table  mb-4">
+            <thead>
+                <tr>
+                    <th scope="col">Customer Bank Details</th>
+                    <th scope="col" style="visibility: hidden">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Account Holder Name</td>
+                    <td>{{ $transaction->holder_name }}</td>
+                </tr>
+                <tr>
+                    <td>Bank Name</td>
+                    <td>{{ $transaction->customer_bank_name }}</td>
+                </tr>
+                <tr>
+                    <td>Account Number</td>
+                    <td>{{ $transaction->customer_account_number }}</td>
+                </tr>
+                <tr>
+                    <td>IFSC Code</td>
+                    <td>{{ $transaction->customer_ifsc }}</td>
+                </tr>
+                <!-- Add more rows for additional bank details -->
+            </tbody>
+        </table>
+    </section>
+    <section class="content">
         <div class="card">
 
             <div class="card-body">
@@ -27,136 +57,112 @@
                     enctype="multipart/form-data">
                     @csrf
                     <div class="row">
-                        <input type="hidden" name="hiddenid" value="{{ isset($transaction) ? $transaction->id : '' }}">
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group" id="client-ajax-dropdown">
-                                <label>Clients <span style="color:red">*</span></label>
-                                <select readonly name="client"  class="form-control">
-                                    <option value="0">--Choose--</option>
-                                    @foreach ($clients as $item)
-                                        <option
-                                            {{ isset($transaction) && $transaction->client_id == $item->id ? 'selected' : (old('client') == $item->id ? 'selected' : '') }}
-                                            value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Date <span style="color:red">*</span></label>
-                                <input readonly type="date" name="date"
-                                    value="{{ isset($transaction) ? $transaction->date : $todaysdate }}" id="date"
-                                    placeholder="100" class="form-control" data-validation="required">
-                                @error('date')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Amount <span style="color:red">*</span></label>
-                                <input readonly oninput="sumAmountBonus()" type="number" name="amount"
-                                    value="{{ isset($transaction) ? $transaction->amount : old('amount') }}" id="amount"
-                                     class="form-control" data-validation="required">
-                                @error('amount')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                       
-                                <input readonly type="hidden" name="created_on"
-                                    value="{{ isset($transaction) ? $transaction->created_at : $currentDateTime }}"
-                                    id="phone" placeholder="100" class="form-control" data-validation="required">
-                               
-                        
-                                <input readonly oninput="sumAmountBonus()" type="hidden" name="bonus"
-                                    value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
-                                     class="form-control">
-                                
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>UTR No <span style="color:red">
-                                        {{ session('user')->role === 'withdrawrer' ? '' : '*' }}</span></label>
-                                <input {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }} type="text"
-                                    name="utr" value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}"
-                                    id="utr" placeholder="UTR Number" class="form-control" data-validation="required">
-                                @error('utr')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <input type="hidden" name="total"
-                                    value="{{ isset($transaction) ? $transaction->total : old('total') }}" id="total"
-                                    readonly class="form-control" data-validation="required">
-                                
-                        <div class="col-xs-12 col-md-6">
-                            <div class="form-group">
-                                <label>Bank Account<span style="color:red">*</span></label>
-                                <select name="bank_account" class="form-control">
-                                    <option value="">--Choose--</option>
-                                    @foreach ($banks as $item)
-                                        <option
-                                            {{ isset($transaction) && $transaction->bank_account == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }}
-                                            value="{{ $item->id }}">{{ $item->holder_name }}</option>
-                                    @endforeach
-                                </select>
+                        <div class="col-6">
 
-                                @error('bank_account')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
 
+                            <input type="hidden" name="hiddenid" value="{{ isset($transaction) ? $transaction->id : '' }}">
+                            <div class="col-12">
+                                <div class="form-group" id="client-ajax-dropdown">
+                                    <label>Clients <span style="color:red">*</span></label>
+                                    <select disabled readonly name="client" class="form-control">
+                                        <option value="0">--Choose--</option>
+                                        @foreach ($clients as $item)
+                                            <option
+                                                {{ isset($transaction) && $transaction->client_id == $item->id ? 'selected' : (old('client') == $item->id ? 'selected' : '') }}
+                                                value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Date <span style="color:red">*</span></label>
+                                    <input readonly type="date" name="date"
+                                        value="{{ isset($transaction) ? $transaction->date : $todaysdate }}" id="date"
+                                        placeholder="100" class="form-control" data-validation="required">
+                                    @error('date')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Amount <span style="color:red">*</span></label>
+                                    <input readonly oninput="sumAmountBonus()" type="number" name="amount"
+                                        value="{{ isset($transaction) ? $transaction->amount : old('amount') }}"
+                                        id="amount" class="form-control" data-validation="required">
+                                    @error('amount')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <input readonly type="hidden" name="created_on"
+                                value="{{ isset($transaction) ? $transaction->created_at : $currentDateTime }}"
+                                id="phone" placeholder="100" class="form-control" data-validation="required">
+
+
+                            <input readonly oninput="sumAmountBonus()" type="hidden" name="bonus"
+                                value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
+                                class="form-control">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>UTR No <span style="color:red">
+                                            {{ session('user')->role === 'withdrawrer' ? '' : '*' }}</span></label>
+                                    <input tabindex="1" {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }} type="text"
+                                        name="utr"
+                                        value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}"
+                                        id="utr" placeholder="UTR Number" class="form-control"
+                                        data-validation="required">
+                                    @error('utr')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <input type="hidden" name="total"
+                                value="{{ isset($transaction) ? $transaction->total : old('total') }}" id="total"
+                                readonly class="form-control" data-validation="required">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Bank Account<span style="color:red">*</span></label>
+                                    <select tabindex="2" name="bank_account" class="form-control">
+                                        <option value="">--Choose--</option>
+                                        @foreach ($banks as $item)
+                                            <option
+                                                {{ isset($transaction) && $transaction->bank_account == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }}
+                                                value="{{ $item->id }}">{{ $item->holder_name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    @error('bank_account')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+
+                                </div>
                             </div>
                         </div>
                     </div>
-                            {{-- customer bank deatils --}}
-                            {{-- <h5 class="font-weight-bold">Customer Bank Details</h5> --}}
-                            {{-- <span class="font-weight-bold">Account Holder Name: </span>{{$transaction->holder_name}} <br>
+                    {{-- customer bank deatils --}}
+                    {{-- <h5 class="font-weight-bold">Customer Bank Details</h5> --}}
+                    {{-- <span class="font-weight-bold">Account Holder Name: </span>{{$transaction->holder_name}} <br>
                             <span class="font-weight-bold">Bank Name: </span>{{$transaction->customer_bank_name}} <br>
                             <span class="font-weight-bold">Account Number: </span>{{$transaction->customer_account_number}} <br>
                             <span class="font-weight-bold">IFSC Code: </span>{{$transaction->customer_ifsc}} <br>
                             <span class="font-weight-bold">Phone Number: </span>{{$transaction->customer_phone}} <br> --}}
-                            <table class="table mt-4 mb-4">
-                                <thead>
-                                  <tr>
-                                    <th scope="col">Customer Bank Details</th>
-                                    <th scope="col" style="visibility: hidden">Value</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                    <td>Account Holder Name</td>
-                                    <td>{{$transaction->holder_name}}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Bank Name</td>
-                                    <td>{{$transaction->customer_bank_name}}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Account Number</td>
-                                    <td>{{$transaction->customer_account_number}}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>IFSC Code</td>
-                                    <td>{{$transaction->customer_ifsc}}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Phone Number</td>
-                                    <td>9876543210</td>
-                                  </tr>
-                                  <!-- Add more rows for additional bank details -->
-                                </tbody>
-                              </table>
+
                     <div class="row mt-2">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-info">Accept</button>
+                            <button tabindex="3" type="submit" class="btn btn-info">Accept</button>
                             <button onclick="openCancelModal({{ $transaction->id }})" type="button"
                                 class="btn btn-default">Cancel</button>
                         </div>
@@ -193,7 +199,7 @@
             </div>
         </div>
     </div>
-   
+
     <script>
         function submitStatusChange() {
             let submitButton = $('#submit-button')

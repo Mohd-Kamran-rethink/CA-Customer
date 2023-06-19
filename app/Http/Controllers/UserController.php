@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use App\Franchise;
+use App\Transaction;
+use App\TransactionHistory;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -176,25 +179,17 @@ class UserController extends Controller
     // common functions for manager and agents
     public function add(Request $req)
     {
-        
-        if($req->role=='deposit_banker')
-        {
-            $redirect_url='deposit-banker';
-        }
-        elseif ($req->role=='depositer')
-        {
-            $redirect_url='depositers';
-        }
-        elseif($req->role=='withdrawrer')
-        {
-            $redirect_url='withdrawrers';
-        }
-        elseif($req->role=='withdrawal_banker')
-        {
-            $redirect_url='withdrawal-banker';
-        }
-        else{
-            $redirect_url='managers';
+
+        if ($req->role == 'deposit_banker') {
+            $redirect_url = 'deposit-banker';
+        } elseif ($req->role == 'depositer') {
+            $redirect_url = 'depositers';
+        } elseif ($req->role == 'withdrawrer') {
+            $redirect_url = 'withdrawrers';
+        } elseif ($req->role == 'withdrawal_banker') {
+            $redirect_url = 'withdrawal-banker';
+        } else {
+            $redirect_url = 'managers';
         }
         $req->validate([
             'name' => 'required|unique:users,name',
@@ -281,7 +276,7 @@ class UserController extends Controller
             'number' => 'required|unique:clients,number',
             'exchange' => 'required|not_in:0',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json(['msg-error' => $validator->errors()], 422);
         }
@@ -298,16 +293,67 @@ class UserController extends Controller
             ';
 
         foreach ($clients as $item) {
-            $html .= '<option value=' . $item->id . ' data-client='.$item->id.' data-number=' .$item->number.'>' . $item->number  .'('.$item->name.')</option>';
+            $html .= '<option value=' . $item->id . ' data-client=' . $item->id . ' data-number=' . $item->number . '>' . $item->number  . '(' . $item->name . ')</option>';
         }
         '</select>';
         if ($result) {
-            return ['client'=>$client,'data'=>$html];
+            return ['client' => $client, 'data' => $html];
         }
     }
 
-    public function clientList() {
-        $clients=Client::get();
-        return view('Admin.Client.list',compact('clients'));
+    public function clientList()
+    {
+        $clients = Client::get();
+
+        foreach ($clients as $client) {
+            $lastDeposit = TransactionHistory::where('client_id', $client->id)
+                ->where('type', 'deposit')
+                ->latest('created_at')
+                ->first();
+
+            $lastWithdrawal = TransactionHistory::where('client_id', $client->id)
+                ->where('type', 'withdraw')
+                ->latest('created_at')
+                ->first();
+
+            $client->lastDepositDate = $lastDeposit ? $lastDeposit->created_at : null;
+            $client->lastWithdrawalDate = $lastWithdrawal ? $lastWithdrawal->created_at : null;
+            if ($client->lastDepositDate) {
+                $client->lastDepositDaysAgo = Carbon::parse($client->lastDepositDate)->diffInDays(Carbon::now());
+            }
+            
+            if ($client->lastWithdrawalDate) {
+                $client->lastWithdrawalDaysAgo = Carbon::parse($client->lastWithdrawalDate)->diffInDays(Carbon::now());
+            }
+        }
+        return view('Admin.Client.list', compact('clients'));
+    }
+
+    // show client transadction details
+    public function showClientActivity(Request $req)
+    {
+        $id=$req->query('id');
+        $startDate = $req->query('from_date')??null;
+        $endDate = $req->query('to_date')??null;
+        $type=$req->query('type')??'null';
+        if (!$startDate) {
+            $startDate = Carbon::now()->startOfDay();
+            $endDate = Carbon::now()->endOfDay();
+        } else {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+        }
+
+        $activites=Transaction::where('client_id','=',$id)
+        ->when($type !== 'null', function ($query) use ($type) {
+            $query->where('type', $type);
+        })
+        ->whereDate('created_at', '>=', date('Y-m-d', strtotime($startDate)))
+        ->whereDate('created_at', '<=', date('Y-m-d', strtotime($endDate)))
+                ->get();
+                $startDate = $startDate->toDateString();
+                $endDate = $endDate->toDateString();
+        return view('Admin.Client.ViewDetails',compact('activites','id','startDate','endDate'));
+        
     }
 }

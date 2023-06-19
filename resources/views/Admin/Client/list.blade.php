@@ -34,19 +34,30 @@
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th>S.No.</th>
+                                            <th style="width: 5%">S.No.</th>
                                             <th>Name</th>
                                             <th>Phone</th>
                                             <th>ID Name</th>
+                                            <th>Last Deposit</th>
+                                            <th>Last Withdraw</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse($clients as $item)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
+                                                <td style="width: 5%">{{ $loop->iteration }}</td>
                                                 <td>{{ $item->name }}</td>
                                                 <td>{{ $item->number }}</td>
                                                 <td>{{ $item->ca_id }}</td>
+                                                <td>{{ $item->lastDepositDate ? $item->lastDepositDate->format('d-M-Y  h:i:s A') : 'No Deposit yet' }}
+                                                    {{ $item->lastDepositDaysAgo != 0 ? $item->lastDepositDaysAgo . ' days ago' : '' }}
+                                                </td>
+                                                <td>{{ $item->lastWithdrawalDate ? $item->lastWithdrawalDate->format('d-M-Y  h:i:s A') : 'No Withdraw yet' }}
+                                                    {{ $item->lastWithdrawalDaysAgo != 0 ? $item->lastWithdrawalDaysAgo . ' days ago' : '' }}
+                                                </td>
+                                                <td><a href="{{ url('clients/transactions/view-details?id=' . $item->id) }}"
+                                                        class="btn btn-success">View Details</a></td>
 
                                             </tr>
                                         @empty

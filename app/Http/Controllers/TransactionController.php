@@ -155,7 +155,7 @@ class TransactionController extends Controller
         $transaction->status = 'Pending';
         $result = $transaction->save();
         // add money to banks and also show transaction history to the bank 
-        $bank=BankDetail::find($req->bank_account);
+        $bank = BankDetail::find($req->bank_account);
         $depositHistory = new TransactionHistory();
         $depositHistory->type = "Deposit";
         $depositHistory->transaction_id = $transaction->id;
@@ -165,7 +165,7 @@ class TransactionController extends Controller
         $depositHistory->opening_balance = $bank->amount;
         $depositHistory->save();
 
-        $bank->amount=$bank->amount+$req->amount;
+        $bank->amount = $bank->amount + $req->amount;
         $bank->save();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Transaction added successfully']);
@@ -281,7 +281,7 @@ class TransactionController extends Controller
         $depositHistory->opening_balance = $exchange->amount;
         $depositHistory->bonus = $req->bonus;
         $depositHistory->save();
-        
+
         //increase exchnage total 
         $exchange->amount = $exchange->amount - $req->total;
         $result = $exchange->update();
@@ -315,16 +315,30 @@ class TransactionController extends Controller
         ]);
         $withdrawrer = session('user');
         $transaction = new Transaction();
-        $transaction->date = $req->date;
-        $transaction->amount = $req->amount;
-        $transaction->bonus = $req->bonus;
         $transaction->client_id = $req->client;
-        $transaction->total = $req->total;
         $transaction->customer_bank_id = $req->client_bank_account;
-        $transaction->withdrawrer_id = $withdrawrer->id;
         $transaction->exchange_id = $req->exchange_id;
+        $transaction->amount = $req->amount;
+        $transaction->date = $req->date;
+        $transaction->withdrawrer_id = $withdrawrer->id;
         $transaction->type = 'Withdraw';
         $transaction->status = 'Pending';
+        // add moeny to exchange
+        $exchange = Exchange::find($req->exchange_id);
+
+        // add transaction history for this exhange transaction
+        $transHistory = new TransactionHistory();
+        $transHistory->agent_id = session('user')->id;
+        $transHistory->exchange_id = $exchange->id;
+        $transHistory->client_id = $req->client;
+        $transHistory->amount = $req->amount;
+        $transHistory->bonus = $req->bonus;
+        $transHistory->opening_balance = $exchange->amount;
+        $transHistory->save();
+
+        //save exchange
+        $exchange->amount = $exchange->amount + $req->total;
+        $exchange->update();
         // send sms
         $client = Client::find($req->client);
         $curl = curl_init();
@@ -410,7 +424,6 @@ class TransactionController extends Controller
             'date' => 'required',
             'amount' => 'required',
             'utr' => 'required',
-            'total' => 'required',
             'bank_account' => 'required|not_in:0',
         ]);
         $withdrawal_banker = session('user');
@@ -423,41 +436,25 @@ class TransactionController extends Controller
         $transaction->withdrawal_banker_id = $withdrawal_banker->id;
         $transaction->type = 'Withdraw';
         $transaction->status = 'Approve';
-        $result = $transaction->save();
-        
-        $exchange = Exchange::find($transaction->exchange_id);
+
         $bankDetails = BankDetail::find($transaction->bank_account);
 
-        //exchnage transaction
+
+
+
+        //bank transaction history
         $deposit = new TransactionHistory();
         $deposit->agent_id = session('user')->id;
-        $deposit->exchange_id = $transaction->exchange_id;
+        $deposit->bank_id = $req->bank_account;
         $deposit->transaction_id = $transaction->id;
         $deposit->client_id = $transaction->client_id;
-        $deposit->amount = $req->total;
-        $deposit->bonus = $req->bonus;
-        $deposit->opening_balance = $exchange->amount;
+        $deposit->amount = $req->amount;
+        $deposit->opening_balance = $bankDetails->amount;
         $deposit->type = "withdraw";
         $deposit->save();
-        //bank transaction history
-        $deposit2 = new TransactionHistory();
-        $deposit2->agent_id = session('user')->id;
-        $deposit2->bank_id = $req->bank_account;
-        $deposit2->transaction_id = $transaction->id;
-        $deposit2->client_id = $transaction->client_id;
-        $deposit2->amount = $req->total;
-        $deposit2->bonus = $req->bonus;
-        $deposit2->opening_balance = $bankDetails->amount;
-        $deposit2->type = "withdraw";
-        $deposit2->save();
-        
-        $exchange->amount = $exchange->amount - $req->total;
-        $bankDetails->amount = $bankDetails->amount - $req->total;
+        $bankDetails->amount = $bankDetails->amount - $req->amount;
         $bankDetails->update();
-        $result = $exchange->update();
-
-
-
+        $result = $transaction->save();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Withdraw approved successfully']);
         } else {
@@ -504,9 +501,8 @@ class TransactionController extends Controller
             $transaction->update();
         } else {
             $transaction->client_id = '';
-            $transaction->total=$$transaction->total-$transaction->bonus;
+            $transaction->total = $$transaction->total - $transaction->bonus;
             $transaction->bonus = '';
-            
         }
         $transaction->status = 'Cancel';
         $exchange = Exchange::find($transaction->exchange_id);

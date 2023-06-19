@@ -68,14 +68,7 @@
                             </ul>
                         </li>
                     @endif
-                    <li class="nav-item  ">
-                        <a href="{{ url('/clients') }}" class="nav-link {{ Request::is('clients') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>
-                                Clients
-                            </p>
-                        </a>
-                    </li>
+                    
                     <li
                         class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
                         <a href="#"
@@ -170,7 +163,14 @@
                     </li>
                    
                 @endif
-
+                <li class="nav-item  ">
+                    <a href="{{ url('/clients') }}" class="nav-link {{ Request::is('clients') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Clients
+                        </p>
+                    </a>
+                </li>
                 @if (session('user')->role == 'deposit_banker')
                     <li class="nav-item  ">
                         <a href="{{ url('/transactions/add') }}"

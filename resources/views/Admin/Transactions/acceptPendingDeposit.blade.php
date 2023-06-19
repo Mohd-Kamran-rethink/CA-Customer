@@ -31,8 +31,8 @@
                                 <div class="col-8 col-md-6 col-lg-8">
                                     <div class="" id="client-ajax-dropdown">
                                         <label>Clients <span style="color:red">*</span></label>
-                                        <select tabindex="1" name="client" id="" class="form-control searchOptions"
-                                            onchange="handleClientChange(this)">
+                                        <select tabindex="1" name="client" id=""
+                                            class="form-control searchOptions" onchange="handleClientChange(this)">
                                             <option value="0">--Choose--</option>
                                             @foreach ($clients as $item)
                                                 <option value="{{ $item->id }}"
@@ -58,7 +58,7 @@
                                 <div class="col-12 mt-2">
                                     <div class="form-group">
                                         <label>Exchange<span style="color:red">*</span></label>
-                                        <select  name="exchange_id" class="form-control">
+                                        <select name="exchange_id" class="form-control">
                                             <option value="">--Choose--</option>
                                             @foreach ($exchanges as $item)
                                                 <option
@@ -76,7 +76,8 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label>Amount <span style="color:red">*</span></label>
-                                        <input tabindex="2" readonly oninput="sumAmountBonus()" type="number" name="amount"
+                                        <input tabindex="2" readonly oninput="sumAmountBonus()" type="number"
+                                            name="amount"
                                             value="{{ isset($transaction) ? $transaction->amount : old('amount') }}"
                                             id="amount" class="form-control" data-validation="required">
                                         @error('amount')
@@ -89,8 +90,8 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label>Bonus %</label>
-                                        <input tabindex="3" oninput="calculateBonuspercent(this.value)" step="any" id="bonus_percent"
-                                            class="form-control" data-validation="required">
+                                        <input tabindex="3" oninput="calculateBonuspercent(this.value)" step="any"
+                                            id="bonus_percent" class="form-control" data-validation="required">
                                         @error('bonus_percent')
                                             <span class="text-danger">
                                                 {{ $message }}
@@ -101,7 +102,8 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label>Bonus</label>
-                                        <input tabindex="4" oninput="sumAmountBonus()" type="number" step="any" name="bonus"
+                                        <input tabindex="4" oninput="sumAmountBonus()" type="number" step="any"
+                                            name="bonus"
                                             value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}"
                                             id="bonus" class="form-control">
                                         @error('bonus')
@@ -129,20 +131,19 @@
 
 
                         <div class="col-6">
-                                <div class="col-12 ">
-                                    <div class="form-group">
-                                        <label>Date <span style="color:red">*</span></label>
-                                        <input readonly type="date" name="date"
-                                            value="{{ isset($transaction) ? $transaction->date : $todaysdate }}"
-                                            id="date" placeholder="100" class="form-control"
-                                            data-validation="required">
-                                        @error('date')
-                                            <span class="text-danger">
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </div>
+                            <div class="col-12 ">
+                                <div class="form-group">
+                                    <label>Date <span style="color:red">*</span></label>
+                                    <input readonly type="date" name="date"
+                                        value="{{ isset($transaction) ? $transaction->date : $todaysdate }}" id="date"
+                                        placeholder="100" class="form-control" data-validation="required">
+                                    @error('date')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
                                 </div>
+                            </div>
 
 
 
@@ -199,7 +200,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-info">Accept</button>
+                            <button tabindex="5" type="submit" class="btn btn-info">Accept</button>
                             <button onclick="openCancelModal({{ $transaction->id }})" type="button"
                                 class="btn btn-default">Cancel</button>
                         </div>

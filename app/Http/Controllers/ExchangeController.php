@@ -58,11 +58,11 @@ class ExchangeController extends Controller
             $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
             $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
         }
-        $transactions = TransactionHistory::where('exchange_id', '=', $id)
+        $transactions = TransactionHistory::where('transaction_histories.exchange_id', '=', $id)
                         ->leftJoin('clients', 'transaction_histories.client_id', '=', 'clients.id')
                         ->leftJoin('users', 'transaction_histories.agent_id', '=', 'users.id')
                         ->select('transaction_histories.*','clients.name as client_name','users.name as approved_by')
-                        ->whereNotNull('exchange_id')
+                        ->whereNotNull('transaction_histories.exchange_id')
                         ->when($type !== 'null', function ($query) use ($type) {
                             $query->where('transaction_histories.type', $type);
                         })
