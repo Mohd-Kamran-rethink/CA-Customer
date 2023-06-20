@@ -157,7 +157,19 @@
                             <p>
                                 Expense
                             </p>
-                            <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span>
+                            {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
+
+                        </a>
+                    </li>
+                    {{-- transfer --}}
+                    <li class="nav-item ">
+                        <a href="{{ url('/transfers') }}"
+                            class="nav-link {{ Request::is('transfers') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-arrow-circle-right"></i>
+                            <p>
+                                Transfers
+                            </p>
+                            {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
 
                         </a>
                     </li>

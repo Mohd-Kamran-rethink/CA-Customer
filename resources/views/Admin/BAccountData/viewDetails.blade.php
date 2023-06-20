@@ -43,8 +43,9 @@
                             <label for="">Transaction Type</label>
                             <select class="form-control" name="type" id="type">
                                 <option value="">--Choose--</option>
-                                <option {{isset($type)&& $type=='withdraw'?'selected':''}} value="withdraw">Withdraw</option>
-                                <option {{isset($type)&& $type=='deposit'?'selected':''}} value="deposit">Deposit</option>
+                                <option {{ isset($type) && $type == 'withdraw' ? 'selected' : '' }} value="withdraw">Withdraw
+                                </option>
+                                <option {{ isset($type) && $type == 'deposit' ? 'selected' : '' }} value="deposit">Deposit</option>
                             </select>
                         </div>
                         <div class="col-3">
@@ -58,7 +59,7 @@
                             </select>
 
                         </div>
-                        
+
                         <div class="">
                             <label for="" style="visibility: hidden;">filter</label>
                             <button class="btn btn-success form-control" onclick="searchData()">Filter</button>
@@ -90,15 +91,15 @@
                                                 <td>{{ $item->client_name }}</td>
                                                 <td>{{ $item->approved_by }}</td>
                                                 <td style="text-transform: capitalize">
-                                                    {{-- @if(!$item->client_name)
-                                                        @if($item->type=='deposit')
+                                                    @if ($item->transfer_id)
+                                                        @if ($item->type == 'deposit')
                                                             Transfer In
-                                                            @else
+                                                        @else
                                                             Transfer Out
                                                         @endif
-                                                    @else --}}
-                                                    {{$item->type }}
-                                                    {{-- @endif --}}
+                                                    @else
+                                                        {{ $item->type }}
+                                                    @endif
                                                 </td>
                                                 <td>{{ $item->amount }}</td>
                                                 <td>{{ $item->opening_balance }}</td>

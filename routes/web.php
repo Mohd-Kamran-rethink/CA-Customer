@@ -151,7 +151,7 @@ Route::get('/clients',[UserController::class,'clientList'])->name('clientList')-
 
 // show all the activeity of partitculat clients
 
-Route::get('/clients/transactions/view-details',[UserController::class,'showClientActivity'])->name('showClientActivity')->middleware('ValidateManager');
+Route::get('/clients/transactions/view-details',[UserController::class,'showClientActivity'])->name('showClientActivity')->middleware('CommonMiddleware');
 
 
 // expenses
@@ -159,4 +159,10 @@ Route::middleware('ValidateManager')->prefix('expenses')->group(function () {
     Route::get('',[ExpenseController::class,'list'])->name('list');
     Route::get('/add',[ExpenseController::class,'addForm'])->name('addForm');
     Route::post('/add',[ExpenseController::class,'add'])->name('add');
+});
+// transfers functions are in expense controller
+Route::middleware('ValidateManager')->prefix('transfers')->group(function () {
+    Route::get('',[ExpenseController::class,'TransferList'])->name('TransferList');
+    Route::get('/add',[ExpenseController::class,'addTransferForm'])->name('addTransferForm');
+    Route::post('/add',[ExpenseController::class,'addTransfer'])->name('addTransfer');
 });

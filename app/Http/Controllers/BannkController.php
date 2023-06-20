@@ -33,7 +33,6 @@ class BannkController extends Controller
             'name' => 'required',
             'ifcs_code' => 'required',
             'phone' => 'required',
-            'address' => 'required',
         ]);
 
         $bank = new BankDetail();
@@ -59,7 +58,6 @@ class BannkController extends Controller
             'name' => 'required',
             'ifcs_code' => 'required',
             'phone' => 'required',
-            'address' => 'required',
         ]);
 
         $bank =  BankDetail::find($req->hiddenid);
