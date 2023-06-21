@@ -99,7 +99,7 @@ class TransactionController extends Controller
                         $query->where('transactions.total', $amount_search);
                     });
                 })
-                ->select('transactions.*', 'bank_details.holder_name as holder_name',)
+                ->select('transactions.*', 'bank_details.holder_name as holder_name')
                 ->when($start_date != null, function ($query) use ($start_date, $end_date) {
                     $query->whereDate('transactions.date', '>=', $start_date)
                         ->whereDate('transactions.date', '<=', $end_date);
