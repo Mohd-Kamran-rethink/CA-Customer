@@ -14,9 +14,23 @@ class BannkController extends Controller
 
     public function list()
     {
+        $type=null;
+        if(session('user')->role=="deposit_banker")
+        {
+            $type='deposit';
+        }
+        else if(session('user')->role=="withdrawal_banker")
+        {
+            $type='withdraw';
+        }
+
         $banks = BankDetail::leftjoin('users', 'bank_details.provider_id', '=', 'users.id')
                         ->select('bank_details.*','users.name as provider_name')
-                     ->whereNull('customer_id')->paginate(20);
+                        ->whereNull('customer_id')
+                        ->when($type !== null, function ($query) use ($type) {
+                            $query->where('bank_details.type', $type);
+                        })
+                        ->paginate(30);
         return view('Admin.BAccountData.list', compact('banks'));
     }
     public function addForm()
@@ -39,7 +53,10 @@ class BannkController extends Controller
             'name' => 'required',
             'ifcs_code' => 'required',
             'phone' => 'required',
-            'amount'=>'required'
+            'amount'=>'required',
+            'provider'=>'required|not_in:0',
+            'bank_type'=>'required|not_in:0',
+
         ]);
 
         $bank = new BankDetail();
@@ -52,6 +69,7 @@ class BannkController extends Controller
         $bank->amount = $req->amount;
         $bank->address = $req->address;
         $bank->provider_id = $req->provider;
+        $bank->type = $req->bank_type;
         $bankresult = $bank->save();
         if($bankresult)
         {

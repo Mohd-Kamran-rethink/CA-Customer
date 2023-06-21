@@ -124,6 +124,19 @@
                         </div>
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
+                                <label>Bank Type<span style="color:red">*</span> </label>
+                                <select class="form-control" data-validation="required" name="bank_type">
+                                    <option value="0">--Choose--</option>
+                                    <option value="deposit">Deposit</option>
+                                    <option value="withdraw">Withdraw</option>
+                                    {{-- <option value="both">Both</option> --}}
+                                
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
                                 <label>Providers<span style="color:red">*</span> </label>
                                 <select class="form-control" data-validation="required" name="provider">
                                     <option value="0">--Choose--</option>

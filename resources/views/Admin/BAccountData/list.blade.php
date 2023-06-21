@@ -54,6 +54,7 @@
                                             <th>IFSC Code</th>
                                             <th>Address</th>
                                             <th>Phone</th>
+                                            <th>Type</th>
                                             <th>Total Amount</th>
                                             <th>Provider</th>
                                             <th>Actions</th>
@@ -69,6 +70,7 @@
                                                 <td>{{ $item->ifsc }}</td>
                                                 <td>{{ $item->address }}</td>
                                                 <td>{{ $item->phone }}</td>
+                                                <td>{{ $item->type }}</td>
                                                 <td>{{ $item->amount }}</td>
                                                 <td>{{ $item->provider_name ?? '-' }}</td>
                                                 <td>
@@ -84,9 +86,9 @@
                                                         <a href="{{ url('bank-accounts/details/?id=' . $item->id) }}"
                                                             title="View Transaction details" class="btn btn-success">View
                                                             Details</a>
-                                                        <a href="{{ url('bank-accounts/edit/' . $item->id) }}"
+                                                        {{-- <a href="{{ url('bank-accounts/edit/' . $item->id) }}"
                                                             title="Edit" class="btn btn-primary"><i
-                                                                class="fa fa-pen"></i></a>
+                                                                class="fa fa-pen"></i></a> --}}
                                                         @if ($item->is_active == 'Yes')
                                                             <button title="Delete"
                                                                 onclick="manageModal({{ $item->id }})"

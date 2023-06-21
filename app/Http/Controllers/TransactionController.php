@@ -55,12 +55,12 @@ class TransactionController extends Controller
             // todays
             $today = now()->format('Y-m-d');
             $ApproveDepoistTranToday = Transaction::where('type', 'Deposit')->where('status', 'Approve')->whereDate('created_at', $today)->get();
-            $ApprovedDepoistToday = $ApproveDepoistTranToday->sum('total');
+            $ApprovedDepoistToday = $ApproveDepoistTranToday->sum('amount');
             $ApprovewithTranToday = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->whereDate('created_at', $today)->get();
             $ApprovedWithdrawToday = $ApprovewithTranToday->sum('amount');
             // total
             $ApproveDepoistTranTotal = Transaction::where('type', 'Deposit')->where('status', 'Approve')->get();
-            $ApprovedDepoistTotal = $ApproveDepoistTranTotal->sum('total');
+            $ApprovedDepoistTotal = $ApproveDepoistTranTotal->sum('amount');
             $ApprovewithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->get();
             $ApprovedWithdrawTotal = $ApprovewithTranTotal->sum('amount');
 
@@ -83,7 +83,7 @@ class TransactionController extends Controller
             return view('Admin.Dashboard.index', compact('clients', 'PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
             // ends
         } else if ($user->role == 'deposit_banker' || $user->role == 'depositer') {
-            $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
+            $transactions = DB::table('transactions')->where('transactions.type', '=', 'Deposit')
                 ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
                 ->leftjoin('clients', 'transactions.client_id', '=', 'clients.id')
                 ->when($status !== 'null', function ($query) use ($status) {
@@ -107,7 +107,7 @@ class TransactionController extends Controller
                 ->orderBy('id', 'desc')
                 ->paginate(30);
         } else if ($user->role == 'withdrawrer' || $user->role == 'withdrawal_banker') {
-            $transactions = DB::table('transactions')->where('type', '=', 'Withdraw')
+            $transactions = DB::table('transactions')->where('transactions.type', '=', 'Withdraw')
                 ->leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
                 ->leftjoin('clients', 'transactions.client_id', '=', 'clients.id')
                 ->select('transactions.*', 'bank_details.holder_name as holder_name','clients.name as client_name')
@@ -140,7 +140,7 @@ class TransactionController extends Controller
 
             $todaysdate = Carbon::now()->startOfDay()->toDateString();
             $currentDateTime = Carbon::now()->startOfDay();
-            $banks = BankDetail::whereNull('customer_id')->get();
+            $banks = BankDetail::whereNull('customer_id')->where('is_active','=','Yes')->where('type','=','deposit')->get();
             return view('Admin.Transactions.add', compact('todaysdate', 'currentDateTime', 'banks'));
         } else return redirect()->back();
     }
@@ -286,7 +286,7 @@ class TransactionController extends Controller
         $depositHistory->exchange_id = $req->exchange_id;
         $depositHistory->agent_id = session('user')->id;
         $depositHistory->client_id = $client->id;
-        $depositHistory->amount = $req->total;
+        $depositHistory->amount = $req->amount;
         $depositHistory->opening_balance = $exchange->amount;
         $depositHistory->bonus = $req->bonus;
         $depositHistory->save();
@@ -425,7 +425,7 @@ class TransactionController extends Controller
         $clients = Client::where('isDeleted', '=', 'No')->get();
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
-        $banks = BankDetail::whereNull('customer_id')->get();
+        $banks = BankDetail::whereNull('customer_id')->where('is_active','=','Yes')->where('type','=','withdraw')->get();
         return view('Admin.Transactions.acceptPendingWithdraw', compact('transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
     }
     // chaneg status for withdraw
