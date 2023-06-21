@@ -150,31 +150,21 @@
                         </a>
                     </li>
                     {{-- expense --}}
-                    <li class="nav-item ">
-                        <a href="{{ url('/expenses') }}"
-                            class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-credit-card"></i>
-                            <p>
-                                Expense
-                            </p>
-                            {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
-
-                        </a>
-                    </li>
+                    
                     {{-- transfer --}}
-                    <li class="nav-item ">
+                    {{-- <li class="nav-item ">
                         <a href="{{ url('/transfers') }}"
                             class="nav-link {{ Request::is('transfers') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-arrow-circle-right"></i>
                             <p>
                                 Transfers
                             </p>
-                            {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
-
+                            
                         </a>
-                    </li>
+                    </li> --}}
                    
                 @endif
+               
                 <li class="nav-item  ">
                     <a href="{{ url('/clients') }}" class="nav-link {{ Request::is('clients') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
@@ -218,8 +208,35 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item  ">
+                        <a href="{{ url('expense-users/debitors') }}" class="nav-link {{ Request::is('debitors') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-users"></i>
+                            <p>
+                                Debitors
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="{{ url('expense-users/creditors') }}" class="nav-link {{ Request::is('credits') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-users"></i>
+                            <p>
+                                Creditors
+                            </p>
+                        </a>
+                    </li>
                 @endif
+                <li class="nav-item">
+                    <a href="{{ url('/expenses') }}"
+                        class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-credit-card"></i>
+                        <p>
+                            Payment Types
 
+                        </p>
+                        {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
+
+                    </a>
+                </li>
 
             </ul>
         </nav>

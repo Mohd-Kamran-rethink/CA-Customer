@@ -28,11 +28,11 @@
                     <div class="row">
                         <div class="col-2">
                             <label for="">From</label>
-                            <input type="date" name="start_date" class="form-control" value="{{ $start_date ?? '' }}">
+                            <input type="date" name="start_date" class="form-control" value="{{ $startDate??'' }}">
                         </div>
                         <div class="col-2">
                             <label for="">To</label>
-                            <input type="date" name="end_date" class="form-control" value="{{ $end_date ?? '' }}">
+                            <input type="date" name="end_date" class="form-control" value="{{ $endDate??'' }}">
                         </div>
                         <div class="col-2 pt-2 ">
                             <div class="row d-flex justify-content-around">

@@ -116,7 +116,7 @@
 
                             <div class="col-12">
                                 <label>Bonus</label>
-                                <input tabindex="4" oninput="sumAmountBonus()" type="number" step="any"
+                                <input tabindex="4" type="number" step="any"
                                     name="bonus" value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}"
                                     id="bonus" class="form-control">
                                 @error('bonus')
@@ -241,7 +241,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
-                            <button onclick="addBankAccoutAjax()" type="button" class="btn btn-info">Save</button>
+                            <button onclick="addBankAccoutAjax()" type="button" class="btn btn-info">Save & Next</button>
                             <a href="{{ url('/banks') }}" type="button" class="btn btn-default">Cancel</a>
                         </div>
                     </div>

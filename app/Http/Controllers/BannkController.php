@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\BankDetail;
 use App\Client;
 use App\TransactionHistory;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -13,17 +14,22 @@ class BannkController extends Controller
 
     public function list()
     {
-        $banks = BankDetail::whereNull('customer_id')->paginate(20);
+        $banks = BankDetail::leftjoin('users', 'bank_details.provider_id', '=', 'users.id')
+                        ->select('bank_details.*','users.name as provider_name')
+                     ->whereNull('customer_id')->paginate(20);
         return view('Admin.BAccountData.list', compact('banks'));
     }
-    public function addForm($id = null)
+    public function addForm()
     {
+        
+        $creditors=User::get();
         if (isset($id)) {
+           
             $bank = BankDetail::find($id);
-            return view('Admin.BAccountData.add', compact('bank'));
+            return view('Admin.BAccountData.add', compact('bank','creditors'));
         }
-
-        return view('Admin.BAccountData.add');
+        return view('Admin.BAccountData.add',compact('creditors'));
+       
     }
     public function add(Request $req)
     {
@@ -33,6 +39,7 @@ class BannkController extends Controller
             'name' => 'required',
             'ifcs_code' => 'required',
             'phone' => 'required',
+            'amount'=>'required'
         ]);
 
         $bank = new BankDetail();
@@ -42,8 +49,21 @@ class BannkController extends Controller
         $bank->ifsc = $req->ifcs_code;
         $bank->phone = $req->phone;
         $bank->email = $req->email;
+        $bank->amount = $req->amount;
         $bank->address = $req->address;
-        $result = $bank->save();
+        $bank->provider_id = $req->provider;
+        $bankresult = $bank->save();
+        if($bankresult)
+        {
+            $transHistory=new TransactionHistory();
+            $transHistory->agent_id=session('user')->id;
+            $transHistory->bank_id=$bank->id;
+            $transHistory->amount=$req->amount;
+            $transHistory->opening_balance=0;
+            $transHistory->type='Intital Deposit';
+            $result= $transHistory->save();
+        }
+
         if ($result) {
             return redirect()->back()->with(['msg-success' => 'Added successfully']);
         } else {
@@ -52,6 +72,7 @@ class BannkController extends Controller
     }
     public function edit(Request $req)
     {
+        
         $req->validate([
             'account_number' => 'required|unique:bank_details,account_number,' . $req->hiddenid,
             'bank_name' => 'required',
@@ -85,6 +106,17 @@ class BannkController extends Controller
             return redirect()->back()->with(['msg-success' => 'Deleted successfully']);
         } else {
             return redirect()->back()->with(['msg-error' => 'Something went wrong']);
+        }
+    }
+    public function reactivebaNK(Request $req) {
+        $BankDetail = BankDetail::find($req->deleteId);
+        $BankDetail->is_active='Yes';
+        $result = $BankDetail->update();
+
+        if ($result) {
+            return redirect()->back()->with(['msg-success' => 'Bank activated successfully']);
+        } else {
+            return redirect()->back()->with(['msg-error' => 'Something went wsrong']);
         }
     }
     public function bankAccouAddAjax(Request $req)
@@ -207,6 +239,7 @@ class BannkController extends Controller
                         })
                         ->whereDate('transaction_histories.created_at', '>=', date('Y-m-d', strtotime($startDate)))
                         ->whereDate('transaction_histories.created_at', '<=', date('Y-m-d', strtotime($endDate)))
+                        ->orderBy('id','desc')
                         ->get();
         $clients=Client::get();
         $startDate = $startDate->toDateString();

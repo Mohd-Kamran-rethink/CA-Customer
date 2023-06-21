@@ -98,6 +98,7 @@ Route::prefix('bank-accounts')->group(function () {
     Route::post('/withdraw',[BannkController::class,'addWithdraw'])->name('addWithdraw');
     // view detai;s
     Route::get('/details',[BannkController::class,'viewDetails'])->name('viewDetails');
+    Route::post('/reactive',[BannkController::class,'reactivebaNK'])->name('reactivebaNK');
     
 });   
 
@@ -155,14 +156,28 @@ Route::get('/clients/transactions/view-details',[UserController::class,'showClie
 
 
 // expenses
-Route::middleware('ValidateManager')->prefix('expenses')->group(function () {
-    Route::get('',[ExpenseController::class,'list'])->name('list');
-    Route::get('/add',[ExpenseController::class,'addForm'])->name('addForm');
-    Route::post('/add',[ExpenseController::class,'add'])->name('add');
+Route::prefix('expenses')->group(function () {
+    Route::get('', [ExpenseController::class, 'listMyExpenses'])->name('listMyExpenses');
+    Route::get('add', [ExpenseController::class, 'addExpenseForm'])->name('addExpenseForm');
+    Route::post('add', [ExpenseController::class, 'addExpense'])->name('addExpense');
+    Route::post('/delete', [ExpenseController::class, 'deleteExpense'])->name('deleteExpense');
+    Route::get('/render-expense-type', [ExpenseController::class, 'renderExpensesType'])->name('renderExpensesType');
+    Route::get('/download/attatchement/{id}', [ExpenseController::class, 'downloadAttatchment'])->name('downloadAttatchment');
 });
 // transfers functions are in expense controller
 Route::middleware('ValidateManager')->prefix('transfers')->group(function () {
     Route::get('',[ExpenseController::class,'TransferList'])->name('TransferList');
     Route::get('/add',[ExpenseController::class,'addTransferForm'])->name('addTransferForm');
     Route::post('/add',[ExpenseController::class,'addTransfer'])->name('addTransfer');
+});
+
+
+// creditor
+Route::prefix('expense-users')->group(function () {
+    Route::get('creditors', [ExpenseController::class, 'creditors'])->name('creditors');
+    Route::get('creditors/add', [ExpenseController::class, 'creditorsAddFrom'])->name('creditorsAddFrom');
+    Route::post('creditor/add', [ExpenseController::class, 'creditorAdd'])->name('creditorAdd');
+    Route::get('debitors', [ExpenseController::class, 'debitors'])->name('debitors');
+    Route::get('debitors/add', [ExpenseController::class, 'debitorsAddFrom'])->name('debitorsAddFrom');
+    Route::post('debitors/add', [ExpenseController::class, 'debitorAdd'])->name('debitorAdd');
 });

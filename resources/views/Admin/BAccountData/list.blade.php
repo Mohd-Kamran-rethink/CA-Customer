@@ -55,6 +55,7 @@
                                             <th>Address</th>
                                             <th>Phone</th>
                                             <th>Total Amount</th>
+                                            <th>Provider</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -69,22 +70,31 @@
                                                 <td>{{ $item->address }}</td>
                                                 <td>{{ $item->phone }}</td>
                                                 <td>{{ $item->amount }}</td>
+                                                <td>{{ $item->provider_name ?? '-' }}</td>
                                                 <td>
-                                                    <a href="{{ url('bank-accounts/deposit-money/' . $item->id) }}"
+                                                    {{-- <a href="{{ url('bank-accounts/deposit-money/' . $item->id) }}"
                                                         title="Deposit money" class="btn btn-primary">Deposit</a>
                                                     <a href="{{ url('bank-accounts/withdraw-money/' . $item->id) }}"
-                                                        title="withdraw" class="btn btn-secondary">Withdraw</a>
+                                                        title="withdraw" class="btn btn-secondary">Withdraw</a> --}}
 
 
-                                                    @if (session('user')->role == 'customer_care_manager')
+                                                    @if (session('user')->role == 'deposit_banker' ||
+                                                            session('user')->role == 'withdrawal_banker' ||
+                                                            session('user')->role == 'customer_care_manager')
                                                         <a href="{{ url('bank-accounts/details/?id=' . $item->id) }}"
                                                             title="View Transaction details" class="btn btn-success">View
                                                             Details</a>
                                                         <a href="{{ url('bank-accounts/edit/' . $item->id) }}"
                                                             title="Edit" class="btn btn-primary"><i
                                                                 class="fa fa-pen"></i></a>
-                                                        <button title="Delete" onclick="manageModal({{ $item->id }})"
-                                                            class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                                        @if ($item->is_active == 'Yes')
+                                                            <button title="Delete"
+                                                                onclick="manageModal({{ $item->id }})"
+                                                                class="btn btn-danger">Deactivate</button>
+                                                        @else
+                                                            <button title="Delete" onclick="reactive({{ $item->id }})"
+                                                                class="btn btn-success">Activate</button>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>
@@ -105,30 +115,57 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade show" id="modal-default" style=" padding-right: 17px;" aria-modal="true" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Banks Detail</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form action="{{ url('/bank-accounts/delete') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="deleteId" id="deleteInput">
+                        <div class="modal-body">
+                            <h4>Are you sure you want to delete this Banks Detail?</h4>
+                        </div>
+                        <div class="modal-footer ">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="button" data-dismiss="modal" aria-label="Close"
+                                class="btn btn-default">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </section>
-    <div class="modal fade show" id="modal-default" style=" padding-right: 17px;" aria-modal="true" role="dialog">
+    {{-- reacticve --}}
+    <div class="modal fade show" id="modal-reactive" style=" padding-right: 17px;" aria-modal="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Delete Banks Detail</h4>
+                    <h4 class="modal-title">Activate Bank</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ url('/bank-accounts/delete') }}" method="POST">
+                <form action="{{ url('/bank-accounts/reactive') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="deleteId" id="deleteInput">
+                    <input type="hidden" name="deleteId" id="reactivateId">
                     <div class="modal-body">
-                        <h4>Are you sure you want to delete this Banks Detail?</h4>
+                        <h4>Are you sure you want to activate this Bank?</h4>
                     </div>
                     <div class="modal-footer ">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger">Yes</button>
                         <button type="button" data-dismiss="modal" aria-label="Close"
                             class="btn btn-default">Cancel</button>
                 </form>
             </div>
         </div>
     </div>
+   
+
     <script>
         const searchData = () => {
             event.preventDefault();
@@ -137,6 +174,11 @@
             const searchValue = $('#searchInput').val().trim();
             url.searchParams.set('search', searchValue);
             $('#search-form').attr('action', url.toString()).submit();
+        }
+
+        function reactive(id) {
+            $('#modal-reactive').modal('show')
+            $('#reactivateId').val(id)
         }
     </script>
 @endsection

@@ -57,20 +57,27 @@ class TransactionController extends Controller
             $ApproveDepoistTranToday = Transaction::where('type', 'Deposit')->where('status', 'Approve')->whereDate('created_at', $today)->get();
             $ApprovedDepoistToday = $ApproveDepoistTranToday->sum('total');
             $ApprovewithTranToday = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->whereDate('created_at', $today)->get();
-            $ApprovedWithdrawToday = $ApprovewithTranToday->sum('total');
+            $ApprovedWithdrawToday = $ApprovewithTranToday->sum('amount');
             // total
             $ApproveDepoistTranTotal = Transaction::where('type', 'Deposit')->where('status', 'Approve')->get();
             $ApprovedDepoistTotal = $ApproveDepoistTranTotal->sum('total');
             $ApprovewithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->get();
-            $ApprovedWithdrawTotal = $ApprovewithTranTotal->sum('total');
+            $ApprovedWithdrawTotal = $ApprovewithTranTotal->sum('amount');
 
             // pending
             $PendingDepoistTranTotal = Transaction::where('type', 'Deposit')->where('status', 'Pending')->get();
             $PendinhwithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Pending')->get();
 
-            // todays bonu
-            $todaysBonus = $ApproveDepoistTranToday->sum('bonus');
-            $totalBonus = $ApproveDepoistTranTotal->sum('bonus');
+            // todays deposit bonus
+            $todaysDepositBonus = $ApproveDepoistTranToday->sum('bonus');
+            $totalDepositBonus = $ApproveDepoistTranTotal->sum('bonus');
+            
+            // total withdraw bonus
+            $todaysWithdrawBonus = $ApprovewithTranTotal->sum('bonus');
+            $totalWithdrawBonus = $ApprovewithTranTotal->sum('bonus');
+
+            $todaysBonus=$todaysDepositBonus-$todaysWithdrawBonus;
+            $totalBonus=$totalDepositBonus-$totalWithdrawBonus;
 
             $clients = Client::get()->count();
             return view('Admin.Dashboard.index', compact('clients', 'PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
@@ -78,6 +85,7 @@ class TransactionController extends Controller
         } else if ($user->role == 'deposit_banker' || $user->role == 'depositer') {
             $transactions = DB::table('transactions')->where('type', '=', 'Deposit')
                 ->join('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
+                ->leftjoin('clients', 'transactions.client_id', '=', 'clients.id')
                 ->when($status !== 'null', function ($query) use ($status) {
                     return $query->where('transactions.status', '=', $status);
                 })
@@ -91,7 +99,7 @@ class TransactionController extends Controller
                         $query->where('transactions.total', $amount_search);
                     });
                 })
-                ->select('transactions.*', 'bank_details.holder_name as holder_name')
+                ->select('transactions.*', 'bank_details.holder_name as holder_name',)
                 ->when($start_date != null, function ($query) use ($start_date, $end_date) {
                     $query->whereDate('transactions.date', '>=', $start_date)
                         ->whereDate('transactions.date', '<=', $end_date);
@@ -101,7 +109,8 @@ class TransactionController extends Controller
         } else if ($user->role == 'withdrawrer' || $user->role == 'withdrawal_banker') {
             $transactions = DB::table('transactions')->where('type', '=', 'Withdraw')
                 ->leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
-                ->select('transactions.*', 'bank_details.holder_name as holder_name')
+                ->leftjoin('clients', 'transactions.client_id', '=', 'clients.id')
+                ->select('transactions.*', 'bank_details.holder_name as holder_name','clients.name as client_name')
                 ->when($status !== 'null', function ($query) use ($status) {
                     return $query->where('transactions.status', '=', $status);
                 })
@@ -168,9 +177,9 @@ class TransactionController extends Controller
         $bank->amount = $bank->amount + $req->amount;
         $bank->save();
         if ($result) {
-            return redirect('/dashboard')->with(['msg-success' => 'Transaction added successfully']);
+            return redirect()->back()->with(['msg-success' => 'Transaction added successfully']);
         } else {
-            return redirect('/dashboard')->with(['msg-error' => 'Something went wrong']);
+            return redirect()->back()->with(['msg-error' => 'Something went wrong']);
         }
     }
     public function delete(Request $req)
@@ -319,6 +328,7 @@ class TransactionController extends Controller
         $transaction->customer_bank_id = $req->client_bank_account;
         $transaction->exchange_id = $req->exchange_id;
         $transaction->amount = $req->amount;
+        $transaction->bonus = $req->bonus;
         $transaction->date = $req->date;
         $transaction->withdrawrer_id = $withdrawrer->id;
         $transaction->type = 'Withdraw';
@@ -334,10 +344,11 @@ class TransactionController extends Controller
         $transHistory->amount = $req->amount;
         $transHistory->bonus = $req->bonus;
         $transHistory->opening_balance = $exchange->amount;
+        $transHistory->type = 'Deposit';
         $transHistory->save();
 
         //save exchange
-        $exchange->amount = $exchange->amount + $req->total;
+        $exchange->amount = $exchange->amount + $req->amount+$req->bonus;
         $exchange->update();
         // send sms
         $client = Client::find($req->client);
@@ -367,9 +378,9 @@ class TransactionController extends Controller
         curl_close($curl);
         $result = $transaction->save();
         if ($result) {
-            return redirect('/dashboard')->with(['msg-success' => 'Withdraw Request added successfully']);
+            return redirect()->back()->with(['msg-success' => 'Withdraw Request added successfully']);
         } else {
-            return redirect('/dashboard')->with(['msg-error' => 'Something went wrong']);
+            return redirect()->back()->with(['msg-error' => 'Something went wrong']);
         }
     }
     public function withdrawEditForm($id)

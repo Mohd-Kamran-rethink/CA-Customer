@@ -122,6 +122,7 @@
                                         <thead>
                                             <tr>
                                                 <th>S.No.</th>
+                                                <th>Client</th>
                                                 <th>Amount</th>
                                                 <th>Bonus</th>
                                                 <th>Total</th>
@@ -137,6 +138,7 @@
                                             @forelse($transactions as $item)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $item->client_name??'' }}</td>
                                                     <td>{{ $item->amount }}</td>
                                                     <td>{{ $item->bonus }}</td>
                                                     <td>{{ $item->total }}</td>
@@ -151,11 +153,11 @@
                                                             <a href="{{ url('transactions/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
-                                                            @if ($item->status == 'Approve')
+                                                            {{-- @if ($item->status == 'Approve')
                                                                 <button onclick="cancelDeposit({{ $item->id }})"
                                                                     title="Change Status" class="btn btn-danger"
                                                                     type="button">Cancel</button>
-                                                            @endif
+                                                            @endif --}}
                                                         @elseif(session('user')->role === 'depositer' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/change-status/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
@@ -166,11 +168,11 @@
                                                             <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
-                                                            @if ($item->status == 'Approve')
+                                                            {{-- @if ($item->status == 'Approve')
                                                                 <button onclick="cancelDeposit({{ $item->id }})"
                                                                     title="Change Status" class="btn btn-danger"
                                                                     type="button">Cancel</button>
-                                                            @endif
+                                                            @endif --}}
                                                         @elseif(session('user')->role === 'withdrawal_banker')
                                                             <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change

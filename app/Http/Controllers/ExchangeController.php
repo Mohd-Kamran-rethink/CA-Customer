@@ -73,6 +73,7 @@ class ExchangeController extends Controller
                         })
                         ->whereDate('transaction_histories.created_at', '>=', date('Y-m-d', strtotime($startDate)))
                         ->whereDate('transaction_histories.created_at', '<=', date('Y-m-d', strtotime($endDate)))
+                        ->orderBy('id','desc')
                         ->get();
         $clients=Client::get();
         $startDate = $startDate->toDateString();

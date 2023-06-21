@@ -14,7 +14,7 @@
                 </div>
             @elseif (session()->has('msg-error'))
                 <div class="alert alert-danger" role="alert">
-                    {{ session('msg-success') }}
+                    {{ session('msg-error') }}
                 </div>
             @endif
         </div>
@@ -105,7 +105,7 @@
         </div>
         <div class="row mt-2">
             <div class="col-12">
-                <button tabindex="4" type="submit" class="btn btn-info">Save</button>
+                <button tabindex="4" type="submit" class="btn btn-info">Save & Next</button>
                 <a href="{{ url('/dashboard') }}" type="button" class="btn btn-default">Cancel</a>
             </div>
         </div>

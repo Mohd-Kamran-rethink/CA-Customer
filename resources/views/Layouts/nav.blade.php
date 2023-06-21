@@ -22,7 +22,7 @@
         <li class="nav-item dropdown ">
             <a class="nav-link d-flex flex-row align-items-center " data-toggle="dropdown" href="#">
                 <i class="far fa-user p-2"></i>
-                {{session('user')->name}}
+                {{session('user')->name }} <span style="text-transform: capitalize" class="px-2"> ( {{ str_replace('_', ' ', session('user')->role)}})</span>
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <div class="dropdown-divider"></div>
