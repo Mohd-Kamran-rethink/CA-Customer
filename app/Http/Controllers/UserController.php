@@ -415,7 +415,7 @@ class UserController extends Controller
     {
         $id = $req->query('id');
         $banks = BankDetail::where('customer_id', '=', $id)->get();
-        return view('Admin.client.BankList', compact('banks'));
+        return view('Admin.Client.BankList', compact('banks'));
     }
     public function editbankFrom($id)
     {
