@@ -154,9 +154,9 @@
                                                     <td>
                                                         {{-- for deposit functionlaity --}}
                                                         @if (session('user')->role === 'deposit_banker')
-                                                            {{-- <a href="{{ url('transactions/edit/' . $item->id) }}"
+                                                            <a href="{{ url('transactions/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
-                                                                    class="fa fa-pen"></i></a> --}}
+                                                                    class="fa fa-pen"></i></a>
                                                             {{-- @if ($item->status == 'Approve')
                                                                 <button onclick="cancelDeposit({{ $item->id }})"
                                                                     title="Change Status" class="btn btn-danger"

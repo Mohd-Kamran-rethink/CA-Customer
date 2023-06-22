@@ -71,12 +71,11 @@
                             <div class="col-12 d-flex  mb-2">
                                 <div style="width: -webkit-fill-available;" id="bank-account-append">
                                     <label>Client Bank Account<span style="color:red">*</span></label>
-                                    <select tabindex="2" name="client_bank_account" class="form-control searchOptions"
-                                        onchange="handleClientChange(this)">
+                                    <select tabindex="2" name="client_bank_account" class="form-control searchOptions">
                                         <option value="">--Choose--</option>
                                         @if (isset($transaction))
                                             @foreach ($banks as $item)
-                                                <option data-exchange-id="{{ $item->exchange_id }}"
+                                                <option
                                                     {{ $item->id == $transaction->customer_bank_id ? 'selected' : '' }}
                                                     value='{{ $item->id }}'>{{ $item->holder_name }} -(
                                                     {{ $item->account_number }} )</option>
@@ -102,7 +101,7 @@
                                         <option value="0">--Choose--</option>
                                         @foreach ($exchanges as $item)
                                             <option
-                                                {{ isset($transaction) && $item->id == $transaction->exchange_id ? 'selected' : '' }}
+                                               
                                                 value='{{ $item->id }}'>{{ $item->name }} </option>
                                         @endforeach
                                     </select>
@@ -267,6 +266,7 @@
     </div>
     <script>
         function renderClients(selectedClient) {
+            handleClientChange(selectedClient)
             let client_id = jQuery('#selected-client').val();
             giveclientHistory(client_id);
             jQuery.ajax({
@@ -278,7 +278,7 @@
                 }
             });
             // select exhcnag value
-            handleClientChange(selectedClient)
+            
         }
 
         function openClientModel() {
@@ -366,12 +366,13 @@
             let selectedOption = selectElement.options[selectElement.selectedIndex];
             let exchangeId = selectedOption.getAttribute('data-exchange-id');
             let exchangeSelect = document.querySelector('select[name="exchange_id"]');
+            
 
             // Loop through each option in the exchange select dropdown
             for (let i = 0; i < exchangeSelect.options.length; i++) {
                 let option = exchangeSelect.options[i];
-
-                if (option.value === exchangeId) {
+                
+                if (option.value == exchangeId) {
                     // Set the selected attribute for the option with the given exchange ID
                     option.selected = true;
                     break;

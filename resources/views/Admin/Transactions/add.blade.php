@@ -25,6 +25,7 @@
                 <form action="{{ isset($transaction) ? url('transactions/edit') : url('transactions/add') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" name="hiddenid" value="{{isset($transaction)?$transaction->id:''}}">
                     <div class="row">
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">

@@ -214,6 +214,9 @@ class TransactionController extends Controller
     }
     public function edit(Request $req)
     {
+        $bank=BankDetail::find( $req->bank_account);
+        
+        $bank->amount=$bank->amount-$req->amount;
         $req->validate([
             'date' => 'required',
             'amount' => 'required',
@@ -222,7 +225,8 @@ class TransactionController extends Controller
             'bank_account' => 'required|not_in:0',
         ]);
         $deposit_banker = session('user');
-        $transaction =  Transaction::find($req->hiddenid);
+        $newbank=BankDetail::find($req->bank_account);
+        $transaction = Transaction::find($req->hiddenid);
         $transaction->date = $req->date;
         $transaction->amount = $req->amount;
         $transaction->bonus = $req->bonus;
@@ -233,6 +237,15 @@ class TransactionController extends Controller
         $transaction->type = 'Deposit';
         $transaction->status = 'Pending';
         $result = $transaction->save();
+        $transHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','deposit')->first();
+        
+        $transHistory->bank_id = $req->bank_account;
+        $transHistory->agent_id = session('user')->id;
+        $transHistory->amount = $req->amount;
+        $transHistory->opening_balance = $bank->amount;
+        $transHistory->update();
+        $newbank->amount = $bank->amount + $req->amount;
+        $newbank->save();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Transaction updated successfully']);
         } else {
