@@ -152,7 +152,7 @@ class TransactionController extends Controller
 
             $todaysdate = Carbon::now()->startOfDay()->toDateString();
             $currentDateTime = Carbon::now()->startOfDay();
-            $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'Yes')->where('type', '=', 'deposit')->get();
+            $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'Yes')->get();
             return view('Admin.Transactions.add', compact('todaysdate', 'currentDateTime', 'banks'));
         } else return redirect()->back();
     }
