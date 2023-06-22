@@ -308,12 +308,12 @@ class UserController extends Controller
         $clients = Client::get();
 
         foreach ($clients as $client) {
-            $lastDeposit = TransactionHistory::where('client_id', $client->id)
+            $lastDeposit = Transaction::where('client_id', $client->id)
                 ->where('type', 'deposit')
                 ->latest('created_at')
                 ->first();
 
-            $lastWithdrawal = TransactionHistory::where('client_id', $client->id)
+            $lastWithdrawal = Transaction::where('client_id', $client->id)
                 ->where('type', 'withdraw')
                 ->latest('created_at')
                 ->first();
