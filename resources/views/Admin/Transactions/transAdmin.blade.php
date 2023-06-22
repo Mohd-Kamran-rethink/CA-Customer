@@ -75,7 +75,7 @@
                                             <th>UTR No.</th>
                                             <th>Status</th>
                                             <th>Created On</th>
-                                            <th>Action</th>
+                                            {{-- <th>Action</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -90,12 +90,12 @@
                                                 <td>{{ $item->utr_no }}</td>
                                                 <td>{{ $item->status }}</td>
                                                 <td>{{ $item->created_at }}</td>
-                                                <td>
+                                                {{-- <td>
 
                                                     <button title="Delete" onclick="deleteModal({{ $item->id }})"
                                                         class="btn btn-danger"><i class="fa fa-trash"></i></button>
 
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                         @empty
                                             <tr>
