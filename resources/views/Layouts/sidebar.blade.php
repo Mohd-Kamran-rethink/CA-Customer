@@ -227,7 +227,17 @@
                             </p>
                         </a>
                     </li>
-                @endif
+                    <li class="nav-item">
+                        <a href="{{ url('/expense-type') }}" class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-credit-card"></i>
+                            <p>
+                                Expense Types
+    
+                            </p>
+                            {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
+    
+                        </a>
+                    </li>
                 <li class="nav-item">
                     <a href="{{ url('/expenses') }}" class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
                         <i class="nav-icon fa fa-credit-card"></i>
@@ -239,7 +249,7 @@
 
                     </a>
                 </li>
-
+                @endif
             </ul>
         </nav>
     </div>

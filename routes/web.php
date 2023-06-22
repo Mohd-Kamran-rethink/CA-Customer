@@ -187,3 +187,13 @@ Route::prefix('expense-users')->group(function () {
 });
 
 Route::get('getClientHistory', [UserController::class, 'clientHistory'])->name('clientHistory');
+
+
+Route::prefix('expense-type')->group(function () {
+    Route::get('', [ExpenseController::class, 'list'])->name('list');
+    Route::post('/delete', [ExpenseController::class, 'delete'])->name('delete');
+    Route::get('/edit', [ExpenseController::class, 'editForm'])->name('editForm');
+    Route::post('/edit', [ExpenseController::class, 'edit'])->name('edit');
+    Route::get('/add', [ExpenseController::class, 'addForm'])->name('addForm');
+    Route::post('/add', [ExpenseController::class, 'add'])->name('add');
+});

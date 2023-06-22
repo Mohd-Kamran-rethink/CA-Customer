@@ -334,4 +334,74 @@ public function listMyExpenses(Request $req)
             return redirect('/expense-users/debitors')->with(['msg-error' => 'Debitor    went wrong could not add creditors .']);
         }
     }
+
+
+
+
+
+
+
+
+
+
+    //expense type controller
+     // list expense type
+     public function list(Request $req)
+     {
+         $expenses = ExpenseType::orderBy('name', 'asc')->get();
+         $department = Department::where('user_id', session('user')->id)->first();
+         return view('Admin.ExpenseType.list', compact('expenses', 'department'));
+     }
+     // delelte expense type
+     public function delete(Request $req)
+     {
+         $expese = ExpenseType::find($req->deleteId);
+         $result = $expese->delete();
+         if ($result) {
+             return redirect('/expense-type')->with(['msg-success' => 'Expense type has been deleted.']);
+         } else {
+             return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not delete source.']);
+         }
+     }
+     // add form expense type
+     public function addForm()
+     {
+         $department = Department::where('user_id', session('user')->id)->first();
+         return view('Admin.ExpenseType.add', compact('department'));
+     }
+     // edit form expense type 
+     public function editForm(Request $req)
+     {
+         $id = $req->query('id');
+         $department = Department::where('user_id', session('user')->id)->first();
+         $expenseType = ExpenseType::find($id);
+         return view('Admin.ExpenseType.add', compact('expenseType', 'department'));
+     }
+     // add expense-type
+     public function add(Request $req)
+     {
+            $department=Department::where('user_id','=',session('user')->id)->first();
+         
+         $expenseTYpe = new ExpenseType();
+         $expenseTYpe->name = $req->name;
+         $expenseTYpe->department_id = $department->id;
+         $result = $expenseTYpe->save();
+         if ($result) {
+             return redirect('/expense-type')->with(['msg-success' => 'Expense type has been added.']);
+         } else {
+             return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not add expense type.']);
+         }
+     }
+     // edit expense types
+     public function edit(Request $req)
+     {
+         $expenseTYpe = ExpenseType::find($req->expenseTypeId);
+         $expenseTYpe->name = $req->name;
+         $result = $expenseTYpe->save();
+         if ($result) {
+             return redirect('/expense-type')->with(['msg-success' => 'Expense type has been updated.']);
+         } else {
+             return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not update expense type.']);
+         }
+     }
 }
