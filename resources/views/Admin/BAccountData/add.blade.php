@@ -155,7 +155,7 @@
                     <div class="row mt-2">
                         <div class="col-12">
                             <button type="submit" class="btn btn-info">Save</button>
-                            <a href="{{ url('/banks') }}" type="button" class="btn btn-default">Cancel</a>
+                            <a href="{{ url('/bank-accounts') }}" type="button" class="btn btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>

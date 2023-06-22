@@ -68,7 +68,7 @@
                             </ul>
                         </li>
                     @endif
-                    
+
                     <li
                         class="nav-item {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'menu-is-opening menu-open' : '' }}">
                         <a href="#"
@@ -150,7 +150,7 @@
                         </a>
                     </li>
                     {{-- expense --}}
-                    
+
                     {{-- transfer --}}
                     {{-- <li class="nav-item ">
                         <a href="{{ url('/transfers') }}"
@@ -162,16 +162,18 @@
                             
                         </a>
                     </li> --}}
-                   <li class="nav-item  ">
-                    <a href="{{ url('/clients') }}" class="nav-link {{ Request::is('clients') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>
-                            Clients
-                        </p>
-                    </a>
-                </li>
+
                 @endif
-                
+                @if (session('user')->role == 'customer_care_manager' || session('user')->role == 'withdrawrer')
+                    <li class="nav-item  ">
+                        <a href="{{ url('/clients') }}" class="nav-link {{ Request::is('clients') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>
+                                Clients
+                            </p>
+                        </a>
+                    </li>
+                @endif
                 @if (session('user')->role == 'deposit_banker')
                     <li class="nav-item  ">
                         <a href="{{ url('/transactions/add') }}"
@@ -208,7 +210,8 @@
                         </a>
                     </li>
                     <li class="nav-item  ">
-                        <a href="{{ url('expense-users/debitors') }}" class="nav-link {{ Request::is('debitors') ? 'active' : '' }}">
+                        <a href="{{ url('expense-users/debitors') }}"
+                            class="nav-link {{ Request::is('debitors') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-users"></i>
                             <p>
                                 Debitors
@@ -216,7 +219,8 @@
                         </a>
                     </li>
                     <li class="nav-item  ">
-                        <a href="{{ url('expense-users/creditors') }}" class="nav-link {{ Request::is('credits') ? 'active' : '' }}">
+                        <a href="{{ url('expense-users/creditors') }}"
+                            class="nav-link {{ Request::is('credits') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-users"></i>
                             <p>
                                 Creditors
@@ -225,8 +229,7 @@
                     </li>
                 @endif
                 <li class="nav-item">
-                    <a href="{{ url('/expenses') }}"
-                        class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
+                    <a href="{{ url('/expenses') }}" class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
                         <i class="nav-icon fa fa-credit-card"></i>
                         <p>
                             Payment Types
