@@ -169,9 +169,11 @@
                                                         @endif
                                                         {{-- for withdrawal functionality --}}
                                                         @if (session('user')->role === 'withdrawrer')
-                                                            {{-- <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
+                                                            {{-- @if($item->status == 'Approve')
+                                                            <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
-                                                                    class="fa fa-pen"></i></a> --}}
+                                                                    class="fa fa-pen"></i></a>
+                                                            @endif --}}
                                                             {{-- @if ($item->status == 'Approve')
                                                                 <button onclick="cancelDeposit({{ $item->id }})"
                                                                     title="Change Status" class="btn btn-danger"
@@ -456,7 +458,7 @@
         
     @php
         $url='';
-        if(session('user')->role=="withdrawrer")
+        if(session('user')->role=="withdrawal_banker")
         {
             $url='http://customer.cricadda.tech/transactions/change-status-withdraw/';
         }
