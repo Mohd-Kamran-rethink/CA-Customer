@@ -503,14 +503,21 @@ class TransactionController extends Controller
     }
     public function listPendingDeposit(Request $req)
     {
-        $transactions = Transaction::where('type', 'Deposit')->where('status', 'Pending')->get();
+        $transactions = Transaction::leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
+        ->where('transactions.type', 'Deposit')->where('transactions.status', 'Pending')
+        ->select('transactions.*', 'bank_details.holder_name as holder_name')
+        ->get();
         $heading = "Pending Deposits";
         return view('Admin.Transactions.transAdmin', compact('heading', 'transactions'));
     }
     public function pendingWithdraw()
     {
 
-        $transactions = Transaction::where('type', 'Withdraw')->where('status', 'Pending')->get();
+        $transactions = Transaction::leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
+        ->where('transactions.type', 'Withdraw')
+        ->where('transactions.status', 'Pending')
+        ->select('transactions.*', 'bank_details.holder_name as holder_name')
+        ->get();
         $heading = "Pending Withdraw";
         return view('Admin.Transactions.transAdmin', compact('heading', 'transactions'));
     }
