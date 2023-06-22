@@ -127,8 +127,8 @@
                                 <label>Bank Type<span style="color:red">*</span> </label>
                                 <select class="form-control" data-validation="required" name="bank_type">
                                     <option value="0">--Choose--</option>
-                                    <option value="deposit">Deposit</option>
-                                    <option value="withdraw">Withdraw</option>
+                                    <option {{isset($bank)&&$bank->type=="deposit"?'selected':''}} value="deposit">Deposit</option>
+                                    <option {{isset($bank)&&$bank->type=="withdraw"?'selected':''}} value="withdraw">Withdraw</option>
                                     {{-- <option value="both">Both</option> --}}
                                 
                                 </select>
@@ -141,7 +141,7 @@
                                 <select class="form-control" data-validation="required" name="provider">
                                     <option value="0">--Choose--</option>
                                 @foreach ($creditors as $item)
-                                        <option value="{{$item->id}}">{{$item->name}}</option>
+                                        <option {{isset($bank)&&$bank->provider_id==$item->id?"selected":'  '}} value="{{$item->id}}">{{$item->name}}</option>
                                 @endforeach
                                 </select>
 

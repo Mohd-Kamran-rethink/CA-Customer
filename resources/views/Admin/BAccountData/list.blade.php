@@ -86,9 +86,9 @@
                                                         <a href="{{ url('bank-accounts/details/?id=' . $item->id) }}"
                                                             title="View Transaction details" class="btn btn-success">View
                                                             Details</a>
-                                                        {{-- <a href="{{ url('bank-accounts/edit/' . $item->id) }}"
+                                                        <a href="{{ url('bank-accounts/edit/' . $item->id) }}"
                                                             title="Edit" class="btn btn-primary"><i
-                                                                class="fa fa-pen"></i></a> --}}
+                                                                class="fa fa-pen"></i></a>
                                                         @if ($item->is_active == 'Yes')
                                                             <button title="Delete"
                                                                 onclick="manageModal({{ $item->id }})"

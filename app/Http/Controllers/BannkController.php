@@ -33,12 +33,11 @@ class BannkController extends Controller
                         ->paginate(30);
         return view('Admin.BAccountData.list', compact('banks'));
     }
-    public function addForm()
+    public function addForm($id=null)
     {
         
         $creditors=User::get();
         if (isset($id)) {
-           
             $bank = BankDetail::find($id);
             return view('Admin.BAccountData.add', compact('bank','creditors'));
         }
@@ -92,11 +91,14 @@ class BannkController extends Controller
     {
         
         $req->validate([
-            'account_number' => 'required|unique:bank_details,account_number,' . $req->hiddenid,
+            'account_number' => 'required',
             'bank_name' => 'required',
             'name' => 'required',
             'ifcs_code' => 'required',
             'phone' => 'required',
+            'amount'=>'required',
+            'provider'=>'required|not_in:0',
+            'bank_type'=>'required|not_in:0',
         ]);
 
         $bank =  BankDetail::find($req->hiddenid);
@@ -106,7 +108,10 @@ class BannkController extends Controller
         $bank->ifsc = $req->ifcs_code;
         $bank->phone = $req->phone;
         $bank->email = $req->email;
+        $bank->amount = $req->amount;
         $bank->address = $req->address;
+        $bank->provider_id = $req->provider;
+        $bank->type = $req->bank_type;
         $result = $bank->save();
         if ($result) {
             return redirect()->back()->with(['msg-success' => 'Added successfully']);
