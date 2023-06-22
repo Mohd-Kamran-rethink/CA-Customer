@@ -280,7 +280,7 @@
                         <div class="col-12">
                             <button onclick="submitForm()" type="submit" id="submit"
                                 class="btn btn-info">Save</button>
-                            <a href="{{ url('/expense-type') }}" type="button" class="btn btn-default">Cancel</a>
+                            <a href="{{ url('/expenses') }}" type="button" class="btn btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>
