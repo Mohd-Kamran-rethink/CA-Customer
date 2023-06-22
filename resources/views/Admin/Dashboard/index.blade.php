@@ -125,15 +125,16 @@
                                         <thead>
                                             <tr>
                                                 <th>S.No.</th>
-                                                <th>UTR No.</th>
-                                                <th>Amount</th>
-                                                <th>Bonus</th>
-                                                <th>Total</th>
+                                               
                                                 <th>Client ID</th>
                                                 <th>Date</th>
                                                 <th>Bank Account</th>
                                                 <th>Status</th>
                                                 <th>Created On</th>
+                                                <th>UTR No.</th>
+                                                <th>Amount</th>
+                                                <th>Bonus</th>
+                                                <th>Total</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -142,13 +143,14 @@
                                                 <tr>
                                                     <input  type="hidden" value="{{$item->id}}">
                                                     <td>{{ $loop->iteration }}</td>
+                                                   
+                                                    <td>{{ $item->client_id??'' }}</td>
+                                                    <td>{{ $item->date }}</td>
+                                                    <td>{{ $item->holder_name }}</td>
                                                     <td>{{ $item->utr_no }}</td>
                                                     <td>{{ $item->amount }}</td>
                                                     <td>{{ $item->bonus }}</td>
                                                     <td>{{ $item->total }}</td>
-                                                    <td>{{ $item->client_id??'' }}</td>
-                                                    <td>{{ $item->date }}</td>
-                                                    <td>{{ $item->holder_name }}</td>
                                                     <td>{{ $item->status }}</td>
                                                     <td>{{ $item->created_at }}</td>
                                                     <td>
