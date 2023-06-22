@@ -140,6 +140,7 @@
                                         <tbody>
                                             @forelse($transactions as $item)
                                                 <tr>
+                                                    <input  type="hidden" value="{{$item->id}}">
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $item->utr_no }}</td>
                                                     <td>{{ $item->amount }}</td>
@@ -452,7 +453,18 @@
             </div>
         </section>
     @endif
-
+        
+    @php
+        $url='';
+        if(session('user')->role=="withdrawrer")
+        {
+            $url='http://customer.cricadda.tech/transactions/change-status-withdraw/';
+        }
+        else {
+            
+            $url='http://customer.cricadda.tech/transactions/change-status/';
+        }
+    @endphp
 
 
     {{-- timer work --}}
@@ -479,4 +491,25 @@
           window.onload = updateTimer;
         @endif
       </script>
+      
+      <script>
+        document.addEventListener('keydown', function(event) {
+            // Check if the key pressed is the desired shortcut (e.g., "Ctrl + Alt + C")
+            if (event.altKey && event.key === 'c') {
+                // Call the openClientModel function
+                var input = document.querySelector('tbody tr:first-child input[type="hidden"]');
+                var url = '{{ $url }}';
+                var newUrl = url+input.value;
+                if(input)
+                {
+
+                    window.location.href = newUrl;
+                }
+
+            }
+            if (event.key === 'Escape') {
+                $('#client-modal').modal('hide');
+            }
+        });
+    </script>
 @endsection
