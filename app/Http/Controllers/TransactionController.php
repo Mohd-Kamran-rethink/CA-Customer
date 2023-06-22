@@ -122,6 +122,9 @@ class TransactionController extends Controller
                 ->when($status !== 'null', function ($query) use ($status) {
                     return $query->where('transactions.status', '=', $status);
                 })
+                ->when($user->role == 'withdrawrer', function ($query) use ($status) {
+                    return $query->orWhere('transactions.status', '=','Cancel');
+                })
                 ->when($search != null, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
                         $query->where('transactions.utr_no', 'like', '%' . $search . '%');
