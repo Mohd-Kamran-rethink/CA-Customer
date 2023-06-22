@@ -220,13 +220,14 @@
                     </li>
                     <li class="nav-item  ">
                         <a href="{{ url('expense-users/creditors') }}"
-                            class="nav-link {{ Request::is('credits') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-users"></i>
-                            <p>
-                                Creditors
-                            </p>
-                        </a>
-                    </li>
+                        class="nav-link {{ Request::is('credits') ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>
+                            Creditors
+                        </p>
+                    </a>
+                </li>
+                @if(session('user')->role==='customer_care_manager')
                     <li class="nav-item">
                         <a href="{{ url('/expense-type') }}" class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-credit-card"></i>
@@ -238,6 +239,7 @@
     
                         </a>
                     </li>
+                    @endif
                 <li class="nav-item">
                     <a href="{{ url('/expenses') }}" class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
                         <i class="nav-icon fa fa-credit-card"></i>
