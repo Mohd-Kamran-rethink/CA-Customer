@@ -271,8 +271,8 @@ class UserController extends Controller
     {
         $html = '';
         $validator = Validator::make($req->all(), [
-            'name' => 'required',
-            'ca_id' => 'required|unique:clients,ca_id',
+            // 'name' => 'required',
+            // 'ca_id' => 'required|unique:clients,ca_id',
             'number' => 'required|unique:clients,number',
             'exchange' => 'required|not_in:0',
         ]);
@@ -293,7 +293,7 @@ class UserController extends Controller
             ';
 
         foreach ($clients as $item) {
-            $html .= '<option value=' . $item->id . ' data-client=' . $item->id . ' data-number=' . $item->number . '>' . $item->number  . '(' . $item->name . ')</option>';
+            $html .= '<option value=' . $item->id . ' data-client=' . $item->id . ' data-number=' . $item->number . '>' . $item->name  . ' - ' .  $item->number . '</option>';
         }
         '</select>';
         if ($result) {

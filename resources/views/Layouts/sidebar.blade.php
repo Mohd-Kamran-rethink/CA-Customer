@@ -162,10 +162,7 @@
                             
                         </a>
                     </li> --}}
-                   
-                @endif
-               
-                <li class="nav-item  ">
+                   <li class="nav-item  ">
                     <a href="{{ url('/clients') }}" class="nav-link {{ Request::is('clients') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
@@ -173,6 +170,8 @@
                         </p>
                     </a>
                 </li>
+                @endif
+                
                 @if (session('user')->role == 'deposit_banker')
                     <li class="nav-item  ">
                         <a href="{{ url('/transactions/add') }}"

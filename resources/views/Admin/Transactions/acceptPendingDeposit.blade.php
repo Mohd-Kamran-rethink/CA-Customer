@@ -37,7 +37,7 @@
                                             @foreach ($clients as $item)
                                                 <option value="{{ $item->id }}"
                                                     data-exchange-id="{{ $item->exchange_id }}">
-                                                    {{ $item->name }}
+                                                   {{$item->number}} - {{ $item->name }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -243,19 +243,6 @@
                         </div>
                         <div class="col-12">
                             <div class="form-group">
-                                <label>Client Name <span style="color:red">*</span></label>
-                                <input type="text" id="client_name" name="name" placeholder="John"
-                                    class="form-control" data-validation="required"
-                                    value="{{ isset($client) ? $client->name : old('name') }}">
-                                @error('name')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-group">
                                 <label>Phone <span style="color:red">*</span></label>
                                 <input {{ isset($client) ? 'readonly' : '' }} type="number" id="cliet_number"
                                     name="number" value="{{ isset($client) ? $client->number : old('number') }}"
@@ -267,7 +254,21 @@
                         </div>
                         <div class="col-12">
                             <div class="form-group">
-                                <label>ID Name <span style="color:red">*</span></label>
+                                <label>Client Name </label>
+                                <input type="text" id="client_name" name="name" placeholder="John"
+                                    class="form-control" data-validation="required"
+                                    value="{{ isset($client) ? $client->name : old('name') }}">
+                                @error('name')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>ID Name </label>
                                 <input type="text" id="client_ca_id" name="ca_id"
                                     {{ isset($client) ? 'readonly' : '' }}
                                     value="{{ isset($client) ? $client->ca_id : old('ca_id') }}" id="ca_id"

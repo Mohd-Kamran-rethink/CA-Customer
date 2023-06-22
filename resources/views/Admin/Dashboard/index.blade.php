@@ -19,14 +19,14 @@
         </div>
     </section>
     @if (session('user')->role != 'customer_care_manager')
-        @if (isset($transactions))
+        @if (isset($totalApprovedForAgent))
             @php
                 $sum = 0;
             @endphp
-            @foreach ($transactions as $transaction)
+            @foreach ($totalApprovedForAgent as $transaction)
                 @php
                     $type = $transaction->type;
-                    $sum += $transaction->total;
+                    $sum += $transaction->amount;
                 @endphp
             @endforeach
         @endif
