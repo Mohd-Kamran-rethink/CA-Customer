@@ -56,8 +56,12 @@
                                                 <td>{{ $item->lastWithdrawalDate ? $item->lastWithdrawalDate->format('d-M-Y  h:i:s A') : 'No Withdraw yet' }}
                                                     {{ $item->lastWithdrawalDaysAgo != 0 ? $item->lastWithdrawalDaysAgo . ' days ago' : '' }}
                                                 </td>
-                                                <td><a href="{{ url('clients/transactions/view-details?id=' . $item->id) }}"
-                                                        class="btn btn-success">View Details</a></td>
+                                                <td>
+                                                    <a href="{{ url('clients/transactions/view-details?id=' . $item->id) }}"
+                                                        class="btn btn-success">View Details</a>
+                                                    <a href="{{ url('clients/view-banks/?id=' . $item->id) }}"
+                                                        class="btn btn-success">View Banks</a>
+                                                </td>
 
                                             </tr>
                                         @empty

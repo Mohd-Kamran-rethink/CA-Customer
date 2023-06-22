@@ -17,6 +17,20 @@
                     {{ session('msg-success') }}
                 </div>
             @endif
+            <div class="">
+
+                <div class="float-right">Add Client:<span class="font-weight-bold float-right" >Alt+C</span> </div> <br>
+                <div class="float-right">Close Pop Up: <span class="font-weight-bold float-right">Esc</span></div>
+            </div>
+            
+        </div>
+        
+    </section>
+
+    <section class="content-header">
+
+        <div id="transDetails">
+
         </div>
     </section>
     <section class="content">
@@ -37,7 +51,7 @@
                                             @foreach ($clients as $item)
                                                 <option value="{{ $item->id }}"
                                                     data-exchange-id="{{ $item->exchange_id }}">
-                                                   {{$item->number}} - {{ $item->name }}
+                                                    {{ $item->number }} - {{ $item->name }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -51,7 +65,8 @@
                                 <div class="col-4 mt-4">
                                     <div class=" mt-2 ml-3">
                                         <label style="visibility: hidden">Client <span style="color:red">*</span></label>
-                                        <button onclick="openClientModel()" type="button" class="btn btn-primary">Add
+                                        <button id="create-client-button" onclick="openClientModel()" type="button"
+                                            class="btn btn-primary">Add
                                             Client</button>
                                     </div>
                                 </div>
@@ -135,8 +150,9 @@
                                 <div class="form-group">
                                     <label>Date <span style="color:red">*</span></label>
                                     <input readonly type="date" name="date"
-                                        value="{{ isset($transaction) ? $transaction->date : $todaysdate }}" id="date"
-                                        placeholder="100" class="form-control" data-validation="required">
+                                        value="{{ isset($transaction) ? $transaction->date : $todaysdate }}"
+                                        id="date" placeholder="100" class="form-control"
+                                        data-validation="required">
                                     @error('date')
                                         <span class="text-danger">
                                             {{ $message }}
@@ -254,21 +270,7 @@
                         </div>
                         <div class="col-12">
                             <div class="form-group">
-                                <label>Client Name </label>
-                                <input type="text" id="client_name" name="name" placeholder="John"
-                                    class="form-control" data-validation="required"
-                                    value="{{ isset($client) ? $client->name : old('name') }}">
-                                @error('name')
-                                    <span class="text-danger">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label>ID Name </label>
+                                <label>ID Name <span style="color:red">*</span></label>
                                 <input type="text" id="client_ca_id" name="ca_id"
                                     {{ isset($client) ? 'readonly' : '' }}
                                     value="{{ isset($client) ? $client->ca_id : old('ca_id') }}" id="ca_id"
@@ -280,6 +282,21 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Client Name </label>
+                                <input type="text" id="client_name" name="name" placeholder="John"
+                                    class="form-control" data-validation="required"
+                                    value="{{ isset($client) ? $client->name : old('name') }}">
+                                @error('name')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
@@ -404,6 +421,7 @@
             let exchangeId = selectedOption.getAttribute('data-exchange-id');
             let exchangeSelect = document.querySelector('select[name="exchange_id"]');
 
+            giveclientHistory(selectedOption.value)
             // Loop through each option in the exchange select dropdown
             for (let i = 0; i < exchangeSelect.options.length; i++) {
                 let option = exchangeSelect.options[i];
@@ -416,5 +434,32 @@
             }
 
         }
+
+        function giveclientHistory(id)
+
+        {
+            $.ajax({
+                url: BASE_URL +
+                    "/getClientHistory/?clientID=" + id,
+                success: function(data) {
+                    $("#transDetails").html(data);
+
+                },
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener('keydown', function(event) {
+            // Check if the key pressed is the desired shortcut (e.g., "Ctrl + Alt + C")
+            if (event.altKey && event.key === 'c') {
+                // Call the openClientModel function
+
+                openClientModel();
+            }
+            if (event.key === 'Escape') {
+                console.log("first")
+                $('#client-modal').modal('hide');
+            }
+        });
     </script>
 @endsection

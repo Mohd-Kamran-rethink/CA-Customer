@@ -7,6 +7,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\franchises;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -153,6 +154,9 @@ Route::get('/clients',[UserController::class,'clientList'])->name('clientList')-
 // show all the activeity of partitculat clients
 
 Route::get('/clients/transactions/view-details',[UserController::class,'showClientActivity'])->name('showClientActivity')->middleware('CommonMiddleware');
+Route::get('clients/view-banks',[UserController::class,'viewBankList'])->name('viewBankList')->middleware('CommonMiddleware');
+Route::get('client/bank-accounts/edit/{id}',[UserController::class,'editbankFrom'])->name('editbankFrom')->middleware('CommonMiddleware');
+Route::post('client/bank-accounts/edit',[UserController::class,'editBank'])->name('editBank')->middleware('CommonMiddleware');
 
 
 // expenses
@@ -181,3 +185,5 @@ Route::prefix('expense-users')->group(function () {
     Route::get('debitors/add', [ExpenseController::class, 'debitorsAddFrom'])->name('debitorsAddFrom');
     Route::post('debitors/add', [ExpenseController::class, 'debitorAdd'])->name('debitorAdd');
 });
+
+Route::get('getClientHistory', [UserController::class, 'clientHistory'])->name('clientHistory');

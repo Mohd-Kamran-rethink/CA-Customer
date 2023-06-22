@@ -100,10 +100,10 @@ class TransactionController extends Controller
                 })
                 ->when($amount_search, function ($query) use ($amount_search) {
                     $query->where(function ($query) use ($amount_search) {
-                        $query->where('transactions.total', $amount_search);
+                        $query->where('transactions.amount', $amount_search);
                     });
                 })
-                ->select('transactions.*', 'bank_details.holder_name as holder_name')
+                ->select('transactions.*', 'bank_details.holder_name as holder_name','clients.name as client_name','clients.ca_id as client_id')
                 ->when($start_date != null, function ($query) use ($start_date, $end_date) {
                     $query->whereDate('transactions.date', '>=', $start_date)
                         ->whereDate('transactions.date', '<=', $end_date);
@@ -118,7 +118,7 @@ class TransactionController extends Controller
             $transactions = DB::table('transactions')->where('transactions.type', '=', 'Withdraw')
                 ->leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
                 ->leftjoin('clients', 'transactions.client_id', '=', 'clients.id')
-                ->select('transactions.*', 'bank_details.holder_name as holder_name', 'clients.name as client_name')
+                ->select('transactions.*', 'bank_details.holder_name as holder_name', 'clients.name as client_name','clients.ca_id as client_id')
                 ->when($status !== 'null', function ($query) use ($status) {
                     return $query->where('transactions.status', '=', $status);
                 })
@@ -129,7 +129,7 @@ class TransactionController extends Controller
                 })
                 ->when($amount_search, function ($query) use ($amount_search) {
                     $query->where(function ($query) use ($amount_search) {
-                        $query->where('transactions.total', $amount_search);
+                        $query->where('transactions.amount', $amount_search);
                     });
                 })
                 ->when($start_date != null, function ($query) use ($start_date, $end_date) {

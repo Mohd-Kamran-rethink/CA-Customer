@@ -109,31 +109,10 @@
                             <input readonly oninput="sumAmountBonus()" type="hidden" name="bonus"
                                 value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
                                 class="form-control">
-
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>UTR No <span style="color:red">
-                                            {{ session('user')->role === 'withdrawrer' ? '' : '*' }}</span></label>
-                                    <input tabindex="1" {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }} type="text"
-                                        name="utr"
-                                        value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}"
-                                        id="utr" placeholder="UTR Number" class="form-control"
-                                        data-validation="required">
-                                    @error('utr')
-                                        <span class="text-danger">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <input type="hidden" name="total"
-                                value="{{ isset($transaction) ? $transaction->total : old('total') }}" id="total"
-                                readonly class="form-control" data-validation="required">
-
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Bank Account<span style="color:red">*</span></label>
-                                    <select tabindex="2" name="bank_account" class="form-control">
+                                    <select tabindex="2" name="bank_account" class="form-control searchOptions">
                                         <option value="">--Choose--</option>
                                         @foreach ($banks as $item)
                                             <option
@@ -150,6 +129,27 @@
 
                                 </div>
                             </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>UTR No <span style="color:red">
+                                            {{ session('user')->role === 'withdrawrer' ? '' : '*' }}</span></label>
+                                    <input tabindex="1" {{ session('user')->role === 'withdrawrer' ? 'readonly' : '' }}
+                                        type="text" name="utr"
+                                        value="{{ isset($transaction) ? $transaction->utr_no : old('utr') }}"
+                                        id="utr" placeholder="UTR Number" class="form-control"
+                                        data-validation="required">
+                                    @error('utr')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <input type="hidden" name="total"
+                                value="{{ isset($transaction) ? $transaction->total : old('total') }}" id="total"
+                                readonly class="form-control" data-validation="required">
+
+
                         </div>
                     </div>
                     {{-- customer bank deatils --}}

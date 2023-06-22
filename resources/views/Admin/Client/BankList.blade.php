@@ -24,7 +24,7 @@
     <section class="content">
         <div class="card">
             <div class="card-body">
-                <div class="mb-3 d-flex justify-content-between align-items-centers">
+                {{-- <div class="mb-3 d-flex justify-content-between align-items-centers">
                     <form action="{{ url('banks') }}" method="GET" id="search-form">
                         <div class="input-group input-group-sm" style="width: 150px;">
                             <input type="text" value="{{ isset($searchTerm) ? $searchTerm : '' }}" name="table_search"
@@ -36,10 +36,8 @@
                             </div>
                         </div>
                     </form>
-                    <div>
-                        <a href="{{ url('bank-accounts/add') }}" class="btn btn-primary">Add Bank Detail</a>
-                    </div>
-                </div>
+                    
+                </div> --}}
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -52,11 +50,6 @@
                                             <th>Bank Account</th>
                                             <th>Account Number</th>
                                             <th>IFSC Code</th>
-                                            <th>Address</th>
-                                            <th>Phone</th>
-                                            <th>Type</th>
-                                            <th>Balance</th>
-                                            <th>Provider</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -68,27 +61,16 @@
                                                 <td>{{ $item->bank_name }}</td>
                                                 <td>{{ $item->account_number }}</td>
                                                 <td>{{ $item->ifsc }}</td>
-                                                <td>{{ $item->address }}</td>
-                                                <td>{{ $item->phone }}</td>
-                                                <td>{{ $item->type }}</td>
-                                                <td>{{ $item->amount }}</td>
-                                                <td>{{ $item->provider_name ?? '-' }}</td>
                                                 <td>
                                                     {{-- <a href="{{ url('bank-accounts/deposit-money/' . $item->id) }}"
-                                                        title="Deposit money" class="btn btn-primary">Deposit</a>
-                                                    <a href="{{ url('bank-accounts/withdraw-money/' . $item->id) }}"
-                                                        title="withdraw" class="btn btn-secondary">Withdraw</a> --}}
+                                                        title="Deposit money" class="btn btn-primary">Deposit</a> --}}
+                                                    <a href="{{ url('client/bank-accounts/edit/' . $item->id) }}"
+                                                        title="withdraw" class="btn btn-secondary">Edit</a>
 
 
                                                     @if (session('user')->role == 'deposit_banker' ||
                                                             session('user')->role == 'withdrawal_banker' ||
                                                             session('user')->role == 'customer_care_manager')
-                                                        <a href="{{ url('bank-accounts/details/?id=' . $item->id) }}"
-                                                            title="View Transaction details" class="btn btn-success">View
-                                                            Details</a>
-                                                        {{-- <a href="{{ url('bank-accounts/edit/' . $item->id) }}"
-                                                            title="Edit" class="btn btn-primary"><i
-                                                                class="fa fa-pen"></i></a> --}}
                                                         @if ($item->is_active == 'Yes')
                                                             <button title="Delete"
                                                                 onclick="manageModal({{ $item->id }})"
@@ -109,9 +91,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="card-footer clearfix">
-                                {{ $banks->links('pagination::bootstrap-4') }}
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -166,7 +146,7 @@
             </div>
         </div>
     </div>
-   
+
 
     <script>
         const searchData = () => {

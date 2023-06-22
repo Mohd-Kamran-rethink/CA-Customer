@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BankDetail;
 use App\Client;
 use App\Franchise;
 use App\Transaction;
@@ -275,6 +276,7 @@ class UserController extends Controller
             // 'ca_id' => 'required|unique:clients,ca_id',
             'number' => 'required|unique:clients,number',
             'exchange' => 'required|not_in:0',
+            'ca_id' => 'required|unique:clients,ca_id',
         ]);
 
         if ($validator->fails()) {
@@ -321,7 +323,7 @@ class UserController extends Controller
             if ($client->lastDepositDate) {
                 $client->lastDepositDaysAgo = Carbon::parse($client->lastDepositDate)->diffInDays(Carbon::now());
             }
-            
+
             if ($client->lastWithdrawalDate) {
                 $client->lastWithdrawalDaysAgo = Carbon::parse($client->lastWithdrawalDate)->diffInDays(Carbon::now());
             }
@@ -332,10 +334,10 @@ class UserController extends Controller
     // show client transadction details
     public function showClientActivity(Request $req)
     {
-        $id=$req->query('id');
-        $startDate = $req->query('from_date')??null;
-        $endDate = $req->query('to_date')??null;
-        $type=$req->query('type')??'null';
+        $id = $req->query('id');
+        $startDate = $req->query('from_date') ?? null;
+        $endDate = $req->query('to_date') ?? null;
+        $type = $req->query('type') ?? 'null';
         if (!$startDate) {
             $startDate = Carbon::now()->startOfDay();
             $endDate = Carbon::now()->endOfDay();
@@ -344,16 +346,101 @@ class UserController extends Controller
             $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
         }
 
-        $activites=Transaction::where('client_id','=',$id)
-        ->when($type !== 'null', function ($query) use ($type) {
-            $query->where('type', $type);
-        })
-        ->whereDate('created_at', '>=', date('Y-m-d', strtotime($startDate)))
-        ->whereDate('created_at', '<=', date('Y-m-d', strtotime($endDate)))
-                ->get();
-                $startDate = $startDate->toDateString();
-                $endDate = $endDate->toDateString();
-        return view('Admin.Client.ViewDetails',compact('activites','id','startDate','endDate'));
-        
+        $activites = Transaction::where('client_id', '=', $id)
+            ->when($type !== 'null', function ($query) use ($type) {
+                $query->where('type', $type);
+            })
+            ->whereDate('created_at', '>=', date('Y-m-d', strtotime($startDate)))
+            ->whereDate('created_at', '<=', date('Y-m-d', strtotime($endDate)))
+            ->get();
+        $startDate = $startDate->toDateString();
+        $endDate = $endDate->toDateString();
+        return view('Admin.Client.ViewDetails', compact('activites', 'id', 'startDate', 'endDate'));
+    }
+
+
+
+    // history
+    public function clientHistory(Request $req)
+    {
+
+        $html = '';
+        $lastWithdraw = Transaction::where('Type', '=', 'Withdraw')->where('client_id', '=', $req->clientID)->latest()
+            ->limit(5)->get();
+        $lastDeposit = Transaction::where('Type', '=', 'Deposit')->where('client_id', '=', $req->clientID)->latest()
+            ->limit(5)->get();
+
+        $html .= '<div class="container">';
+        $html .= '<div class="row">';
+
+        $html .= '<div class="col-6">';
+        $html .= '<h2>Last Withdrawals:</h2>';
+        $html .= '<table class="table">';
+        $html .= '<tr><th>Amount</th><th>Date</th></tr>';
+
+        foreach ($lastWithdraw as $withdraw) {
+            $html .= '<tr>';
+            $html .= '<td>' . $withdraw->amount . '</td>';
+            $html .= '<td>' . $withdraw->date . '</td>';
+            // Add any other details you want to display
+            $html .= '</tr>';
+        }
+
+        $html .= '</table>';
+        $html .= '</div>'; // Close col-6
+
+        $html .= '<div class="col-6">';
+        $html .= '<h2>Last Deposits:</h2>';
+        $html .= '<table class="table">';
+        $html .= '<tr><th>Amount</th><th>Date</th></tr>';
+
+        foreach ($lastDeposit as $deposit) {
+            $html .= '<tr>';
+            $html .= '<td>' . $deposit->amount . '</td>';
+            $html .= '<td>' . $deposit->date . '</td>';
+            // Add any other details you want to display
+            $html .= '</tr>';
+        }
+
+        $html .= '</table>';
+        $html .= '</div>'; // Close col-6
+
+        $html .= '</div>'; // Close row
+        $html .= '</div>'; // Close container
+
+        return $html;
+    }
+
+    public function viewBankList(Request $req)
+    {
+        $id = $req->query('id');
+        $banks = BankDetail::where('customer_id', '=', $id)->get();
+        return view('Admin.client.BankList', compact('banks'));
+    }
+    public function editbankFrom($id)
+    {
+        $bank = BankDetail::find($id);
+        return view('Admin.Client.Editbank', compact('bank'));
+    }
+    public function editBank(Request $req)
+    {
+        $req->validate([
+            'account_number' => 'required',
+            'bank_name' => 'required',
+            'name' => 'required',
+            'ifcs_code' => 'required',
+        ]);
+
+        $bank = BankDetail::find($req->hiddenid);
+        $bank->holder_name = $req->name;
+        $bank->customer_id = $req->customer_id;
+        $bank->bank_name = $req->bank_name;
+        $bank->account_number = $req->account_number;
+        $bank->ifsc = $req->ifcs_code;
+        $bank->phone = $req->phone;
+        $bank->email = $req->email;
+        $bank->address = $req->address;
+        $bank->save();
+        return redirect()->back()->with(['msg-success' => 'updated successfully']);
     }
 }

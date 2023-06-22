@@ -18,6 +18,19 @@
                 </div>
             @endif
         </div>
+        <div class="">
+
+            <div class="float-right">Add Client Bank : <span class="font-weight-bold float-right pl-2"> Alt+C</span> </div>
+            <br>
+            <div class="float-right">Close Pop Up : <span class="font-weight-bold float-right pl-3"> Esc</span></div>
+        </div>
+
+    </section>
+    <section class="content-header">
+
+        <div id="transDetails">
+
+        </div>
     </section>
     <section class="content">
         <div class="card">
@@ -39,7 +52,8 @@
                                         <option
                                             {{ isset($transaction) && $transaction->client_id == $item->id ? 'selected' : '' }}
                                             value="{{ $item->id }}" data-number="{{ $item->number }}"
-                                            data-client="{{ $item->id }}" data-exchange-id="{{ $item->exchange_id }}"> {{ $item->name }}</option>
+                                            data-client="{{ $item->id }}" data-exchange-id="{{ $item->exchange_id }}">
+                                            {{ $item->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('client')
@@ -57,11 +71,13 @@
                             <div class="col-12 d-flex  mb-2">
                                 <div style="width: -webkit-fill-available;" id="bank-account-append">
                                     <label>Client Bank Account<span style="color:red">*</span></label>
-                                    <select tabindex="2" name="client_bank_account" class="form-control">
+                                    <select tabindex="2" name="client_bank_account" class="form-control searchOptions"
+                                        onchange="handleClientChange(this)">
                                         <option value="">--Choose--</option>
                                         @if (isset($transaction))
                                             @foreach ($banks as $item)
-                                                <option {{ $item->id == $transaction->customer_bank_id ? 'selected' : '' }}
+                                                <option data-exchange-id="{{ $item->exchange_id }}"
+                                                    {{ $item->id == $transaction->customer_bank_id ? 'selected' : '' }}
                                                     value='{{ $item->id }}'>{{ $item->holder_name }} -(
                                                     {{ $item->account_number }} )</option>
                                             @endforeach
@@ -82,7 +98,7 @@
                             <div class="col-12">
                                 <div style="width: -webkit-fill-available;" id="exchange_id">
                                     <label>Exchange<span style="color:red">*</span></label>
-                                    <select name="exchange_id" class="form-control">
+                                    <select name="exchange_id" class="form-control searchOptions" id="exchangeOptions">
                                         <option value="0">--Choose--</option>
                                         @foreach ($exchanges as $item)
                                             <option
@@ -116,9 +132,9 @@
 
                             <div class="col-12">
                                 <label>Bonus</label>
-                                <input tabindex="4" type="number" step="any"
-                                    name="bonus" value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}"
-                                    id="bonus" class="form-control">
+                                <input tabindex="4" type="number" step="any" name="bonus"
+                                    value="{{ isset($transaction) ? $transaction->bonus : old('bonus') }}" id="bonus"
+                                    class="form-control">
                                 @error('bonus')
                                     <span class="text-danger">
                                         {{ $message }}
@@ -128,9 +144,8 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Total<span style="color:red">*</span></label>
-                                    <input type="number" name="total"
-                                        value="{{ old('total') }}"
-                                        id="total" readonly class="form-control" data-validation="required">
+                                    <input type="number" name="total" value="{{ old('total') }}" id="total"
+                                        readonly class="form-control" data-validation="required">
                                     @error('total')
                                         <span class="text-danger">
                                             {{ $message }}
@@ -138,23 +153,23 @@
                                     @enderror
                                 </div>
                             </div>
-   
+
                         </div>
                         <div class="col-6">
-                           <div class="col-12">
-                               <div class="form-group">
-                                   <label>Date <span style="color:red">*</span></label>
-                                   <input type="date" name="date"
-                                       value="{{ isset($transaction) ? $transaction->date : $todaysdate }}" id="date"
-                                       class="form-control" data-validation="required">
-                                   @error('date')
-                                       <span class="text-danger">
-                                           {{ $message }}
-                                       </span>
-                                   @enderror
-                               </div>
-                           </div>
-                       </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Date <span style="color:red">*</span></label>
+                                    <input type="date" name="date"
+                                        value="{{ isset($transaction) ? $transaction->date : $todaysdate }}"
+                                        id="date" class="form-control" data-validation="required">
+                                    @error('date')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row mt-2">
@@ -241,7 +256,8 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
-                            <button onclick="addBankAccoutAjax()" type="button" class="btn btn-info">Save & Next</button>
+                            <button onclick="addBankAccoutAjax()" type="button" class="btn btn-info">Save &
+                                Next</button>
                             <a href="{{ url('/banks') }}" type="button" class="btn btn-default">Cancel</a>
                         </div>
                     </div>
@@ -252,6 +268,7 @@
     <script>
         function renderClients(selectedClient) {
             let client_id = jQuery('#selected-client').val();
+            giveclientHistory(client_id);
             jQuery.ajax({
                 url: BASE_URL + "/render-client-account/?client_id=" + client_id,
                 success: function(data) {
@@ -266,6 +283,19 @@
 
         function openClientModel() {
             $('#client-modal').modal('show');
+        }
+
+        function giveclientHistory(id)
+
+        {
+            $.ajax({
+                url: BASE_URL +
+                    "/getClientHistory/?clientID=" + id,
+                success: function(data) {
+                    $("#transDetails").html(data);
+
+                },
+            });
         }
 
         function openBankModal() {
@@ -349,5 +379,19 @@
             }
 
         }
+    </script>
+    <script>
+        document.addEventListener('keydown', function(event) {
+            // Check if the key pressed is the desired shortcut (e.g., "Ctrl + Alt + C")
+            if (event.altKey && event.key === 'c') {
+                // Call the openClientModel function
+
+                openBankModal();
+            }
+            if (event.key === 'Escape') {
+
+                $('#bank-modal').modal('hide');
+            }
+        });
     </script>
 @endsection

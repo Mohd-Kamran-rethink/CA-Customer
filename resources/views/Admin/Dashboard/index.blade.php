@@ -33,7 +33,7 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-3 col-6">
+                    <div class="col-3">
                         <div class="small-box bg-info">
                             <div class="inner">
                                 <h3>{{ isset($transactions) ? count($transactions) ?? 0 : 0 }} </h3>
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     {{-- for withdraw --}}
-                    <div class="col-lg-3 col-6">
+                    <div class="col-3">
                         <div class="small-box bg-primary">
                             <div class="inner">
                                 <h3>{{ number_format($sum) }}</h3>
@@ -59,6 +59,9 @@
                                 <i class="fa fa-credit-card"></i>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-6 d-flex justify-content-end align-items-end pb-2" >
+                        <h1 id="timer">Page will reload in 10 s</h1>
                     </div>
                 </div>
             </div>
@@ -122,13 +125,13 @@
                                         <thead>
                                             <tr>
                                                 <th>S.No.</th>
-                                                <th>Client</th>
+                                                <th>UTR No.</th>
                                                 <th>Amount</th>
                                                 <th>Bonus</th>
                                                 <th>Total</th>
+                                                <th>Client ID</th>
                                                 <th>Date</th>
                                                 <th>Bank Account</th>
-                                                <th>UTR No.</th>
                                                 <th>Status</th>
                                                 <th>Created On</th>
                                                 <th>Action</th>
@@ -138,13 +141,13 @@
                                             @forelse($transactions as $item)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $item->client_name??'' }}</td>
+                                                    <td>{{ $item->utr_no }}</td>
                                                     <td>{{ $item->amount }}</td>
                                                     <td>{{ $item->bonus }}</td>
                                                     <td>{{ $item->total }}</td>
+                                                    <td>{{ $item->client_id??'' }}</td>
                                                     <td>{{ $item->date }}</td>
                                                     <td>{{ $item->holder_name }}</td>
-                                                    <td>{{ $item->utr_no }}</td>
                                                     <td>{{ $item->status }}</td>
                                                     <td>{{ $item->created_at }}</td>
                                                     <td>
@@ -260,6 +263,9 @@
             $('#transID').val(id)
         }
     </script>
+
+
+
     {{-- for customercar manager --}}
     @if (session('user')->role == 'customer_care_manager')
         <section class="content">
@@ -446,4 +452,31 @@
             </div>
         </section>
     @endif
+
+
+
+    {{-- timer work --}}
+    <script>
+        // Function to update the timer
+        function updateTimer() {
+          var countdown = 10; // Set the countdown duration in seconds
+          var timerElement = document.getElementById("timer");
+    
+          var countdownInterval = setInterval(function() {
+            timerElement.textContent ="Page will reload in " + countdown + " s"; // Update the timer display
+    
+            if (countdown === 0) {
+              clearInterval(countdownInterval);
+              location.reload(); // Reload the page when countdown reaches 0
+            }
+    
+            countdown--;
+          }, 1000); // 1000 milliseconds = 1 second
+        }
+        
+        // Call the function to start the timer if the user role is not "manager"
+        @if(session('user')->role != 'customer_care_manager')
+          window.onload = updateTimer;
+        @endif
+      </script>
 @endsection
