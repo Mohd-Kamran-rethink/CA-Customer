@@ -68,7 +68,7 @@ public function listMyExpenses(Request $req)
         $expenseTypes = ExpenseType::orderBy('expense_types.name', 'asc')->get();
         $departments = Department::orderBy('departments.name', 'asc')->get();
         $users = User::orderBy('name', 'asc')->get();
-        $banks = BankDetail::orderBy('holder_name', 'asc')->get();
+        $banks = BankDetail::whereNull('customer_id')->orderBy('holder_name', 'asc')->get();
         return view('Admin.Expenses.add', compact('banks', 'users', 'departments', 'expenseTypes'));
     }
     // add expenses main function
