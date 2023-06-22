@@ -162,7 +162,7 @@ class TransactionController extends Controller
         $req->validate([
             'date' => 'required',
             'amount' => 'required',
-            'utr' => 'required',
+            'utr' => 'required|unique:transactions,utr_no',
             'bank_account' => 'required|not_in:0',
         ]);
         $deposit_banker = session('user');
@@ -446,7 +446,7 @@ class TransactionController extends Controller
         $req->validate([
             'date' => 'required',
             'amount' => 'required',
-            'utr' => 'required',
+            'utr' => 'required|unique:transactions,utr_no',
             'bank_account' => 'required|not_in:0',
         ]);
         $withdrawal_banker = session('user');
