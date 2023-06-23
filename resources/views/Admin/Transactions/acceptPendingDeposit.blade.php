@@ -43,9 +43,9 @@
                         <div class="col-6">
                             <div class="row">
                                 <div class="col-8 col-md-6 col-lg-8">
-                                    <div class="" id="client-ajax-dropdown">
+                                    <div class="" >
                                         <label>Clients <span style="color:red">*</span></label>
-                                        <select tabindex="1" name="client" id=""
+                                        <select id="client-ajax-dropdown" tabindex="1" name="client" id=""
                                             class="form-control searchOptions" onchange="handleClientChange(this)">
                                             <option value="0">--Choose--</option>
                                             @foreach ($clients as $item)
