@@ -97,7 +97,7 @@
                             <div class="col-12">
                                 <div style="width: -webkit-fill-available;" id="exchange_id">
                                     <label>Exchange<span style="color:red">*</span></label>
-                                    <select name="exchange_id" class="form-control searchOptions" id="exchangeOptions">
+                                    <select name="exchange_id" class="form-control" id="exchanges">
                                         <option value="0">--Choose--</option>
                                         @foreach ($exchanges as $item)
                                             <option
@@ -365,12 +365,13 @@
         function handleClientChange(selectElement) {
             let selectedOption = selectElement.options[selectElement.selectedIndex];
             let exchangeId = selectedOption.getAttribute('data-exchange-id');
-            let exchangeSelect = document.querySelector('select[name="exchange_id"]');
+            let exchangeSelect = document.querySelector('select[id="exchanges"]');
             
 
             // Loop through each option in the exchange select dropdown
             for (let i = 0; i < exchangeSelect.options.length; i++) {
                 let option = exchangeSelect.options[i];
+                
                 
                 if (option.value == exchangeId) {
                     // Set the selected attribute for the option with the given exchange ID

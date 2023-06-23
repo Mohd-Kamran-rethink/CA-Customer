@@ -425,7 +425,6 @@
             // Loop through each option in the exchange select dropdown
             for (let i = 0; i < exchangeSelect.options.length; i++) {
                 let option = exchangeSelect.options[i];
-
                 if (option.value === exchangeId) {
                     // Set the selected attribute for the option with the given exchange ID
                     option.selected = true;
