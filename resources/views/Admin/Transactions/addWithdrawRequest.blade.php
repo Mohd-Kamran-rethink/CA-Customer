@@ -309,9 +309,18 @@
             let selectedOption = $("#selected-client option:selected");
             // let selectedNumber = selectedOption.data("number");
             let client_id = selectedOption.data("client");
-            // $('#phone').val(selectedNumber);
-            $('#hidden_client_id').val(client_id);
-            $('#bank-modal').modal('show');
+            console.log(client_id)
+            if(client_id==0 || client_id==undefined)
+            {
+                alert("Please select client first than add bank");
+            }
+            else
+            {
+
+                // $('#phone').val(selectedNumber);
+                $('#hidden_client_id').val(client_id);
+                $('#bank-modal').modal('show');
+            }
         }
 
         function addBankAccoutAjax() {
