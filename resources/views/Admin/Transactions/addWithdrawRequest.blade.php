@@ -53,7 +53,7 @@
                                             {{ isset($transaction) && $transaction->client_id == $item->id ? 'selected' : '' }}
                                             value="{{ $item->id }}" data-number="{{ $item->number }}"
                                             data-client="{{ $item->id }}" data-exchange-id="{{ $item->exchange_id }}">
-                                            {{ $item->name }}</option>
+                                            {{ $item->number }} - {{ $item->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('client')
