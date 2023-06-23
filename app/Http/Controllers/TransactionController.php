@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\BankDetail;
 use App\Client;
 use App\Exchange;
+use App\Exports\TransactionsExport;
 use App\Lead;
 use App\LeadStatus;
 use App\LeadStatusOption;
@@ -14,6 +15,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
@@ -246,38 +248,34 @@ class TransactionController extends Controller
     }
     public function edit(Request $req)
     {
-        $bank=BankDetail::find( $req->bank_account);
         
-        $bank->amount=$bank->amount-$req->amount;
+        $transaction = Transaction::find($req->hiddenid);
+        $bank=BankDetail::find($transaction->bank_account);
+        $bankoldAmount=$bank->amount-$transaction->amount;
+        $bank->amount=($bank->amount-$transaction->amount)+$req->amount;
+        $bank->save();
         $req->validate([
             'date' => 'required',
             'amount' => 'required',
             'utr' => 'required',
             'total' => 'required',
-            'bank_account' => 'required|not_in:0',
         ]);
         $deposit_banker = session('user');
-        $newbank=BankDetail::find($req->bank_account);
-        $transaction = Transaction::find($req->hiddenid);
         $transaction->date = $req->date;
         $transaction->amount = $req->amount;
         $transaction->bonus = $req->bonus;
         $transaction->utr_no = $req->utr;
         $transaction->total = $req->total;
-        $transaction->bank_account = $req->bank_account;
         $transaction->deposit_banker_id = $deposit_banker->id;
         $transaction->type = 'Deposit';
         $transaction->status = 'Pending';
         $result = $transaction->save();
         $transHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','deposit')->first();
         
-        $transHistory->bank_id = $req->bank_account;
         $transHistory->agent_id = session('user')->id;
         $transHistory->amount = $req->amount;
-        $transHistory->opening_balance = $bank->amount;
+        $transHistory->opening_balance = $bankoldAmount;
         $transHistory->update();
-        $newbank->amount = $bank->amount + $req->amount;
-        $newbank->save();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Transaction updated successfully']);
         } else {
@@ -623,5 +621,19 @@ class TransactionController extends Controller
         $exchange->update();
         $bank->update();
         return redirect('/dashboard')->with(['msg-success' => 'Transaction has been cancelled']);
+    }
+
+
+
+
+
+    public function exportPending(Request $req)
+    {
+        $transactions = Transaction::leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
+                        ->where('transactions.type', $req->type)->where('transactions.status', 'Pending')
+                        ->select('transactions.amount','transactions.bonus','transactions.utr_no', 'bank_details.holder_name as holder_name','bank_details.bank_name as bank','transactions.created_at')
+                        ->get();
+        $export=new TransactionsExport($transactions);
+        return Excel::download($export, 'transactions.xlsx');
     }
 }

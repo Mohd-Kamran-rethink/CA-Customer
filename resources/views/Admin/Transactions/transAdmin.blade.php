@@ -54,11 +54,16 @@
                             <label for="">To</label>
                             <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
                         </div>
-                        <div class="col-2 pt-2">
-                            <button class="btn btn-success mt-4">Filter</button>
-                        </div>
                     </div>
                 </form> --}}
+                <div class="pt-2">
+                    <form action="{{url('transaction/export')}}" method="POST">
+                        @csrf
+                        <input  value="{{$heading=="Pending Deposits"?'Deposit':'Withdraw'}}" type="hidden" name="type">
+                        <button type="submit" class="btn btn-success mt-4">Export</button>
+                    </form>
+                </div>
+
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card">

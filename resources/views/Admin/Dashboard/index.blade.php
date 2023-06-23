@@ -112,6 +112,7 @@
                                     @if(session('user')->role=='deposit_banker')
                                     <a href="{{ url('transactions/add') }}" class="btn btn-primary mt-4">Add</a>
                                     @endif
+                                    
                                 </div>
 
                             </div>
@@ -121,7 +122,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-hover text-nowrap">
+                                    <table class="table table-hover text-nowrap ">
                                         <thead>
                                             <tr>
                                                 <th>S.No.</th>
@@ -153,7 +154,7 @@
                                                     <td>{{ $item->status }}</td>
                                                     <td>
                                                         {{-- for deposit functionlaity --}}
-                                                        @if (session('user')->role === 'deposit_banker')
+                                                        @if (session('user')->role === 'deposit_banker' && $item->status == 'Pending')
                                                             <a href="{{ url('transactions/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
