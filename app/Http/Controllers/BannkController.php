@@ -163,16 +163,14 @@ class BannkController extends Controller
         $result = $bank->save();
         if ($result) {
             $banks = BankDetail::where('customer_id','=',$bank->customer_id)->get();
-            $html = '<label class="form-label" for="form3Example1n1">Client Bank Accounts <span style="color:red"> *</span></label>
-            <select name="client_bank_account"  class="form-control searchOptions">
+            $html = '
             <option value="0">--Choose--</option>
             
             ';
 
             foreach ($banks as $item) {
                 $html .= '<option value=' . $item->id . '>' . $item->holder_name . '-(' . $item->account_number . ')</option>';
-            }
-            '</select>';
+            };
             return $html;
         }
     }

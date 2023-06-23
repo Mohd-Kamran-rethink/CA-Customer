@@ -69,9 +69,9 @@
                             </div>
 
                             <div class="col-12 d-flex  mb-2">
-                                <div style="width: -webkit-fill-available;" id="bank-account-append">
+                                <div style="width: -webkit-fill-available;" >
                                     <label>Client Bank Account<span style="color:red">*</span></label>
-                                    <select tabindex="2" name="client_bank_account" class="form-control searchOptions">
+                                    <select id="bank-account-append" tabindex="2" name="client_bank_account" class="form-control searchOptions">
                                         <option value="">--Choose--</option>
                                         @if (isset($transaction))
                                             @foreach ($banks as $item)
