@@ -36,7 +36,7 @@
                     <div class="col-3">
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>{{ isset($transactions) ? count($transactions) ?? 0 : 0 }} </h3>
+                                <h3>{{ isset($totalApprovedForAgent) ? count($totalApprovedForAgent) ?? 0 : 0 }} </h3>
                                 <p>Transactions</p>
                             </div>
                             <div class="icon">

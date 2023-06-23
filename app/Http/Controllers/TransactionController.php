@@ -50,6 +50,7 @@ class TransactionController extends Controller
         // for agent todays date
         $agentstartDate = Carbon::now()->startOfDay();
         $agentEndDate = Carbon::now()->endOfDay();
+        $totalApprovedForAgent=[];
         // conditional data rendereing
         if ($user->role == 'customer_care_manager') {
             $depositers = User::where('role', '=', 'deposit_banker')->get()->count();
@@ -110,10 +111,7 @@ class TransactionController extends Controller
                 })
                 ->orderBy('id', 'desc')
                 ->paginate(30);
-            $totalApprovedForAgent = DB::table('transactions')->where('transactions.type', '=', 'Deposit')->where('status', '=', 'Approve')
-                ->whereDate('transactions.created_at', '>=', date('Y-m-d', strtotime($agentstartDate)))
-                ->whereDate('transactions.created_at', '<=', date('Y-m-d', strtotime($agentEndDate)))
-                ->get();
+            
         } else if ($user->role == 'withdrawrer' || $user->role == 'withdrawal_banker') {
             $transactions = DB::table('transactions')->where('transactions.type', '=', 'Withdraw')
                 ->leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
@@ -141,10 +139,41 @@ class TransactionController extends Controller
                 })
                 ->orderBy('id', 'desc')
                 ->paginate(30);
-            $totalApprovedForAgent = DB::table('transactions')->where('transactions.type', '=', 'Withdraw')->where('status', '=', 'Approve')
+           
+        }
+        // dashboard counts work
+        if(session('user')->role=='deposit_banker')
+        {
+            $totalApprovedForAgent = DB::table('transactions')
+                    ->where('transactions.type', '=', 'Deposit')
                 ->whereDate('transactions.created_at', '>=', date('Y-m-d', strtotime($agentstartDate)))
                 ->whereDate('transactions.created_at', '<=', date('Y-m-d', strtotime($agentEndDate)))
                 ->get();
+        }
+        else if(session('user')->role=='depositer')
+        {
+            $totalApprovedForAgent = DB::table('transactions')
+            ->where('transactions.type', '=', 'Deposit')
+            ->where('status', '=', 'Approve')
+            ->whereDate('transactions.created_at', '>=', date('Y-m-d', strtotime($agentstartDate)))
+            ->whereDate('transactions.created_at', '<=', date('Y-m-d', strtotime($agentEndDate)))
+            ->get();
+        }
+        else if(session('user')->role=='withdrawrer')
+        {
+            $totalApprovedForAgent = DB::table('transactions')->where('transactions.type', '=', 'Withdraw')
+            
+            ->whereDate('transactions.created_at', '>=', date('Y-m-d', strtotime($agentstartDate)))
+            ->whereDate('transactions.created_at', '<=', date('Y-m-d', strtotime($agentEndDate)))
+            ->get();
+        }
+        else if(session('user')->role=='withdrawal_banker')
+        {
+            $totalApprovedForAgent = DB::table('transactions')->where('transactions.type', '=', 'Withdraw')
+            ->where('status', '=', 'Approve')
+            ->whereDate('transactions.created_at', '>=', date('Y-m-d', strtotime($agentstartDate)))
+            ->whereDate('transactions.created_at', '<=', date('Y-m-d', strtotime($agentEndDate)))
+            ->get();
         }
         return view('Admin.Dashboard.index', compact('totalApprovedForAgent', 'amount_search', 'transactions', 'status', 'search', 'start_date', 'end_date'));
     }
