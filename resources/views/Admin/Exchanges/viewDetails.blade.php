@@ -90,15 +90,8 @@
                                                 <td>{{ $item->client_name }}</td>
                                                 <td>{{ $item->approved_by }}</td>
                                                 <td style="text-transform: capitalize">
-                                                    @if(!$item->client_name)
-                                                        @if($item->type=='deposit')
-                                                            Transfer In
-                                                            @else
-                                                            Transfer Out
-                                                        @endif
-                                                    @else
+                                                    
                                                     {{$item->type }}
-                                                    @endif
                                                 </td>
                                                 <td>{{ $item->amount }}</td>
                                                 <td>{{ $item->bonus ?? '--' }}</td>
