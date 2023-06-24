@@ -56,6 +56,7 @@
                                             <th>Phone</th>
                                             <th>Type</th>
                                             <th>Balance</th>
+                                            <th>Opening Balance</th>
                                             <th>Provider</th>
                                             <th>Actions</th>
                                         </tr>
@@ -72,6 +73,7 @@
                                                 <td>{{ $item->phone }}</td>
                                                 <td>{{ $item->type }}</td>
                                                 <td>{{ $item->amount }}</td>
+                                                <td>{{ $item->closginYesterday }}</td>
                                                 <td>{{ $item->provider_name ?? '-' }}</td>
                                                 <td>
                                                     {{-- <a href="{{ url('bank-accounts/deposit-money/' . $item->id) }}"

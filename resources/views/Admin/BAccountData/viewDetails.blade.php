@@ -81,6 +81,7 @@
                                             <th>Type</th>
                                             <th>Total Amount</th>
                                             <th>Opening Balance</th>
+                                            <th>Current Balance</th>
                                             <th>Created Date</th>
                                         </tr>
                                     </thead>
@@ -95,6 +96,7 @@
                                                 </td>
                                                 <td>{{ $item->amount }}</td>
                                                 <td>{{ $item->opening_balance }}</td>
+                                                <td>{{ $item->current_balance }}</td>
                                                 <td>{{ $item->created_at }}</td>
 
                                             </tr>

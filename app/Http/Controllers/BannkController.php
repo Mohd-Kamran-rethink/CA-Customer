@@ -14,35 +14,34 @@ class BannkController extends Controller
 
     public function list()
     {
-        $type=null;
-        if(session('user')->role=="deposit_banker")
-        {
-            $type='deposit';
-        }
-        else if(session('user')->role=="withdrawal_banker")
-        {
-            $type='withdraw';
-        }
-
-        $banks = BankDetail::leftjoin('users', 'bank_details.provider_id', '=', 'users.id')
-                        ->select('bank_details.*','users.name as provider_name')
-                        ->whereNull('customer_id')
-                        ->when($type !== null, function ($query) use ($type) {
-                            $query->where('bank_details.type', $type);
-                        })
-                        ->paginate(30);
-        return view('Admin.BAccountData.list', compact('banks'));
-    }
-    public function addForm($id=null)
-    {
         
-        $creditors=User::get();
+        $yesterday = Carbon::yesterday();
+        $banks = BankDetail::leftjoin('users', 'bank_details.provider_id', '=', 'users.id')
+            ->select('bank_details.*', 'users.name as provider_name')
+            ->whereNull('customer_id')
+           
+            ->paginate(30);
+            // Retrieve last transaction history for each bank from yesterday
+            foreach ($banks as $bank) {
+                $lastEntery = TransactionHistory::where('bank_id', $bank->id)
+                    ->whereDate('created_at', $yesterday)
+                    ->orderBy('created_at', 'desc')
+                    ->select('current_balance')
+                    ->first();
+                    $bank->closginYesterday=$lastEntery->current_balance??'';
+            }
+       
+            return view('Admin.BAccountData.list', compact('banks'));
+    }
+    public function addForm($id = null)
+    {
+
+        $creditors = User::get();
         if (isset($id)) {
             $bank = BankDetail::find($id);
-            return view('Admin.BAccountData.add', compact('bank','creditors'));
+            return view('Admin.BAccountData.add', compact('bank', 'creditors'));
         }
-        return view('Admin.BAccountData.add',compact('creditors'));
-       
+        return view('Admin.BAccountData.add', compact('creditors'));
     }
     public function add(Request $req)
     {
@@ -52,9 +51,9 @@ class BannkController extends Controller
             'name' => 'required',
             'ifcs_code' => 'required',
             'phone' => 'required',
-            'amount'=>'required',
-            'provider'=>'required|not_in:0',
-            'bank_type'=>'required|not_in:0',
+            'amount' => 'required',
+            'provider' => 'required|not_in:0',
+            'bank_type' => 'required|not_in:0',
 
         ]);
 
@@ -70,15 +69,14 @@ class BannkController extends Controller
         $bank->provider_id = $req->provider;
         $bank->type = $req->bank_type;
         $bankresult = $bank->save();
-        if($bankresult)
-        {
-            $transHistory=new TransactionHistory();
-            $transHistory->agent_id=session('user')->id;
-            $transHistory->bank_id=$bank->id;
-            $transHistory->amount=$req->amount;
-            $transHistory->opening_balance=0;
-            $transHistory->type='Intital Deposit';
-            $result= $transHistory->save();
+        if ($bankresult) {
+            $transHistory = new TransactionHistory();
+            $transHistory->agent_id = session('user')->id;
+            $transHistory->bank_id = $bank->id;
+            $transHistory->amount = $req->amount;
+            $transHistory->opening_balance = 0;
+            $transHistory->type = 'Intital Deposit';
+            $result = $transHistory->save();
         }
 
         if ($result) {
@@ -89,16 +87,16 @@ class BannkController extends Controller
     }
     public function edit(Request $req)
     {
-        
+
         $req->validate([
             'account_number' => 'required',
             'bank_name' => 'required',
             'name' => 'required',
             'ifcs_code' => 'required',
             'phone' => 'required',
-            'amount'=>'required',
-            'provider'=>'required|not_in:0',
-            'bank_type'=>'required|not_in:0',
+            'amount' => 'required',
+            'provider' => 'required|not_in:0',
+            'bank_type' => 'required|not_in:0',
         ]);
 
         $bank =  BankDetail::find($req->hiddenid);
@@ -122,7 +120,7 @@ class BannkController extends Controller
     public function delete(Request $req)
     {
         $BankDetail = BankDetail::find($req->deleteId);
-        $BankDetail->is_active='No';
+        $BankDetail->is_active = 'No';
         $result = $BankDetail->update();
 
         if ($result) {
@@ -131,9 +129,10 @@ class BannkController extends Controller
             return redirect()->back()->with(['msg-error' => 'Something went wrong']);
         }
     }
-    public function reactivebaNK(Request $req) {
+    public function reactivebaNK(Request $req)
+    {
         $BankDetail = BankDetail::find($req->deleteId);
-        $BankDetail->is_active='Yes';
+        $BankDetail->is_active = 'Yes';
         $result = $BankDetail->update();
 
         if ($result) {
@@ -162,7 +161,7 @@ class BannkController extends Controller
         $bank->address = $req->address;
         $result = $bank->save();
         if ($result) {
-            $banks = BankDetail::where('customer_id','=',$bank->customer_id)->get();
+            $banks = BankDetail::where('customer_id', '=', $bank->customer_id)->get();
             $html = '
             <option value="0">--Choose--</option>
             
@@ -194,50 +193,55 @@ class BannkController extends Controller
     }
 
     // transactions in banks
-    public function adddepositForm($id) {
-        return view('Admin.BAccountData.AddDeposit',compact('id'));
+    public function adddepositForm($id)
+    {
+        return view('Admin.BAccountData.AddDeposit', compact('id'));
     }
-    public function addDeposit(Request $req) {
-        $bank=BankDetail::find( $req->hiddenid);
-        $transHistory=new TransactionHistory();
-        $transHistory->agent_id=session('user')->id;
-        $transHistory->bank_id= $req->hiddenid;
-        $transHistory->amount=$req->amount;
-        $transHistory->opening_balance=$bank->amount??0;
+    public function addDeposit(Request $req)
+    {
+        $bank = BankDetail::find($req->hiddenid);
+        $transHistory = new TransactionHistory();
+        $transHistory->agent_id = session('user')->id;
+        $transHistory->bank_id = $req->hiddenid;
+        $transHistory->amount = $req->amount;
+        $transHistory->opening_balance = $bank->amount ?? 0;
         $transHistory->save();
-        $bank->amount=$bank->amount+$req->amount;
-        $result=$bank->update();
+        $bank->amount = $bank->amount + $req->amount;
+        $result = $bank->update();
         if ($result) {
             return redirect()->back()->with(['msg-success' => 'Added successfully']);
         } else {
             return redirect()->back()->with(['msg-error' => 'Something went wrong']);
         }
     }
-    public function addWithdrawForm($id) {
-        return view('Admin.BAccountData.addWithdraw',compact('id'));
+    public function addWithdrawForm($id)
+    {
+        return view('Admin.BAccountData.addWithdraw', compact('id'));
     }
-    public function addWithdraw(Request $req) {
-        $bank=BankDetail::find( $req->hiddenid);
-        $transHistory=new TransactionHistory();
-        $transHistory->agent_id=session('user')->id;
-        $transHistory->bank_id= $req->hiddenid;
-        $transHistory->amount=$req->amount;
-        $transHistory->opening_balance=$bank->amount??0;
+    public function addWithdraw(Request $req)
+    {
+        $bank = BankDetail::find($req->hiddenid);
+        $transHistory = new TransactionHistory();
+        $transHistory->agent_id = session('user')->id;
+        $transHistory->bank_id = $req->hiddenid;
+        $transHistory->amount = $req->amount;
+        $transHistory->opening_balance = $bank->amount ?? 0;
         $transHistory->save();
-        $bank->amount=$bank->amount-$req->amount;
-        $result=$bank->update();
+        $bank->amount = $bank->amount - $req->amount;
+        $result = $bank->update();
         if ($result) {
             return redirect()->back()->with(['msg-success' => 'Withdrawal successfully']);
         } else {
             return redirect()->back()->with(['msg-error' => 'Something went wrong']);
         }
     }
-    public function viewDetails(Request $req) {
-        $id=$req->query('id')??null;
-        $startDate = $req->query('from_date')??null;
-        $endDate = $req->query('to_date')??null;
-        $type=$req->query('type')??'null';
-        $client_id=$req->query('client_id')??'null';
+    public function viewDetails(Request $req)
+    {
+        $id = $req->query('id') ?? null;
+        $startDate = $req->query('from_date') ?? null;
+        $endDate = $req->query('to_date') ?? null;
+        $type = $req->query('type') ?? 'null';
+        $client_id = $req->query('client_id') ?? 'null';
         if (!$startDate) {
             $startDate = Carbon::now()->startOfDay();
             $endDate = Carbon::now()->endOfDay();
@@ -246,25 +250,25 @@ class BannkController extends Controller
             $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
         }
         $transactions = TransactionHistory::where('bank_id', '=', $id)
-                        ->leftJoin('clients', 'transaction_histories.client_id', '=', 'clients.id')
-                        ->leftJoin('users', 'transaction_histories.agent_id', '=', 'users.id')
-                        ->select('transaction_histories.*','clients.name as client_name','users.name as approved_by')
-                        ->whereNotNull('bank_id')
-                        ->when($type !== 'null', function ($query) use ($type) {
-                            $query->where('transaction_histories.type', $type);
-                        })
-                        ->when($client_id!='null', function ($query, $client_id) {
-                            $query->where(function ($query) use ($client_id) {
-                                $query->Where('transaction_histories.client_id', '=', $client_id);
-                            });
-                        })
-                        ->whereDate('transaction_histories.created_at', '>=', date('Y-m-d', strtotime($startDate)))
-                        ->whereDate('transaction_histories.created_at', '<=', date('Y-m-d', strtotime($endDate)))
-                        ->orderBy('id','desc')
-                        ->get();
-        $clients=Client::get();
+            ->leftJoin('clients', 'transaction_histories.client_id', '=', 'clients.id')
+            ->leftJoin('users', 'transaction_histories.agent_id', '=', 'users.id')
+            ->select('transaction_histories.*', 'clients.name as client_name', 'users.name as approved_by')
+            ->whereNotNull('bank_id')
+            ->when($type !== 'null', function ($query) use ($type) {
+                $query->where('transaction_histories.type', $type);
+            })
+            ->when($client_id != 'null', function ($query, $client_id) {
+                $query->where(function ($query) use ($client_id) {
+                    $query->Where('transaction_histories.client_id', '=', $client_id);
+                });
+            })
+            ->whereDate('transaction_histories.created_at', '>=', date('Y-m-d', strtotime($startDate)))
+            ->whereDate('transaction_histories.created_at', '<=', date('Y-m-d', strtotime($endDate)))
+
+            ->get();
+        $clients = Client::get();
         $startDate = $startDate->toDateString();
         $endDate = $endDate->toDateString();
-        return view('Admin.BAccountData.viewDetails',compact('clients','client_id','type','endDate','startDate','transactions','id'));
+        return view('Admin.BAccountData.viewDetails', compact('clients', 'client_id', 'type', 'endDate', 'startDate', 'transactions', 'id'));
     }
 }

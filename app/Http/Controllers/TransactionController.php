@@ -218,6 +218,7 @@ class TransactionController extends Controller
         $depositHistory->agent_id = session('user')->id;
         $depositHistory->amount = $req->amount;
         $depositHistory->opening_balance = $bank->amount;
+        $depositHistory->current_balance = $bank->amount+$req->amount;
         $depositHistory->save();
 
         $bank->amount = $bank->amount + $req->amount;
@@ -275,6 +276,7 @@ class TransactionController extends Controller
         $transHistory->agent_id = session('user')->id;
         $transHistory->amount = $req->amount;
         $transHistory->opening_balance = $bankoldAmount;
+        $transHistory->current_balance = $bankoldAmount+$req->amount;
         $transHistory->update();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Transaction updated successfully']);
@@ -480,7 +482,7 @@ class TransactionController extends Controller
         $clients = Client::where('isDeleted', '=', 'No')->get();
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
-        $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'Yes')->where('type', '=', 'withdraw')->get();
+        $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'Yes')->get();
         return view('Admin.Transactions.acceptPendingWithdraw', compact('transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
     }
     // chaneg status for withdraw
@@ -516,6 +518,7 @@ class TransactionController extends Controller
         $deposit->client_id = $transaction->client_id;
         $deposit->amount = $req->amount;
         $deposit->opening_balance = $bankDetails->amount;
+        $deposit->current_balance = $bankDetails->amount-$req->amount;
         $deposit->type = "withdraw";
         $deposit->save();
         $bankDetails->amount = $bankDetails->amount - $req->amount;
