@@ -19,7 +19,6 @@ class franchises extends Controller
             $franchise=Franchise::find($id);
             return view('Admin.Franchises.add',compact('franchise'));
         }
-
         return view('Admin.Franchises.add');
     }
     public function add(Request $req)
@@ -37,9 +36,9 @@ class franchises extends Controller
                 return redirect()->back()->with(['msg-success' => 'Added successfully']);
             } else {
                 return redirect()->back()->with(['msg-error'=>'Something went wrong']);   
-            }
-         
+        }
     }
+         
     public function edit(Request $req)
     {
         $req->validate([

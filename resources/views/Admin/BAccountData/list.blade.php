@@ -48,16 +48,11 @@
                                     <thead>
                                         <tr>
                                             <th>S.No.</th>
-                                            <th>Account Holder Name</th>
-                                            <th>Bank Account</th>
-                                            <th>Account Number</th>
-                                            <th>IFSC Code</th>
-                                            <th>Address</th>
-                                            <th>Phone</th>
-                                            <th>Type</th>
-                                            <th>Balance</th>
+                                            <th>Bank</th>
                                             <th>Opening Balance</th>
-                                            <th>Provider</th>
+                                            <th>Total Deposit</th>
+                                            <th>Total Withdraw</th>
+                                            <th>Closing Balance</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -65,16 +60,11 @@
                                         @forelse($banks as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->holder_name }}</td>
-                                                <td>{{ $item->bank_name }}</td>
-                                                <td>{{ $item->account_number }}</td>
-                                                <td>{{ $item->ifsc }}</td>
-                                                <td>{{ $item->address }}</td>
-                                                <td>{{ $item->phone }}</td>
-                                                <td>{{ $item->type }}</td>
-                                                <td>{{ $item->amount }}</td>
+                                                <td>[{{ $item->holder_name }}]-[{{ $item->bank_name }}]-[{{ $item->account_number }}]-[{{ $item->ifsc }}]</td>
                                                 <td>{{ $item->closginYesterday }}</td>
-                                                <td>{{ $item->provider_name ?? '-' }}</td>
+                                                <td>{{ $item->totalDeposit??0 }}</td>
+                                                <td>{{ $item->totalWithdraw??0 }}</td>
+                                                <td>{{ $item->amount??0 }}</td>
                                                 <td>
                                                     {{-- <a href="{{ url('bank-accounts/deposit-money/' . $item->id) }}"
                                                         title="Deposit money" class="btn btn-primary">Deposit</a>

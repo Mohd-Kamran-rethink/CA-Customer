@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BankDetail;
 use App\Client;
+use App\Transaction;
 use App\TransactionHistory;
 use App\User;
 use Carbon\Carbon;
@@ -28,8 +29,26 @@ class BannkController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->select('current_balance')
                     ->first();
-                    $bank->closginYesterday=$lastEntery->current_balance??'';
+                $bank->closginYesterday=$lastEntery->current_balance??'';
             }
+            foreach ($banks as $bank) {
+                $totaldeposit = Transaction::where('bank_account', $bank->id)
+                                ->where('type','=','Deposit')
+                                ->orderBy('created_at', 'desc')
+                                ->get()
+                                ->sum('amount');
+                                $bank->totalDeposit=$totaldeposit??'';
+                            }
+                            foreach ($banks as $bank) {
+                                $totalWithdraw = Transaction::where('bank_account', $bank->id)
+                                                ->where('type','=','Withdraw')
+                                                ->where('status','=','Approve')
+                                                ->orderBy('created_at', 'desc')
+                                                ->get()
+                                                ->sum('amount');
+                                                $bank->totalWithdraw=$totaldeposit??'';
+                                            }
+                                
        
             return view('Admin.BAccountData.list', compact('banks'));
     }

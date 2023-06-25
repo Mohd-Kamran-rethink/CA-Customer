@@ -43,8 +43,9 @@
                             <label for="">Transaction Type</label>
                             <select class="form-control" name="type" id="type">
                                 <option value="">--Choose--</option>
-                                <option {{isset($type)&& $type=='withdraw'?'selected':''}} value="withdraw">Withdraw</option>
-                                <option {{isset($type)&& $type=='deposit'?'selected':''}} value="deposit">Deposit</option>
+                                <option {{ isset($type) && $type == 'withdraw' ? 'selected' : '' }} value="withdraw">Withdraw
+                                </option>
+                                <option {{ isset($type) && $type == 'deposit' ? 'selected' : '' }} value="deposit">Deposit</option>
                             </select>
                         </div>
                         <div class="col-3">
@@ -53,7 +54,8 @@
                                 <option value="null">--Choose--</option>
                                 @foreach ($clients as $item)
                                     <option {{ isset($client_id) && $client_id == $item->id ? 'selected' : '' }}
-                                        value="{{ $item->id }}">{{ $item->name??''}}-{{$item->ca_id??''}}-{{$item->number??''}}</option>
+                                        value="{{ $item->id }}">
+                                        {{ $item->name ?? '' }}-{{ $item->ca_id ?? '' }}-{{ $item->number ?? '' }}</option>
                                 @endforeach
                             </select>
 
@@ -90,16 +92,15 @@
                                                 <td>{{ $item->client_name }}</td>
                                                 <td>{{ $item->approved_by }}</td>
                                                 <td style="text-transform: capitalize">
-                                                    
-                                                    {{$item->type }}
+                                                    {{ $item->type }}
                                                 </td>
                                                 <td>{{ $item->amount }}</td>
                                                 <td>{{ $item->bonus ?? '--' }}</td>
                                                 <td>{{ $item->opening_balance }}</td>
                                                 <td>{{ $item->created_at }}</td>
-
                                             </tr>
                                         @empty
+
                                             <tr>
                                                 <td colspan="10" class="text-center">No data</td>
                                             </tr>
