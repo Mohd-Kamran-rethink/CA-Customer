@@ -129,7 +129,7 @@
                     {{-- trans --}}
                     <li class="nav-item ">
                         <a href="{{ url('/exchanges') }}"
-                            class="nav-link {{ Request::is('exchanges')||Request::is('exchanges/view-details') ? 'active' : '' }}">
+                            class="nav-link {{ Request::is('exchanges') || Request::is('exchanges/view-details') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-bank">&#x1F4B0;
                             </i>
                             <p>
@@ -201,7 +201,7 @@
                         session('user')->role == 'customer_care_manager')
                     <li class="nav-item ">
                         <a href="{{ url('/bank-accounts') }}"
-                            class="nav-link {{ Request::is('bank-accounts')||Request::is('bank-accounts/details') ? 'active' : '' }}">
+                            class="nav-link {{ Request::is('bank-accounts') || Request::is('bank-accounts/details') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-money">&#x1F4B0;
                             </i>
                             <p>
@@ -220,37 +220,39 @@
                     </li>
                     <li class="nav-item  ">
                         <a href="{{ url('expense-users/creditors') }}"
-                        class="nav-link {{ Request::is('credits') ? 'active' : '' }}">
-                        <i class="nav-icon fa fa-users"></i>
-                        <p>
-                            Creditors
-                        </p>
-                    </a>
-                </li>
-                @if(session('user')->role==='customer_care_manager')
-                    <li class="nav-item">
-                        <a href="{{ url('/expense-type') }}" class="nav-link {{ Request::is('expense-type') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-credit-card"></i>
+                            class="nav-link {{ Request::is('credits') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-users"></i>
                             <p>
-                                Expense Types
-    
+                                Creditors
                             </p>
-                            {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
-    
                         </a>
                     </li>
+                    @if (session('user')->role === 'customer_care_manager')
+                        <li class="nav-item">
+                            <a href="{{ url('/expense-type') }}"
+                                class="nav-link {{ Request::is('expense-type') ? 'active' : '' }}">
+                                <i class="nav-icon fa fa-credit-card"></i>
+                                <p>
+                                    Expense Types
+
+                                </p>
+                                {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
+
+                            </a>
+                        </li>
                     @endif
-                <li class="nav-item">
-                    <a href="{{ url('/expenses') }}" class="nav-link {{ Request::is('expenses') ? 'active' : '' }}">
-                        <i class="nav-icon fa fa-credit-card"></i>
-                        <p>
-                            Payment Types
+                    <li class="nav-item">
+                        <a href="{{ url('/expenses') }}"
+                            class="nav-link {{ Request::is('expenses') || Request::is('expenses/add') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-credit-card"></i>
+                            <p>
+                                Payment Types
 
-                        </p>
-                        {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
+                            </p>
+                            {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
 
-                    </a>
-                </li>
+                        </a>
+                    </li>
                 @endif
             </ul>
         </nav>
