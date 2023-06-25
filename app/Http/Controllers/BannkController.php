@@ -252,7 +252,7 @@ class BannkController extends Controller
         $transactions = TransactionHistory::where('bank_id', '=', $id)
             ->leftJoin('clients', 'transaction_histories.client_id', '=', 'clients.id')
             ->leftJoin('users', 'transaction_histories.agent_id', '=', 'users.id')
-            ->select('transaction_histories.*', 'clients.name as client_name', 'users.name as approved_by')
+            ->select('transaction_histories.*', 'clients.ca_id as client_name', 'users.name as approved_by')
             ->whereNotNull('bank_id')
             ->when($type !== 'null', function ($query) use ($type) {
                 $query->where('transaction_histories.type', $type);
