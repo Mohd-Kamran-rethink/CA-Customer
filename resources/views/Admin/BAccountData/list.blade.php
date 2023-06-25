@@ -61,7 +61,7 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>[{{ $item->holder_name }}]-[{{ $item->bank_name }}]-[{{ $item->account_number }}]-[{{ $item->ifsc }}]</td>
-                                                <td>{{ $item->closginYesterday }}</td>
+                                                <td>{{ $item->closginYesterday??'--' }}</td>
                                                 <td>{{ $item->totalDeposit??0 }}</td>
                                                 <td>{{ $item->totalWithdraw??0 }}</td>
                                                 <td>{{ $item->amount??0 }}</td>

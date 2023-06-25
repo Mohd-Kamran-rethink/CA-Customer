@@ -39,7 +39,7 @@ class BannkController extends Controller
                                 ->sum('amount');
                                 $bank->totalDeposit=$totaldeposit??'';
                             }
-                            foreach ($banks as $bank) {
+                foreach ($banks as $bank) {
                                 $totalWithdraw = Transaction::where('bank_account', $bank->id)
                                                 ->where('type','=','Withdraw')
                                                 ->where('status','=','Approve')
