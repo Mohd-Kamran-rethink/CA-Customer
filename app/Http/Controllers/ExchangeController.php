@@ -61,7 +61,7 @@ class ExchangeController extends Controller
         $transactions = TransactionHistory::where('transaction_histories.exchange_id', '=', $id)
                         ->leftJoin('clients', 'transaction_histories.client_id', '=', 'clients.id')
                         ->leftJoin('users', 'transaction_histories.agent_id', '=', 'users.id')
-                        ->select('transaction_histories.*','clients.name as client_name','users.name as approved_by')
+                        ->select('transaction_histories.*','clients.ca_id as client_name','users.name as approved_by')
                         ->whereNotNull('transaction_histories.exchange_id')
                         ->when($type !== 'null', function ($query) use ($type) {
                             $query->where('transaction_histories.type', $type);

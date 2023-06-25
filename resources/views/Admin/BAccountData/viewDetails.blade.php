@@ -76,7 +76,7 @@
                                     <thead>
                                         <tr>
                                             <th>S.No.</th>
-                                            <th>Client Name</th>
+                                            <th>Client ID</th>
                                             <th>Approved By</th>
                                             <th>Type</th>
                                             <th>Total Amount</th>
