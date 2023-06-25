@@ -138,7 +138,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item ">
+                    {{-- <li class="nav-item ">
                         <a href="{{ url('/franchises') }}"
                             class="nav-link {{ Request::is('franchises') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-building"></i>
@@ -148,7 +148,7 @@
                             <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span>
 
                         </a>
-                    </li>
+                    </li> --}}
                     {{-- expense --}}
 
                     {{-- transfer --}}

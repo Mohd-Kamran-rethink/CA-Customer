@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Transaction Details</h1>
+                    <h1>Bank Transaction Details</h1>
                 </div>
             </div>
             @if (session()->has('msg-success'))

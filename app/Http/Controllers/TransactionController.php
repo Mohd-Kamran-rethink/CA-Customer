@@ -244,7 +244,7 @@ class TransactionController extends Controller
         $transaction = Transaction::find($id);
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
-        $banks = BankDetail::get();
+        $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'Yes')->get();
         return view('Admin.Transactions.add', compact('transaction', 'todaysdate', 'currentDateTime', 'banks'));
     }
     public function edit(Request $req)
@@ -567,7 +567,7 @@ class TransactionController extends Controller
         $heading = "Pending Withdraw";
         return view('Admin.Transactions.transAdmin', compact('heading', 'transactions'));
     }
-
+    
     // canceled
     public function depsoiterCancel(Request $req)
     {
@@ -625,10 +625,6 @@ class TransactionController extends Controller
         $bank->update();
         return redirect('/dashboard')->with(['msg-success' => 'Transaction has been cancelled']);
     }
-
-
-
-
 
     public function exportPending(Request $req)
     {
