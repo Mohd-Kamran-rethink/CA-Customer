@@ -230,7 +230,7 @@
                     @if (session('user')->role === 'customer_care_manager')
                         <li class="nav-item">
                             <a href="{{ url('/expense-type') }}"
-                                class="nav-link {{ Request::is('expense-type') ? 'active' : '' }}">
+                                class="nav-link {{ Request::is('expense-type')||Request::is('expense-type/add') ? 'active' : '' }}">
                                 <i class="nav-icon fa fa-credit-card"></i>
                                 <p>
                                     Expense Types
