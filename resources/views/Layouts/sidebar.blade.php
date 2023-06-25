@@ -129,7 +129,7 @@
                     {{-- trans --}}
                     <li class="nav-item ">
                         <a href="{{ url('/exchanges') }}"
-                            class="nav-link {{ Request::is('exchanges') ? 'active' : '' }}">
+                            class="nav-link {{ Request::is('exchanges')||Request::is('exchanges/view-details') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-bank">&#x1F4B0;
                             </i>
                             <p>
@@ -201,7 +201,7 @@
                         session('user')->role == 'customer_care_manager')
                     <li class="nav-item ">
                         <a href="{{ url('/bank-accounts') }}"
-                            class="nav-link {{ Request::is('bank-accounts') ? 'active' : '' }}">
+                            class="nav-link {{ Request::is('bank-accounts')||Request::is('bank-accounts/details') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-money">&#x1F4B0;
                             </i>
                             <p>
