@@ -54,7 +54,7 @@
                                 <option value="null">--Choose--</option>
                                 @foreach ($clients as $item)
                                     <option {{ isset($client_id) && $client_id == $item->id ? 'selected' : '' }}
-                                        value="{{ $item->id }}">{{ $item->name }}</option>
+                                        value="{{ $item->id }}">{{ $item->name??''}}-{{$item->ca_id??''}}-{{$item->number??''}}</option>
                                 @endforeach
                             </select>
 
