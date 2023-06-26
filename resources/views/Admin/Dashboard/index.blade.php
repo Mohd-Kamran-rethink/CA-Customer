@@ -150,8 +150,8 @@
                                                     <td>{{ $item->bonus }}</td>
                                                     <td>{{ $item->total }}</td>
                                                     <td>{{ $item->client_id??'' }}</td>
-                                                    <td>{{ $item->created_at }}</td>
                                                     <td>{{ $item->status }}</td>
+                                                    <td>{{ $item->created_at }}</td>
                                                     <td>
                                                         {{-- for deposit functionlaity --}}
                                                         @if (session('user')->role === 'deposit_banker' && $item->status == 'Pending')
