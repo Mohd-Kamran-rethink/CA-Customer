@@ -181,7 +181,7 @@
                                                                     type="button">Cancel</button>
                                                             @endif --}}
                                                         @elseif(session('user')->role === 'withdrawal_banker')
-                                                            @if ($item->status == 'Approve')
+                                                            @if ($item->status == 'Pending')
                                                             <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>
