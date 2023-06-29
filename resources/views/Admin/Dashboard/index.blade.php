@@ -60,7 +60,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 d-flex justify-content-end align-items-end pb-2" >
+                    <div class="col-6 d-flex justify-content-end align-items-end pb-2">
                         <h1 id="timer">Page will reload in 10 s</h1>
                     </div>
                 </div>
@@ -109,10 +109,10 @@
                             <div class="col-2 pt-2 ">
                                 <div class="row d-flex justify-content-around">
                                     <button class="btn btn-success mt-4">Filter</button>
-                                    @if(session('user')->role=='deposit_banker')
-                                    <a href="{{ url('transactions/add') }}" class="btn btn-primary mt-4">Add</a>
+                                    @if (session('user')->role == 'deposit_banker')
+                                        <a href="{{ url('transactions/add') }}" class="btn btn-primary mt-4">Add</a>
                                     @endif
-                                    
+
                                 </div>
 
                             </div>
@@ -141,7 +141,7 @@
                                         <tbody>
                                             @forelse($transactions as $item)
                                                 <tr>
-                                                    <input  type="hidden" value="{{$item->id}}">
+                                                    <input type="hidden" value="{{ $item->id }}">
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $item->date }}</td>
                                                     <td>{{ $item->holder_name }}</td>
@@ -149,7 +149,7 @@
                                                     <td>{{ $item->amount }}</td>
                                                     <td>{{ $item->bonus }}</td>
                                                     <td>{{ $item->total }}</td>
-                                                    <td>{{ $item->client_id??'' }}</td>
+                                                    <td>{{ $item->client_id ?? '' }}</td>
                                                     <td>{{ $item->status }}</td>
                                                     <td>{{ $item->created_at }}</td>
                                                     <td>
@@ -170,7 +170,7 @@
                                                         @endif
                                                         {{-- for withdrawal functionality --}}
                                                         @if (session('user')->role === 'withdrawrer')
-                                                            {{-- @if($item->status == 'Approve')
+                                                            {{-- @if ($item->status == 'Approve')
                                                             <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
@@ -184,6 +184,11 @@
                                                             <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>
+                                                            @if ($item->status == 'Approve')
+                                                                <a href="{{ url('transactions/withdraw-banker/edit/' . $item->id) }}"
+                                                                    title="Edit" class="btn btn-danger"><i
+                                                                        class="fa fa-pen"></i></a>
+                                                            @endif
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -456,16 +461,13 @@
             </div>
         </section>
     @endif
-        
+
     @php
-        $url='';
-        if(session('user')->role=="withdrawal_banker")
-        {
-            $url='http://customer.cricadda.tech/transactions/change-status-withdraw/';
-        }
-        else {
-            
-            $url='http://customer.cricadda.tech/transactions/change-status/';
+        $url = '';
+        if (session('user')->role == 'withdrawal_banker') {
+            $url = 'http://customer.cricadda.tech/transactions/change-status-withdraw/';
+        } else {
+            $url = 'http://customer.cricadda.tech/transactions/change-status/';
         }
     @endphp
 
@@ -474,37 +476,36 @@
     <script>
         // Function to update the timer
         function updateTimer() {
-          var countdown = 10; // Set the countdown duration in seconds
-          var timerElement = document.getElementById("timer");
-    
-          var countdownInterval = setInterval(function() {
-            timerElement.textContent ="Page will reload in " + countdown + " s"; // Update the timer display
-    
-            if (countdown === 0) {
-              clearInterval(countdownInterval);
-              location.reload(); // Reload the page when countdown reaches 0
-            }
-    
-            countdown--;
-          }, 1000); // 1000 milliseconds = 1 second
+            var countdown = 10; // Set the countdown duration in seconds
+            var timerElement = document.getElementById("timer");
+
+            var countdownInterval = setInterval(function() {
+                timerElement.textContent = "Page will reload in " + countdown + " s"; // Update the timer display
+
+                if (countdown === 0) {
+                    clearInterval(countdownInterval);
+                    location.reload(); // Reload the page when countdown reaches 0
+                }
+
+                countdown--;
+            }, 1000); // 1000 milliseconds = 1 second
         }
-        
+
         // Call the function to start the timer if the user role is not "manager"
-        @if(session('user')->role != 'customer_care_manager')
-          window.onload = updateTimer;
+        @if (session('user')->role != 'customer_care_manager')
+            window.onload = updateTimer;
         @endif
-      </script>
-      
-      <script>
+    </script>
+
+    <script>
         document.addEventListener('keydown', function(event) {
             // Check if the key pressed is the desired shortcut (e.g., "Ctrl + Alt + C")
             if (event.altKey && event.key === 'c') {
                 // Call the openClientModel function
                 var input = document.querySelector('tbody tr:first-child input[type="hidden"]');
                 var url = '{{ $url }}';
-                var newUrl = url+input.value;
-                if(input)
-                {
+                var newUrl = url + input.value;
+                if (input) {
 
                     window.location.href = newUrl;
                 }

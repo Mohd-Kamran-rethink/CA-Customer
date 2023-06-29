@@ -53,7 +53,7 @@
         <div class="card">
 
             <div class="card-body">
-                <form action="{{ isset($transaction) ? url('transactions/change-status-withdraw') : '' }}" method="POST"
+                <form action="{{ isset($transaction) && isset($edit) ? url('transactions/withdraw-banker/edit') : url('transactions/change-status-withdraw') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     <div class="row">
@@ -112,7 +112,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Bank Account<span style="color:red">*</span></label>
-                                    <select tabindex="2" name="bank_account" class="form-control searchOptions">
+                                    <select {{isset($edit)?'disabled':''}} tabindex="2" name="bank_account" class="form-control searchOptions">
                                         <option value="">--Choose--</option>
                                         @foreach ($banks as $item)
                                             <option

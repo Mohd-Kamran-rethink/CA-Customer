@@ -635,4 +635,32 @@ class TransactionController extends Controller
         $export=new TransactionsExport($transactions);
         return Excel::download($export, 'transactions.xlsx');
     }
+
+
+
+    // with draw banker edit
+    public function widdrawBankerEditForm($id)
+    {
+        $transaction = Transaction::leftjoin('bank_details', 'transactions.customer_bank_id', '=', 'bank_details.id')
+            ->select('transactions.*', 'bank_details.holder_name as holder_name', 'bank_details.bank_name as customer_bank_name', 'bank_details.account_number as customer_account_number', 'bank_details.ifsc as customer_ifsc', 'bank_details.phone as customer_phone')
+            ->find($id);
+        $clients = Client::where('isDeleted', '=', 'No')->get();
+        $todaysdate = Carbon::now()->startOfDay()->toDateString();
+        $currentDateTime = Carbon::now()->startOfDay();
+        $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'Yes')->get();
+        $edit="yes";
+        return view('Admin.Transactions.acceptPendingWithdraw', compact('edit','transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
+
+    }
+    public function widdrawBankerEdit(Request $req)
+    {
+        $transaction=Transaction::find($req->hiddenid);
+        $transaction->utr_no=$req->utr;
+        $result= $transaction->update();
+        if ($result) {
+            return redirect('/dashboard')->with(['msg-success' => 'Updated successfully']);
+        } else {
+            return redirect('/dashboard')->with(['msg-error' => 'Something went wrong']);
+        }
+    }
 }

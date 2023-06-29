@@ -123,6 +123,8 @@ Route::middleware('CommonMiddleware')->prefix('transactions')->group(function ()
     Route::post('depositer/recancel',[TransactionController::class,'depsoiterCancel'])->name('depsoiterCancel');
     Route::post('withdrawrer/recancel',[TransactionController::class,'withdrawCancel'])->name('withdrawCancel');
     // for manager
+    Route::get('withdraw-banker/edit/{id}',[TransactionController::class,'widdrawBankerEditForm'])->name('widdrawBankerEditForm');
+    Route::post('withdraw-banker/edit',[TransactionController::class,'widdrawBankerEdit'])->name('widdrawBankerEdit');
 }); 
 
 // exchanges
