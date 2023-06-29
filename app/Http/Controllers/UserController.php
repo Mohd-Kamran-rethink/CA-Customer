@@ -307,7 +307,7 @@ class UserController extends Controller
         $clients=[];
         $clientsQuery = Client::leftJoin('users','clients.agent_id','users.id')
                             ->select('clients.*',"users.name as agent_name");
-                            if ($filterData === 'all') {
+                            if ($filterData === 'all'|| !$filterData) {
                                 $clients = $clientsQuery->get();
                             } elseif ($filterData === 'without_agent') {
                                 $clients = $clientsQuery->whereNull('agent_id')->get();
