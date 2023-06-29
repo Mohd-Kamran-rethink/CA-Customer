@@ -64,9 +64,11 @@
                             <div class="col-12">
                                 <div class="form-group" id="client-ajax-dropdown">
                                     <label>Clients <span style="color:red">*</span></label>
-                                    <select disabled readonly name="client" class="form-control">
+                                    <select disabled  name="client" class="form-control">
                                         <option value="0">--Choose--</option>
+                                       
                                         @foreach ($clients as $item)
+
                                             <option
                                                 {{ isset($transaction) && $transaction->client_id == $item->id ? 'selected' : (old('client') == $item->id ? 'selected' : '') }}
                                                 value="{{ $item->id }}">{{ $item->name }}</option>
