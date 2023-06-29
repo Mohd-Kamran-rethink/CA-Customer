@@ -62,12 +62,12 @@
                                                 <td>
                                                     <a href="{{ url('exchanges/view-details?id=' . $item->id) }}" title="View Details"
                                                         class="btn btn-primary">View Details</a>
-                                                        {{-- <a href="{{ url('exchanges/add-money?id=' . $item->id) }}" title="View Details"
+                                                        <a href="{{ url('exchanges/add-money?id=' . $item->id) }}" title="View Details"
                                                             class="btn btn-success">Add Money</a>
                                                             <a href="{{ url('exchanges/withdraw-money?id=' . $item->id) }}" title="View Details"
-                                                                class="btn btn-secondary">Withdraw Money</a> --}}
-                                                    {{-- <a href="{{ url('exchanges/edit/' . $item->id) }}" title="Edit"
-                                                        class="btn btn-primary"><i class="fa fa-pen"></i></a> --}}
+                                                                class="btn btn-secondary">Withdraw Money</a>
+                                                    <a href="{{ url('exchanges/edit/' . $item->id) }}" title="Edit"
+                                                        class="btn btn-primary"><i class="fa fa-pen"></i></a>
                                                     <button title="Delete" onclick="manageModal({{ $item->id }})"
                                                         class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                                     
