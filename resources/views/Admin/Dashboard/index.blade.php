@@ -466,11 +466,24 @@
 
     @php
         $url = '';
+        $addUrl = '';
         if (session('user')->role == 'withdrawal_banker') {
             $url = 'http://customer.cricadda.tech/transactions/change-status-withdraw/';
         } else {
             $url = 'http://customer.cricadda.tech/transactions/change-status/';
         }
+        if(session('user')->role == 'deposit_banker')
+        {
+            $addUrl='http://customer.cricadda.tech/transactions/add';
+        }    
+        if(session('user')->role=='withdrawrer')
+        {
+            $addUrl='http://customer.cricadda.tech/transactions/withdraw/add';
+        }
+
+
+            
+            
     @endphp
 
 
@@ -507,10 +520,17 @@
                 var input = document.querySelector('tbody tr:first-child input[type="hidden"]');
                 var url = '{{ $url }}';
                 var newUrl = url + input.value;
-                if (input) {
+                if (input && url) {
 
                     window.location.href = newUrl;
                 }
+
+            }
+            if (event.altKey && event.key === 'a') {
+                // Call the openClientModel function
+                var addUrl = '{{ $addUrl }}';
+                    window.location.href = addUrl;
+                
 
             }
             if (event.key === 'Escape') {
