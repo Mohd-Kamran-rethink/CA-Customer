@@ -158,6 +158,7 @@ Route::get('/clients/transactions/view-details',[UserController::class,'showClie
 Route::get('clients/view-banks',[UserController::class,'viewBankList'])->name('viewBankList')->middleware('CommonMiddleware');
 Route::get('client/bank-accounts/edit/{id}',[UserController::class,'editbankFrom'])->name('editbankFrom')->middleware('CommonMiddleware');
 Route::post('client/bank-accounts/edit',[UserController::class,'editBank'])->name('editBank')->middleware('CommonMiddleware');
+Route::post('/clients/assign',[UserController::class,'clientAssign'])->name('clientAssign')->middleware('CommonMiddleware');
 
 
 // expenses

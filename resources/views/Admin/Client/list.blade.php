@@ -24,9 +24,21 @@
     <section class="content">
         <div class="card">
             <div class="card-body">
-                <div class="mb-3 d-flex justify-content-between align-items-centers">
-
+                <div class="mb-3 d-flex justify-content-between align-items-centers  flex-row">
+                    <form action="{{ url('clients') }}" method="GET" id="search-form" class="d-flex" >
+                        <div class="form-group">
+                            <select name="filterData" id="filterData" class="form-control">
+                                <option {{isset($filterData)&&$filterData=='all'?'selected':''}} value="all">All</option>
+                                <option {{isset($filterData)&&$filterData=='without_agent'?'selected':''}} value="without_agent">Without Agent</option>
+                            </select>
+                        </div>
+                            
+                        <div class=" mx-2">
+                            <button class="btn btn-success" onclick="searchData()">Filter</button>
+                        </div>
+                    </form>
                 </div>
+                            
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -38,6 +50,7 @@
                                             <th>Name</th>
                                             <th>Phone</th>
                                             <th>ID Name</th>
+                                            <th>Agent Name</th>
                                             <th>Last Deposit</th>
                                             <th>Last Withdraw</th>
                                             <th>Actions</th>
@@ -50,6 +63,7 @@
                                                 <td>{{ $item->name }}</td>
                                                 <td>{{ $item->number }}</td>
                                                 <td>{{ $item->ca_id }}</td>
+                                                <td>{{ $item->agent_name }}</td>
                                                 <td>{{ $item->lastDepositDate ? $item->lastDepositDate->format('d-M-Y  h:i:s A') : 'No Deposit yet' }}
                                                     {{ $item->lastDepositDaysAgo != 0 ? $item->lastDepositDaysAgo . ' days ago' : '' }}
                                                 </td>
@@ -60,7 +74,10 @@
                                                     <a href="{{ url('clients/transactions/view-details?id=' . $item->id) }}"
                                                         class="btn btn-success">View Details</a>
                                                     <a href="{{ url('clients/view-banks/?id=' . $item->id) }}"
-                                                        class="btn btn-success">View Banks</a>
+                                                        class="btn btn-primary">View Banks</a>
+                                                    @if (!$item->agent_id)
+                                                        <button onclick="openAssignLead({{$item->id}})" class="btn btn-danger">Assign Agent</button>
+                                                    @endif
                                                 </td>
 
                                             </tr>
@@ -84,20 +101,26 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Delete user</h4>
+                    <h4 class="modal-title">Assign client to agent</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ url('/user/delete') }}" method="POST">
+                <form action="{{ url('/clients/assign') }}" method="POST" class="mx-3">
                     @csrf
-                    <input type="hidden" name="deleteId" id="deleteInput">
-                    <input type="hidden" name="role" id="deleteInput" value="customer_care_manager">
-                    <div class="modal-body">
-                        <h4>Are you sure you want to delete this manager?</h4>
+                    <input type="hidden" name="clientID" id="clientID">
+                    <div class="form-group">
+                        <label for="">Select Agent</label>
+                        <select class="form-control" name="agent_id">
+                            <option value="0">--Choose--</option>
+                            @foreach ($agents as $item)
+                            <option value="{{$item->id}}">{{$item->name}}</option>
+                            @endforeach
+                        </select>
+                                
                     </div>
                     <div class="modal-footer ">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger">submit</button>
                         <button type="button" data-dismiss="modal" aria-label="Close"
                             class="btn btn-default">Cancel</button>
                 </form>
@@ -106,12 +129,19 @@
     </div>
     <script>
         const searchData = () => {
+            const searchData = () => {
             event.preventDefault();
             const url = new URL(window.location.href);
 
-            const searchValue = $('#searchInput').val().trim();
+            const searchValue = $('#filterData').val().trim();
             url.searchParams.set('search', searchValue);
             $('#search-form').attr('action', url.toString()).submit();
+        }
+        }
+        function openAssignLead(id)
+        {
+            $('#modal-default').modal('show');
+            $('#clientID').val(id);
         }
     </script>
 @endsection

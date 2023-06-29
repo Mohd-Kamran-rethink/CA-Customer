@@ -301,9 +301,17 @@ class UserController extends Controller
         }
     }
 
-    public function clientList()
+    public function clientList(Request $req)
     {
-        $clients = Client::get();
+        $filterData=$req->query('filterData');
+        $clients=[];
+        $clientsQuery = Client::leftJoin('users','clients.agent_id','users.id')
+                            ->select('clients.*',"users.name as agent_name");
+                            if ($filterData === 'all') {
+                                $clients = $clientsQuery->get();
+                            } elseif ($filterData === 'without_agent') {
+                                $clients = $clientsQuery->whereNull('agent_id')->get();
+                            } 
 
         foreach ($clients as $client) {
             $lastDeposit = Transaction::where('client_id', $client->id)
@@ -326,7 +334,8 @@ class UserController extends Controller
                 $client->lastWithdrawalDaysAgo = Carbon::parse($client->lastWithdrawalDate)->diffInDays(Carbon::now());
             }
         }
-        return view('Admin.Client.list', compact('clients'));
+        $agents=User::where('role','=','agent')->get();
+        return view('Admin.Client.list', compact('clients','agents','filterData'));
     }
 
     // show client transadction details
@@ -355,7 +364,23 @@ class UserController extends Controller
         $endDate = $endDate->toDateString();
         return view('Admin.Client.ViewDetails', compact('activites', 'id', 'startDate', 'endDate'));
     }
+    function clientAssign(Request $req) {
+        $req->validate(['agent_id'=>'required|not_in:0']);
+        $client=Client::find($req->clientID);
+        $client->agent_id=$req->agent_id;
+        $result=$client->update();
+        if($result)
+        {
+            return redirect()->back()->with(['msg-success'=>'Assigned successfully']);
+        }
+        else
+        {
+            return redirect()->back()->with(['msg-error'=>'Somthing went wrong']);
+            
+        }
+        
 
+    }
 
 
     // history

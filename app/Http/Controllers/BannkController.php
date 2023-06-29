@@ -46,7 +46,7 @@ class BannkController extends Controller
                                                 ->orderBy('created_at', 'desc')
                                                 ->get()
                                                 ->sum('amount');
-                                                $bank->totalWithdraw=$totaldeposit??'';
+                                                $bank->totalWithdraw=$totalWithdraw??'';
                                             }
                                 
        
