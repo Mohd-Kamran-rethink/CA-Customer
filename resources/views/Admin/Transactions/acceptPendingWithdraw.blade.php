@@ -71,7 +71,7 @@
 
                                             <option
                                                 {{ isset($transaction) && $transaction->client_id == $item->id ? 'selected' : (old('client') == $item->id ? 'selected' : '') }}
-                                                value="{{ $item->id }}">{{ $item->name }}</option>
+                                                value="{{ $item->id }}">{{ $item->ca_id }}-{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
