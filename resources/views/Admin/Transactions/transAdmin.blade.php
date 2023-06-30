@@ -60,7 +60,9 @@
                     <form action="{{url('transaction/export')}}" method="POST">
                         @csrf
                         <input  value="{{$heading=="Pending Deposits"?'Deposit':'Withdraw'}}" type="hidden" name="type">
+                        @if($heading=='Pending Withdraw'||$heading=='Pending Deposits')
                         <button type="submit" class="btn btn-success mt-4">Export</button>
+                        @endif
                     </form>
                 </div>
 

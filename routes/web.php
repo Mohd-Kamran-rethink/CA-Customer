@@ -148,6 +148,9 @@ Route::middleware('ValidateManager')->prefix('exchanges')->group(function () {
 // admin transaction
 Route::get('/transactions/pending-deposit',[TransactionController::class,'listPendingDeposit'])->name('listPendingDeposit')->middleware('ValidateManager');
 Route::get('/transactions/pending-withdraw',[TransactionController::class,'pendingWithdraw'])->name('pendingWithdraw')->middleware('ValidateManager');
+Route::get('/transactions/approved-deposits',[TransactionController::class,'approvedDeposit'])->name('approvedDeposit')->middleware('ValidateManager');
+Route::get('/transactions/approved-withdraws',[TransactionController::class,'approvedWithdraws'])->name('approvedWithdraws')->middleware('ValidateManager');
+
 Route::post('/transaction/export',[TransactionController::class,'exportPending'])->name('exportPending')->middleware('ValidateManager');
 Route::get('/clients/add',[UserController::class,'addClient'])->name('addClient');
 Route::get('/bankaccount/add',[BannkController::class,'bankAccouAddAjax'])->name('bankAccouAddAjax');

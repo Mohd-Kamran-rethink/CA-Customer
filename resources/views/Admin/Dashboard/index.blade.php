@@ -37,22 +37,35 @@
                         <div class="small-box bg-info">
                             <div class="inner">
                                 <h3>{{ isset($totalApprovedForAgent) ? count($totalApprovedForAgent) ?? 0 : 0 }} </h3>
-                                <p>Transactions</p>
+                                <p>Today's Pending Transactions</p>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-credit-card"></i>
                             </div>
                         </div>
                     </div>
+                    @if(session('user')->role=='deposit_banker' || session('user')->role=='withdrawal_banker')
+                    <div class="col-3">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ isset($todaysApproed) ? count($todaysApproed) ?? 0 : 0 }} </h3>
+                                <p>Today's Approved Transactions</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     {{-- for withdraw --}}
                     <div class="col-3">
                         <div class="small-box bg-primary">
                             <div class="inner">
                                 <h3>{{ number_format($sum) }}</h3>
                                 @if (session('user')->role == 'withdrawal_banker' || session('user')->role == 'withdrawrer')
-                                    <p>Withdraws</p>
+                                    <p>Today's Withdraws</p>
                                 @elseif(session('user')->role == 'deposit_banker' || session('user')->role == 'depositer')
-                                    <p>Deposits</p>
+                                    <p>Today's Deposits</p>
                                 @endif
                             </div>
                             <div class="icon">
@@ -91,13 +104,13 @@
                                 <label for="" style="visibility: hidden">sdf</label>
                                 <select {{-- {{ session('user')->role === 'deposit_banker' || session('user')->role === 'withdrawrer' ? '' : 'disabled' }} --}} name="status_name" type="text" class="form-control">
                                     <option value="null">--Filter by status--</option>
-
-
                                     <option {{ $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
                                     <option {{ $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
                                     <option {{ $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
                                 </select>
                             </div>
+
+
                             <div class="col-2">
                                 <label for="">From</label>
                                 <input type="date" name="start_date" class="form-control" value="{{ $start_date }}">

@@ -277,8 +277,6 @@
                     }
                 }
             });
-            // select exhcnag value
-            
         }
 
         function openClientModel() {
@@ -293,7 +291,6 @@
                     "/getClientHistory/?clientID=" + id,
                 success: function(data) {
                     $("#transDetails").html(data);
-
                 },
             });
         }
@@ -316,7 +313,6 @@
             }
             else
             {
-
                 // $('#phone').val(selectedNumber);
                 $('#hidden_client_id').val(client_id);
                 $('#bank-modal').modal('show');
@@ -375,13 +371,9 @@
             let selectedOption = selectElement.options[selectElement.selectedIndex];
             let exchangeId = selectedOption.getAttribute('data-exchange-id');
             let exchangeSelect = document.querySelector('select[id="exchanges"]');
-            
-
             // Loop through each option in the exchange select dropdown
             for (let i = 0; i < exchangeSelect.options.length; i++) {
                 let option = exchangeSelect.options[i];
-                
-                
                 if (option.value == exchangeId) {
                     // Set the selected attribute for the option with the given exchange ID
                     option.selected = true;

@@ -39,13 +39,21 @@
                                 class="nav-link {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'active' : '' }}">
                                 <i class="nav-icon fa fa-credit-card"></i>
                                 <p>
-                                    Pending Transaction
+                                Transactions
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview"
                                 style="display: {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'block' : 'none' }}">
-
+                                <li class="nav-item  ">
+                                    <a href="{{ url('/transactions/approved-deposits') }}"
+                                        class="nav-link {{ Request::is('transactions/approved-deposits') ? 'active' : '' }}">
+                                        <p>
+                                           Approved Deposit
+                                        </p>
+                                        <span class="badge badge-info right">{{ $approvedDeposit ?? 0 }}</span>
+                                    </a>
+                                </li>
 
                                 <li class="nav-item  ">
                                     <a href="{{ url('/transactions/pending-deposit') }}"
@@ -54,6 +62,15 @@
                                             Pending Deposit
                                         </p>
                                         <span class="badge badge-info right">{{ $pendingDeposit ?? 0 }}</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item  ">
+                                    <a href="{{ url('/transactions/approved-withdraws') }}"
+                                        class="nav-link {{ Request::is('transactions/approved-withdraws') ? 'active' : '' }}">
+                                        <p>
+                                           Approved Withdraws
+                                        </p>
+                                        <span class="badge badge-info right">{{ $approvedWithdraw ?? 0 }}</span>
                                     </a>
                                 </li>
                                 <li class="nav-item  ">
