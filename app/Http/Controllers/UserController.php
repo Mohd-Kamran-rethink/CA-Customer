@@ -274,7 +274,7 @@ class UserController extends Controller
         $validator = Validator::make($req->all(), [
             // 'name' => 'required',
             // 'ca_id' => 'required|unique:clients,ca_id',
-            'number' => 'required|unique:clients,number',
+            'number' => 'required|unique:clients,number|digits_between:1,10',
             'exchange' => 'required|not_in:0',
             'ca_id' => 'required|unique:clients,ca_id',
         ]);
@@ -290,11 +290,16 @@ class UserController extends Controller
         $result = $client->save();
         $clients = Client::get();
         $html = '
-            <option value="0">--Choose--</option>
-            ';
+            <option value="0">--Choose--</option>';
 
         foreach ($clients as $item) {
-            $html .= '<option value=' . $item->id . ' data-client=' . $item->id . ' data-number=' . $item->number . '>' . $item->name  . ' - ' .  $item->number . '</option>';
+            $html .= '<option data-exchange-id="'. $item->exchange_id .'" value=' . $item->id . ' data-client=' . $item->id . ' data-number=' . $item->number;
+
+            if ($client->id == $item->id) {
+                $html .= ' selected';
+            }
+            
+            $html .= '>' . $item->name  . ' - ' .  $item->number . '</option>';
         };
         if ($result) {
             return ['client' => $client, 'data' => $html];

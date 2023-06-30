@@ -259,11 +259,11 @@
                         </div>
                         <div class="col-12">
                             <div class="form-group">
-                                <label>Phone <span style="color:red">*</span></label>
-                                <input {{ isset($client) ? 'readonly' : '' }} type="number" id="cliet_number"
-                                    name="number" value="{{ isset($client) ? $client->number : old('number') }}"
-                                    id="number" placeholder="972873818" class="form-control"
-                                    data-validation="required">
+                                <label>Phone <span style="color:red">* Don't use 91 in phone number</span></label>
+                                <input {{ isset($client) ? 'readonly' : '' }}  id="cliet_number"
+                                    name="number" maxlength="10" value="{{ isset($client) ? $client->number : old('number') }}"
+                                    id="number"  class="form-control"
+                                    >
                                 <span id="client_name_error" class="text-danger">
                                 </span>
                             </div>
@@ -386,6 +386,8 @@
             let client_number = $('#cliet_number').val();
             let client_ca_id = $('#client_ca_id').val();
             let exchange = $('#exchange').val();
+            var dropdown = document.getElementById('client-ajax-dropdown');
+            
 
             $.ajax({
                 url: BASE_URL + "/clients/add?name=" + client_name + "&number=" + client_number + "&ca_id=" +
@@ -394,6 +396,7 @@
                     if (response.client && response.data) {
                         $('#client-modal').modal('hide');
                         $("#client-ajax-dropdown").html(response.data);
+                        handleClientChange(dropdown);
                     }
                 },
                 error: function(xhr, status, error) {
@@ -416,8 +419,11 @@
     </script>
     {{-- on clienet select select exchnage auto --}}
     <script>
+        
         function handleClientChange(selectElement) {
+            
             let selectedOption = selectElement.options[selectElement.selectedIndex];
+            console.log(selectedOption)
             let exchangeId = selectedOption.getAttribute('data-exchange-id');
             let exchangeSelect = document.querySelector('select[name="exchange_id"]');
 

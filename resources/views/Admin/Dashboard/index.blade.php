@@ -94,7 +94,7 @@
                                 <input type="text" value="{{ isset($search) ? $search : '' }}" name="table_search"
                                     class="form-control float-right" placeholder="Search by UTR" id="searchInput">
                             </div>
-                            <div class="col-2">
+                            <div class="col-1">
                                 <label for="" style="visibility: hidden">s</label>
                                 <input type="text" value="{{ isset($amount_search) ? $amount_search : '' }}"
                                     name="amount_search" class="form-control float-right" placeholder="Search by amount"
@@ -119,7 +119,15 @@
                                 <label for="">To</label>
                                 <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
                             </div>
-                            <div class="col-2 pt-2 ">
+                            <div class="col-2">
+                                <label for="">Sort Amount</label>
+                                <select name="sortamount" id="sortamount" class="form-control">
+                                    <option value="null">--Choose--</option>
+                                    <option value="asc">Ascending</option>
+                                    <option value="desc">Descending</option>
+                                </select>
+                            </div>
+                            <div class="col-1 pt-2 ">
                                 <div class="row d-flex justify-content-around">
                                     <button class="btn btn-success mt-4">Filter</button>
                                     @if (session('user')->role == 'deposit_banker')
