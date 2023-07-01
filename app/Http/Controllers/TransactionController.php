@@ -707,9 +707,13 @@ class TransactionController extends Controller
         $bank->amount=$bank->amount + $transaction->amount;
         $bank->update();
         $transHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','withdraw')->first();
-        $transHistory->delete();
+        $resulthistory=$transHistory->delete();
         $transaction->status="Revert";
-        $transaction->update();
+        if($resulthistory)
+        {
+            $transaction->update();
+        }
+
         return redirect('/dashboard');
     }
     function  cancelReverted(Request $req) {
@@ -718,9 +722,13 @@ class TransactionController extends Controller
         $transHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','Deposit')->first();
         $exchange->amount = $exchange->amount - ( $transaction->amount + $transaction->bonus);
         $exchange->update();
-        $transHistory->delete();
+        $transhistoryResult= $transHistory->delete();
         $transaction->status="Cancel";
-        $transaction->update();
+        if($transhistoryResult)
+        {
+            $transaction->update();
+        }
+
 
         return redirect('dashboard');
     }
