@@ -52,6 +52,8 @@
                                             <th>Opening Balance</th>
                                             <th>Total Deposit</th>
                                             <th>Total Withdraw</th>
+                                            <th>Total Transfer IN</th>
+                                            <th>Total Transfer Out</th>
                                             <th>Closing Balance</th>
                                             <th>Actions</th>
                                         </tr>
@@ -64,6 +66,8 @@
                                                 <td>{{ $item->closginYesterday??'--' }}</td>
                                                 <td>{{ $item->totalDeposit??0 }}</td>
                                                 <td>{{ $item->totalWithdraw??0 }}</td>
+                                                <td>{{ $item->totalTransferIN??0 }}</td>
+                                                <td>{{ $item->totalTransferOut??0 }}</td>
                                                 <td>{{ $item->amount??0 }}</td>
                                                 <td>
                                                     {{-- <a href="{{ url('bank-accounts/deposit-money/' . $item->id) }}"

@@ -15,42 +15,53 @@ class BannkController extends Controller
 
     public function list()
     {
-        
+
         $yesterday = Carbon::yesterday();
         $banks = BankDetail::leftjoin('users', 'bank_details.provider_id', '=', 'users.id')
             ->select('bank_details.*', 'users.name as provider_name')
             ->whereNull('customer_id')
-           
+
             ->paginate(30);
-            // Retrieve last transaction history for each bank from yesterday
-            foreach ($banks as $bank) {
-                $lastEntery = TransactionHistory::where('bank_id', $bank->id)
-                    ->whereDate('created_at', $yesterday)
-                    ->orderBy('created_at', 'desc')
-                    ->select('current_balance')
-                    ->first();
-                $bank->closginYesterday=$lastEntery->current_balance??'';
-            }
-            foreach ($banks as $bank) {
-                $totaldeposit = Transaction::where('bank_account', $bank->id)
-                                ->where('type','=','Deposit')
-                                ->orderBy('created_at', 'desc')
-                                ->get()
-                                ->sum('amount');
-                                $bank->totalDeposit=$totaldeposit??'';
-                            }
-                foreach ($banks as $bank) {
-                                $totalWithdraw = Transaction::where('bank_account', $bank->id)
-                                                ->where('type','=','Withdraw')
-                                                ->where('status','=','Approve')
-                                                ->orderBy('created_at', 'desc')
-                                                ->get()
-                                                ->sum('amount');
-                                                $bank->totalWithdraw=$totalWithdraw??'';
-                                            }
-                                
-       
-            return view('Admin.BAccountData.list', compact('banks'));
+        // Retrieve last transaction history for each bank from yesterday
+        foreach ($banks as $bank) {
+            $lastEntery = TransactionHistory::where('bank_id', $bank->id)
+                ->whereDate('created_at', $yesterday)
+                ->orderBy('created_at', 'desc')
+                ->select('current_balance')
+                ->first();
+            $bank->closginYesterday = $lastEntery->current_balance ?? '';
+        }
+        foreach ($banks as $bank) {
+            $totaldeposit = Transaction::where('bank_account', $bank->id)
+                ->where('type', '=', 'Deposit')
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->sum('amount');
+            $bank->totalDeposit = $totaldeposit ?? '';
+        }
+        foreach ($banks as $bank) {
+            $totalWithdraw = Transaction::where('bank_account', $bank->id)
+                ->where('type', '=', 'Withdraw')
+                ->where('status', '=', 'Approve')
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->sum('amount');
+            $bank->totalWithdraw = $totalWithdraw ?? '';
+        }
+        foreach ($banks as $bank) {
+            $totalTransferIN = TransactionHistory::where('bank_id', $bank->id)
+                ->where('type', '=','Transfer In')
+                ->get()
+                ->sum('amount');
+            $totalTransferOut = TransactionHistory::where('bank_id', $bank->id)
+                ->where('type', '=', 'Transfer Out')
+                ->get()
+                ->sum('amount');
+            $bank->totalTransferOut = $totalTransferOut ?? '';
+            $bank->totalTransferIN = $totalTransferIN ?? '';
+        }
+
+        return view('Admin.BAccountData.list', compact('banks'));
     }
     public function addForm($id = null)
     {
