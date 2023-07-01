@@ -208,6 +208,5 @@ Route::prefix('expense-type')->group(function () {
     Route::get('/add', [ExpenseController::class, 'addForm'])->name('addForm');
     Route::post('/add', [ExpenseController::class, 'add'])->name('add');
 });
-
 Route::get('/client/import', [UserController::class, 'clientImportFORM'])->name('clientImportFORM')->middleware('ValidateManager');
 Route::post('/client/import', [UserController::class, 'clientImport'])->name('clientImport')->middleware('ValidateManager');

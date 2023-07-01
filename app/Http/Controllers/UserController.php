@@ -372,7 +372,7 @@ class UserController extends Controller
     }
     function clientAssign(Request $req)
     {
-        $req->validate(['agent_id' => 'required|not_in:0']);
+        $req->validate(['agent_id' => 'required']);
         $client = Client::find($req->clientID);
         $client->agent_id = $req->agent_id;
         $result = $client->update();
