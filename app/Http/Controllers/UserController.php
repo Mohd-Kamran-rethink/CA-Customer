@@ -285,7 +285,7 @@ class UserController extends Controller
         }
         $client = new Client();
         $client->name = $req->name;
-        $client->number = $req->number;
+        $client->number = str_replace('+91', '', $req->number);
         $client->ca_id = $req->ca_id;
         $client->exchange_id = $req->exchange;
         $result = $client->save();
