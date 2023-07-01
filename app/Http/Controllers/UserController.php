@@ -275,7 +275,7 @@ class UserController extends Controller
         $validator = Validator::make($req->all(), [
             // 'name' => 'required',
             // 'ca_id' => 'required|unique:clients,ca_id',
-            'number' => 'required',
+            'number' => 'required|unique:clients,number',
             'exchange' => 'required|not_in:0',
             'ca_id' => 'required|unique:clients,ca_id',
         ]);
