@@ -216,7 +216,7 @@
                                                         @if (session('user')->role === 'withdrawrer')
                                                             @if ($item->status == 'Revert')
                                                             <button onclick="WithdrawCancel({{$item->id}})"
-                                                                title="Edit" class="btn btn-primary">Cancel</button>
+                                                                title="Edit" class="btn btn-primary">Complete Refund</button>
                                                             @endif
                                                             {{-- @if ($item->status == 'Approve')
                                                                 <button onclick="cancelDeposit({{ $item->id }})"
