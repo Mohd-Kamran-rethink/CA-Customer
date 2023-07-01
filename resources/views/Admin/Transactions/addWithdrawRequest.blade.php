@@ -236,14 +236,14 @@
                   </div>
                </div>
                --}}
-                        <div class="col-12">
+                        {{-- <div class="col-12">
                             <div class="form-group">
                                 <label>Email </label>
                                 <input type="email" name="email"
                                     value="{{ isset($bank) ? $bank->email : old('email') }}" id="email"
                                     class="form-control" data-validation="required">
                             </div>
-                        </div>
+                        </div> --}}
                         {{-- 
                <div class="col-12">
                   <div class="form-group">
