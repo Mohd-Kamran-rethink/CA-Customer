@@ -165,8 +165,8 @@
                     <div class="row mt-2">
                         <div class="col-12">
                             <button tabindex="3" type="submit" class="btn btn-info">Accept</button>
-                            <button onclick="openCancelModal({{ $transaction->id }})" type="button"
-                                class="btn btn-default">Cancel</button>
+                            <a href="{{url('/dashboard')}}"  type="button"
+                                class="btn btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>

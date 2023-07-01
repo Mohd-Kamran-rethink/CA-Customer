@@ -61,7 +61,7 @@
                                             <tr>
                                                 <td style="width: 5%">{{ $loop->iteration }}</td>
                                                 <td>{{ $item->name }}</td>
-                                                <td>{{ $item->number }}</td>
+                                                <td>{{ session('user')->role=='customer_care_manager'?$item->number: substr($item->number, 0, -3) . str_repeat('*', 3) }}</td>
                                                 <td>{{ $item->ca_id }}</td>
                                                 <td>{{ $item->agent_name }}</td>
                                                 <td>{{ $item->lastDepositDate ? $item->lastDepositDate->format('d-M-Y  h:i:s A') : 'No Deposit yet' }}
@@ -75,7 +75,7 @@
                                                         class="btn btn-success">View Details</a>
                                                     <a href="{{ url('clients/view-banks/?id=' . $item->id) }}"
                                                         class="btn btn-primary">View Banks</a>
-                                                    @if (!$item->agent_id)
+                                                    @if (!$item->agent_id && session('user')->role=='customer_care_manager')
                                                         <button onclick="openAssignLead({{$item->id}})" class="btn btn-danger">Assign Agent</button>
                                                     @endif
                                                 </td>

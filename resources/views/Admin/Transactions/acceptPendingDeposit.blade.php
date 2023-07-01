@@ -19,12 +19,12 @@
             @endif
             <div class="">
 
-                <div class="float-right">Add Client:<span class="font-weight-bold float-right" >Alt+C</span> </div> <br>
+                <div class="float-right">Add Client:<span class="font-weight-bold float-right">Alt+C</span> </div> <br>
                 <div class="float-right">Close Pop Up: <span class="font-weight-bold float-right">Esc</span></div>
             </div>
-            
+
         </div>
-        
+
     </section>
 
     <section class="content-header">
@@ -43,7 +43,7 @@
                         <div class="col-6">
                             <div class="row">
                                 <div class="col-8 col-md-6 col-lg-8">
-                                    <div class="" >
+                                    <div class="">
                                         <label>Clients <span style="color:red">*</span></label>
                                         <select id="client-ajax-dropdown" tabindex="1" name="client" id=""
                                             class="form-control searchOptions" onchange="handleClientChange(this)">
@@ -163,7 +163,7 @@
 
 
 
-                            <div class="col-12">
+                            <div class="col-12" style="display: none">
                                 <div class="form-group">
                                     <label>Created On <span style="color:red">*</span></label>
                                     <input readonly type="text" name="created_on"
@@ -260,10 +260,9 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label>Phone <span style="color:red">* Don't use 91 in phone number</span></label>
-                                <input {{ isset($client) ? 'readonly' : '' }}  id="cliet_number"
-                                    name="number" maxlength="10" value="{{ isset($client) ? $client->number : old('number') }}"
-                                    id="number"  class="form-control"
-                                    >
+                                <input {{ isset($client) ? 'readonly' : '' }} name="number" maxlength="10"
+                                    value="{{ isset($client) ? $client->number : old('number') }}" id="number"
+                                    type="text" class="form-control" onpaste="removePrefix(event)">
                                 <span id="client_name_error" class="text-danger">
                                 </span>
                             </div>
@@ -387,7 +386,7 @@
             let client_ca_id = $('#client_ca_id').val();
             let exchange = $('#exchange').val();
             var dropdown = document.getElementById('client-ajax-dropdown');
-            
+
 
             $.ajax({
                 url: BASE_URL + "/clients/add?name=" + client_name + "&number=" + client_number + "&ca_id=" +
@@ -419,9 +418,8 @@
     </script>
     {{-- on clienet select select exchnage auto --}}
     <script>
-        
         function handleClientChange(selectElement) {
-            
+
             let selectedOption = selectElement.options[selectElement.selectedIndex];
             console.log(selectedOption)
             let exchangeId = selectedOption.getAttribute('data-exchange-id');
@@ -466,5 +464,15 @@
                 $('#client-modal').modal('hide');
             }
         });
+    </script>
+    {{-- remove phone input prefix --}}
+    <script>
+        function removePrefix(event) {
+            var clipboardData = event.clipboardData || window.clipboardData;
+            var pastedData = clipboardData.getData('text');
+            var phoneNumber = pastedData.replace('+91', '');
+            event.preventDefault();
+            $('#number').val(phoneNumber);
+        }
     </script>
 @endsection

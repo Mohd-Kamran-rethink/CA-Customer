@@ -125,6 +125,10 @@ Route::middleware('CommonMiddleware')->prefix('transactions')->group(function ()
     // for manager
     Route::get('withdraw-banker/edit/{id}',[TransactionController::class,'widdrawBankerEditForm'])->name('widdrawBankerEditForm');
     Route::post('withdraw-banker/edit',[TransactionController::class,'widdrawBankerEdit'])->name('widdrawBankerEdit');
+    // revert
+    Route::post('/withdraw-banker/revert',[TransactionController::class,'revertWithdraw'])->name('revertWithdraw');
+    Route::post('withdraw/cancel-the-revert',[TransactionController::class,'cancelReverted'])->name('cancelReverted');
+
 }); 
 
 // exchanges

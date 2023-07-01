@@ -44,18 +44,18 @@
                             </div>
                         </div>
                     </div>
-                    @if(session('user')->role=='deposit_banker' || session('user')->role=='withdrawal_banker')
-                    <div class="col-3">
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>{{ isset($todaysApproed) ? count($todaysApproed) ?? 0 : 0 }} </h3>
-                                <p>Today's Approved Transactions</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fa fa-credit-card"></i>
+                    @if (session('user')->role == 'deposit_banker' || session('user')->role == 'withdrawal_banker')
+                        <div class="col-3">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>{{ isset($todaysApproed) ? count($todaysApproed) ?? 0 : 0 }} </h3>
+                                    <p>Today's Approved Transactions</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-credit-card"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endif
                     {{-- for withdraw --}}
                     <div class="col-3">
@@ -73,6 +73,19 @@
                             </div>
                         </div>
                     </div>
+                    @if(session('user')->role=='withdrawrer')
+                    <div class="col-3">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ isset($totalWithdrawRevert) ? count($totalWithdrawRevert) ?? 0 : 0 }} </h3>
+                                <p>Total Reverts</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     <div class="col-6 d-flex justify-content-end align-items-end pb-2">
                         <h1 id="timer">Page will reload in 10 s</h1>
                     </div>
@@ -107,6 +120,9 @@
                                     <option {{ $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
                                     <option {{ $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
                                     <option {{ $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
+                                    @if(session('user')->role=='withdrawrer')
+                                        <option {{ $status == 'Revert' ? 'selected' : '' }} value="Revert">Revert</option>
+                                    @endif
                                 </select>
                             </div>
 
@@ -164,7 +180,7 @@
                                                 <tr>
                                                     <input type="hidden" value="{{ $item->id }}">
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $item->date }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($item->date)->format('d-m-Y') }}</td>
                                                     <td>{{ $item->holder_name }}</td>
                                                     <td>{{ $item->utr_no }}</td>
                                                     <td>{{ $item->amount }}</td>
@@ -191,11 +207,10 @@
                                                         @endif
                                                         {{-- for withdrawal functionality --}}
                                                         @if (session('user')->role === 'withdrawrer')
-                                                            {{-- @if ($item->status == 'Approve')
-                                                            <a href="{{ url('transactions/withdraw/edit/' . $item->id) }}"
-                                                                title="Edit" class="btn btn-primary"><i
-                                                                    class="fa fa-pen"></i></a>
-                                                            @endif --}}
+                                                            @if ($item->status == 'Revert')
+                                                            <button onclick="WithdrawCancel({{$item->id}})"
+                                                                title="Edit" class="btn btn-primary">Cancel</button>
+                                                            @endif
                                                             {{-- @if ($item->status == 'Approve')
                                                                 <button onclick="cancelDeposit({{ $item->id }})"
                                                                     title="Change Status" class="btn btn-danger"
@@ -203,14 +218,16 @@
                                                             @endif --}}
                                                         @elseif(session('user')->role === 'withdrawal_banker')
                                                             @if ($item->status == 'Pending')
-                                                            <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
-                                                                title="Change Status" class="btn btn-primary">Change
-                                                                Status</a>
-                                                                @endif
+                                                                <a href="{{ url('transactions/change-status-withdraw/' . $item->id) }}"
+                                                                    title="Change Status" class="btn btn-primary">Change
+                                                                    Status</a>
+                                                            @endif
                                                             @if ($item->status == 'Approve')
                                                                 <a href="{{ url('transactions/withdraw-banker/edit/' . $item->id) }}"
                                                                     title="Edit" class="btn btn-danger"><i
                                                                         class="fa fa-pen"></i></a>
+                                                                <button onclick="revertWithdraw({{$item->id}})" title="revert"
+                                                                    class="btn btn-danger">Revert</button>
                                                             @endif
                                                         @endif
                                                     </td>
@@ -231,7 +248,63 @@
                     </div>
                 </div>
             </div>
+            {{-- cancel-withdraw --}}
+        <div class="modal fade show" id="cancel-withdraw" style=" padding-right: 17px;" aria-modal="true" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Cancel transaction</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form action="{{ url('/transactions/withdraw/cancel-the-revert') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="cancelId" id="calcelWithdraw">
+                        <div class="modal-body">
+                            <h4>Are you sure you want to cancel this transaction?</h4>
+                            
+                        </div>
+                        <div class="modal-footer ">
+                            <button type="submit" class="btn btn-danger">Yes</button>
+                            <button type="button" data-dismiss="modal" aria-label="Close"
+                                class="btn btn-default">No</button>
+                    </form>
+                </div>
+            </div>
+        </div>
         </section>
+        {{-- revert transaction --}}
+        <div class="modal fade show" id="revert-transaction" style=" padding-right: 17px;" aria-modal="true"
+            role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Are you sure you want to revert this transaction?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form action="{{ url('/transactions/withdraw-banker/revert') }}" method="POST"
+                        id="statsus-change-form">
+                        @csrf
+                        <input type="hidden" name="hiddenId" id="revertId">
+                        <div class="modal-body">
+                            <label for="">Revert Note <span style="color:red">*</span></label>
+                            <textarea name="cancel_note" id="cancel_note" cols="30" rows="3" class="form-control"
+                                placeholder="Write something"></textarea>
+                            <span style="color:red;display: none" id="cancel_note_error">Please write revert note!</span>
+                        </div>
+                        <div class="modal-footer ">
+                            <button onclick="submitBankerRevert()" type="submit" id="submit-button"
+                                class="btn btn-danger">Submit</button>
+                            <button type="button" data-dismiss="modal" aria-label="Close"
+                                class="btn btn-default">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         {{-- cancel deposit --}}
         <div class="modal fade show" id="depositer-cancel" style=" padding-right: 17px;" aria-modal="true"
             role="dialog">
@@ -259,30 +332,8 @@
                 </div>
             </div>
         </div>
-        {{--  --}}
-        <div class="modal fade show" id="modal-default" style=" padding-right: 17px;" aria-modal="true" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Delete transaction</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <form action="{{ url('/transactions/delete') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="deleteId" id="deleteInput">
-                        <div class="modal-body">
-                            <h4>Are you sure you want to delete this transaction?</h4>
-                        </div>
-                        <div class="modal-footer ">
-                            <button type="submit" class="btn btn-danger">Yes</button>
-                            <button type="button" data-dismiss="modal" aria-label="Close"
-                                class="btn btn-default">No</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+
+        
     @endif
     <script>
         function deleteModal(id) {
@@ -294,6 +345,17 @@
             $('#depositer-cancel').modal('show')
             $('#transID').val(id)
         }
+
+        function revertWithdraw(id) {
+            $('#revert-transaction').modal('show');
+            $('#revertId').val(id);
+        }
+        function WithdrawCancel(id)
+        {
+            $('#cancel-withdraw').modal('show');
+            $('#calcelWithdraw').val(id);
+        }
+
     </script>
 
 
@@ -493,18 +555,13 @@
         } else {
             $url = 'http://customer.cricadda.tech/transactions/change-status/';
         }
-        if(session('user')->role == 'deposit_banker')
-        {
-            $addUrl='http://customer.cricadda.tech/transactions/add';
-        }    
-        if(session('user')->role=='withdrawrer')
-        {
-            $addUrl='http://customer.cricadda.tech/transactions/withdraw/add';
+        if (session('user')->role == 'deposit_banker') {
+            $addUrl = 'http://customer.cricadda.tech/transactions/add';
         }
-
-
-            
-            
+        if (session('user')->role == 'withdrawrer') {
+            $addUrl = 'http://customer.cricadda.tech/transactions/withdraw/add';
+        }
+        
     @endphp
 
 
@@ -550,8 +607,8 @@
             if (event.altKey && event.key === 'a') {
                 // Call the openClientModel function
                 var addUrl = '{{ $addUrl }}';
-                    window.location.href = addUrl;
-                
+                window.location.href = addUrl;
+
 
             }
             if (event.key === 'Escape') {
