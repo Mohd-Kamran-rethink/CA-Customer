@@ -153,6 +153,8 @@
                                     <button class="btn btn-success mt-4">Filter</button>
                                     @if (session('user')->role == 'deposit_banker')
                                         <a href="{{ url('transactions/add') }}" class="btn btn-primary mt-4">Add</a>
+                                        @elseif(session('user')->role == 'withdrawrer')
+                                        <a href="{{ url('/transactions/withdraw/add') }}" class="btn btn-primary mt-4">Add</a>
                                     @endif
 
                                 </div>
