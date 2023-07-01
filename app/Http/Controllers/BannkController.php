@@ -198,7 +198,8 @@ class BannkController extends Controller
             ';
 
             foreach ($banks as $item) {
-                $html .= '<option value=' . $item->id . '>' . $item->holder_name . '-(' . $item->account_number . ')</option>';
+                $isSelected = ($item->id === $bank->id) ? 'selected' : '';
+                $html .= '<option value="' . $item->id . '" ' . $isSelected . '>' . $item->holder_name . '-(' . $item->account_number . ')</option>';
             };
             return $html;
         }
