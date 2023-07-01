@@ -141,14 +141,14 @@
                                 <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
                             </div>
                             <div class="col-1">
-                                <label for="">Sort Amount</label>
+                                <label for="">Amount</label>
                                 <select name="sortamount" id="sortamount" class="form-control">
                                     <option value="null">--Choose--</option>
                                     <option value="asc">Ascending</option>
                                     <option value="desc">Descending</option>
                                 </select>
                             </div>
-                            <div class="col-1 pt-2 ">
+                            <div class="col-2 pt-2 ">
                                 <div class="row d-flex justify-content-around">
                                     <button class="btn btn-success mt-4">Filter</button>
                                     @if (session('user')->role == 'deposit_banker')
