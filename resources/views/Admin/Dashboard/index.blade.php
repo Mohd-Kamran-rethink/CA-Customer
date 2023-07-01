@@ -86,7 +86,7 @@
                         </div>
                     </div>
                     @endif
-                    <div class="col-6 d-flex justify-content-end align-items-end pb-2 flex-column">
+                    <div class="col-4 d-flex justify-content-end align-items-end pb-2 flex-column">
                         <h5 id="timer">Page will reload in 10 s</h5>
                         @if(session('user')->role=='withdrawrer'||session('user')->role=='deposit_banker')
                         <h5 id="timer">Alt+A to Add</h5>
