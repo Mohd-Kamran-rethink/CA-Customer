@@ -140,7 +140,7 @@
                                 <label for="">To</label>
                                 <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
                             </div>
-                            <div class="col-2">
+                            <div class="col-1">
                                 <label for="">Sort Amount</label>
                                 <select name="sortamount" id="sortamount" class="form-control">
                                     <option value="null">--Choose--</option>
