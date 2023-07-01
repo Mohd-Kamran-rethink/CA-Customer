@@ -112,10 +112,10 @@
                                 <input type="text" value="{{ isset($search) ? $search : '' }}" name="table_search"
                                     class="form-control float-right" placeholder="Search by UTR" id="searchInput">
                             </div>
-                            <div class="col-2">
+                            <div class="col-1">
                                 <label for="" style="visibility: hidden">s</label>
                                 <input type="text" value="{{ isset($amount_search) ? $amount_search : '' }}"
-                                    name="amount_search" class="form-control float-right" placeholder="Search by amount"
+                                    name="amount_search" class="form-control float-right" placeholder="Amount"
                                     id="searchInput">
                             </div>
                             <div class="col-2 ">
