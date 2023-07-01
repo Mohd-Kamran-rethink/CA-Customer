@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BankDetail;
 use App\Client;
+use App\Exchange;
 use App\Franchise;
 use App\Transaction;
 use App\TransactionHistory;
@@ -293,12 +294,12 @@ class UserController extends Controller
             <option value="0">--Choose--</option>';
 
         foreach ($clients as $item) {
-            $html .= '<option data-exchange-id="'. $item->exchange_id .'" value=' . $item->id . ' data-client=' . $item->id . ' data-number=' . $item->number;
+            $html .= '<option data-exchange-id="' . $item->exchange_id . '" value=' . $item->id . ' data-client=' . $item->id . ' data-number=' . $item->number;
 
             if ($client->id == $item->id) {
                 $html .= ' selected';
             }
-            
+
             $html .= '>' . $item->name  . ' - ' .  $item->number . '</option>';
         };
         if ($result) {
@@ -308,15 +309,15 @@ class UserController extends Controller
 
     public function clientList(Request $req)
     {
-        $filterData=$req->query('filterData');
-        $clients=[];
-        $clientsQuery = Client::leftJoin('users','clients.agent_id','users.id')
-                            ->select('clients.*',"users.name as agent_name");
-                            if ($filterData === 'all'|| !$filterData) {
-                                $clients = $clientsQuery->get();
-                            } elseif ($filterData === 'without_agent') {
-                                $clients = $clientsQuery->whereNull('agent_id')->get();
-                            } 
+        $filterData = $req->query('filterData');
+        $clients = [];
+        $clientsQuery = Client::leftJoin('users', 'clients.agent_id', 'users.id')
+            ->select('clients.*', "users.name as agent_name");
+        if ($filterData === 'all' || !$filterData) {
+            $clients = $clientsQuery->get();
+        } elseif ($filterData === 'without_agent') {
+            $clients = $clientsQuery->whereNull('agent_id')->get();
+        }
 
         foreach ($clients as $client) {
             $lastDeposit = Transaction::where('client_id', $client->id)
@@ -339,8 +340,8 @@ class UserController extends Controller
                 $client->lastWithdrawalDaysAgo = Carbon::parse($client->lastWithdrawalDate)->diffInDays(Carbon::now());
             }
         }
-        $agents=User::where('role','=','agent')->get();
-        return view('Admin.Client.list', compact('clients','agents','filterData'));
+        $agents = User::where('role', '=', 'agent')->get();
+        return view('Admin.Client.list', compact('clients', 'agents', 'filterData'));
     }
 
     // show client transadction details
@@ -369,22 +370,17 @@ class UserController extends Controller
         $endDate = $endDate->toDateString();
         return view('Admin.Client.ViewDetails', compact('activites', 'id', 'startDate', 'endDate'));
     }
-    function clientAssign(Request $req) {
-        $req->validate(['agent_id'=>'required|not_in:0']);
-        $client=Client::find($req->clientID);
-        $client->agent_id=$req->agent_id;
-        $result=$client->update();
-        if($result)
-        {
-            return redirect()->back()->with(['msg-success'=>'Assigned successfully']);
+    function clientAssign(Request $req)
+    {
+        $req->validate(['agent_id' => 'required|not_in:0']);
+        $client = Client::find($req->clientID);
+        $client->agent_id = $req->agent_id;
+        $result = $client->update();
+        if ($result) {
+            return redirect()->back()->with(['msg-success' => 'Assigned successfully']);
+        } else {
+            return redirect()->back()->with(['msg-error' => 'Somthing went wrong']);
         }
-        else
-        {
-            return redirect()->back()->with(['msg-error'=>'Somthing went wrong']);
-            
-        }
-        
-
     }
 
 
@@ -470,5 +466,53 @@ class UserController extends Controller
         $bank->address = $req->address;
         $bank->save();
         return redirect()->back()->with(['msg-success' => 'updated successfully']);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // import client by manager
+    public function clientImportFORM()
+    {
+        return view('clientImport');
+    }
+    function clientImport(Request $req)
+    {
+
+        $file = $req->file('excel_file');
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file->path());
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($file->path());
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+        $entries = [];
+        $columnHeaders = array_shift($rows);
+        $exchanges = Exchange::pluck('name', 'id')->map(function ($name) {
+            return trim($name);
+        })->toArray();
+        foreach ($rows as $row) {
+            $data = array_combine($columnHeaders, $row);
+            $exchnageID = array_search(strtolower(trim($data['Exchange'])), array_map('strtolower', $exchanges));
+            //for leads_date
+            $leads_dateDateserialNumber =$data['Date']; // This is the serial number for the date "01/01/2021"
+            $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
+            $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
+            $leads_dateformattedDate = $leads_date->format('Y-m-d');
+            $entry = [
+                'number' => str_replace('+91', '', $data['Number']),
+                'ca_id' => $data['Client ID'],
+                'exchange_id' => $exchnageID ?? '',
+                'date' => $leads_dateformattedDate,
+            ];
+            Client::create($entry);
+        }
+        return redirect()->back()->with(['msg-success' => 'imported successfully']);
     }
 }
