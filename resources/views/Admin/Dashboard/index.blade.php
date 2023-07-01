@@ -86,8 +86,13 @@
                         </div>
                     </div>
                     @endif
-                    <div class="col-6 d-flex justify-content-end align-items-end pb-2">
-                        <h1 id="timer">Page will reload in 10 s</h1>
+                    <div class="col-6 d-flex justify-content-end align-items-end pb-2 flex-column">
+                        <h5 id="timer">Page will reload in 10 s</h5>
+                        @if(session('user')->role=='withdrawrer'||session('user')->role=='deposit_banker')
+                        <h5 id="timer">Alt+A to Add</h5>
+                        @elseif(session('user')->role=='depositer'||session('user')->role=='withdrawal_banker')
+                        <h5 id="timer">Alt+C to Change Status</h5>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -107,7 +112,7 @@
                                 <input type="text" value="{{ isset($search) ? $search : '' }}" name="table_search"
                                     class="form-control float-right" placeholder="Search by UTR" id="searchInput">
                             </div>
-                            <div class="col-1">
+                            <div class="col-2">
                                 <label for="" style="visibility: hidden">s</label>
                                 <input type="text" value="{{ isset($amount_search) ? $amount_search : '' }}"
                                     name="amount_search" class="form-control float-right" placeholder="Search by amount"

@@ -27,7 +27,14 @@ class TransactionController extends Controller
         $amount_search = null;
         $start_date = $req->start_date;
         $end_date = $req->end_date;
+        $sortamount='desc';
+        $sortBy='id';
+        
         // Default values if start date is not available
+        if ($req->sortamount && $req->sortamount!='null') {
+            $sortamount = $req->sortamount;
+            $sortBy = 'amount';
+        }
         if (empty($start_date)) {
             $start_date = now()->toDateString();
         }
@@ -112,7 +119,7 @@ class TransactionController extends Controller
                     $query->whereDate('transactions.date', '>=', $start_date)
                         ->whereDate('transactions.date', '<=', $end_date);
                 })
-                ->orderBy('id', 'desc')
+                ->orderBy($sortBy, $sortamount)
                 ->paginate(30);
         } else if ($user->role == 'withdrawrer' || $user->role == 'withdrawal_banker') {
             $totalWithdrawRevert=Transaction::where('status','=','Revert')->get();
