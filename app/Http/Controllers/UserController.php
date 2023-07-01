@@ -300,7 +300,7 @@ class UserController extends Controller
                 $html .= ' selected';
             }
 
-            $html .= '>' . $item->name  . ' - ' .  $item->number . '</option>';
+            $html .= '>' . $item->name??''  . ' - ' .  $item->number . '</option>';
         };
         if ($result) {
             return ['client' => $client, 'data' => $html];

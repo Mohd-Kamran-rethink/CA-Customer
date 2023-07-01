@@ -382,7 +382,7 @@
             event.preventDefault();
             let submitButton = $('#submit-button')
             let client_name = $('#client_name').val();
-            let client_number = $('#cliet_number').val();
+            let client_number = $('#number').val();
             let client_ca_id = $('#client_ca_id').val();
             let exchange = $('#exchange').val();
             var dropdown = document.getElementById('client-ajax-dropdown');
