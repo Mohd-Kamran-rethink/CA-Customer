@@ -115,6 +115,7 @@ public function listMyExpenses(Request $req)
                 $trnascationForFromBank->amount = $req->amount;
                 $trnascationForFromBank->opening_balance = $bankFrom->amount;
                 $trnascationForFromBank->type = "Transfer Out";
+                $trnascationForFromBank->current_balance = $bankFrom->amount - $req->amount;
                 $trnascationForFromBank->save();
                 $bankFrom->amount = $bankFrom->amount - $req->amount;
 
@@ -128,6 +129,7 @@ public function listMyExpenses(Request $req)
                 $trnascationForToBank->amount = $req->amount;
                 $trnascationForToBank->opening_balance = $bankTo->amount;
                 $trnascationForToBank->type = "Transfer In";
+                $trnascationForToBank->current_balance = $bankTo->amount  + $req->amount;
                 $trnascationForToBank->save();
                 $bankTo->amount = $bankTo->amount  + $req->amount;
 
