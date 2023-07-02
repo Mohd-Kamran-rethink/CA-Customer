@@ -768,12 +768,25 @@ class TransactionController extends Controller
             {
                 continue;
             }
+            $transaction=new Transaction();
+            $transaction->client_id;
+            $transaction->amount=$data['Deposit'] ?? '';
+            $transaction->bonus=$data['Bonus'] ?? '';
+            $transaction->utr_no=$data['UTR No'];
+            $transaction->type='Deposit';
+            $transaction->status='Approve';
+            $transaction->exchange_id=$exchnageID;
+            $transaction->date=$leads_dateformattedDate;
+            $transaction->created_at=$leads_dateformattedDate;
+            $transaction->save();
+
             $entry = [
                 'exchange_id' => $exchnageID??'',
                 'client_id' => $clientID,
                 'amount' => $data['Deposit'] ?? '',
                 'bonus' => $data['Bonus'] ?? '',
                 'type' => 'Deposit',
+                'transaction_id' => $transaction->id??'',
                 'created_at'=>$leads_dateformattedDate,
             ];
             TransactionHistory::create($entry);
