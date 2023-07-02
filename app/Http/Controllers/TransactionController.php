@@ -27,11 +27,11 @@ class TransactionController extends Controller
         $amount_search = null;
         $start_date = $req->start_date;
         $end_date = $req->end_date;
-        $sortamount='desc';
-        $sortBy='id';
-        
+        $sortamount = 'desc';
+        $sortBy = 'id';
+
         // Default values if start date is not available
-        if ($req->sortamount && $req->sortamount!='null') {
+        if ($req->sortamount && $req->sortamount != 'null') {
             $sortamount = $req->sortamount;
             $sortBy = 'amount';
         }
@@ -60,7 +60,7 @@ class TransactionController extends Controller
         $agentstartDate = Carbon::now()->startOfDay();
         $agentEndDate = Carbon::now()->endOfDay();
         $totalApprovedForAgent = [];
-        $totalWithdrawRevert=0;
+        $totalWithdrawRevert = 0;
         // conditional data rendereing
         if ($user->role == 'customer_care_manager') {
             $depositers = User::where('role', '=', 'deposit_banker')->get()->count();
@@ -122,7 +122,7 @@ class TransactionController extends Controller
                 ->orderBy($sortBy, $sortamount)
                 ->paginate(30);
         } else if ($user->role == 'withdrawrer' || $user->role == 'withdrawal_banker') {
-            $totalWithdrawRevert=Transaction::where('status','=','Revert')->get();
+            $totalWithdrawRevert = Transaction::where('status', '=', 'Revert')->get();
             $transactions = DB::table('transactions')->where('transactions.type', '=', 'Withdraw')
                 ->leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
                 ->leftjoin('clients', 'transactions.client_id', '=', 'clients.id')
@@ -130,7 +130,7 @@ class TransactionController extends Controller
                 ->when($status !== 'null', function ($query) use ($status) {
                     return $query->where('transactions.status', '=', $status);
                 })
-                
+
                 ->when($search != null, function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
                         $query->where('transactions.utr_no', 'like', '%' . $search . '%');
@@ -176,7 +176,6 @@ class TransactionController extends Controller
                 ->whereDate('transactions.created_at', '>=', date('Y-m-d', strtotime($agentstartDate)))
                 ->whereDate('transactions.created_at', '<=', date('Y-m-d', strtotime($agentEndDate)))
                 ->get();
-            
         } else if (session('user')->role == 'withdrawal_banker') {
             $totalApprovedForAgent = DB::table('transactions')->where('transactions.type', '=', 'Withdraw')
                 ->where('status', '=', 'Pending')
@@ -189,7 +188,7 @@ class TransactionController extends Controller
                 ->whereDate('transactions.created_at', '<=', date('Y-m-d', strtotime($agentEndDate)))
                 ->get();
         }
-        return view('Admin.Dashboard.index', compact('totalWithdrawRevert','todaysApproed', 'totalApprovedForAgent', 'amount_search', 'transactions', 'status', 'search', 'start_date', 'end_date'));
+        return view('Admin.Dashboard.index', compact('totalWithdrawRevert', 'todaysApproed', 'totalApprovedForAgent', 'amount_search', 'transactions', 'status', 'search', 'start_date', 'end_date'));
     }
     // deposit work functions
     public function addForm()
@@ -420,7 +419,7 @@ class TransactionController extends Controller
 
         //save exchange
         $exchange->amount = $exchange->amount + $req->amount + $req->bonus;
-       $result= $exchange->update();
+        $result = $exchange->update();
         // send sms
         $client = Client::find($req->client);
         $curl = curl_init();
@@ -447,7 +446,7 @@ class TransactionController extends Controller
 
         $response = curl_exec($curl);
         curl_close($curl);
-        
+
         if ($result) {
             return redirect()->back()->with(['msg-success' => 'Withdraw Request added successfully']);
         } else {
@@ -702,34 +701,82 @@ class TransactionController extends Controller
     // revert withdraw 
     public function revertWithdraw(Request $req)
     {
-        $transaction=Transaction::find($req->hiddenId);
-        $bank=BankDetail::find($transaction->bank_account);
-        $bank->amount=$bank->amount + $transaction->amount;
+        $transaction = Transaction::find($req->hiddenId);
+        $bank = BankDetail::find($transaction->bank_account);
+        $bank->amount = $bank->amount + $transaction->amount;
         $bank->update();
-        $transHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','withdraw')->first();
-        $resulthistory=$transHistory->delete();
-        $transaction->status="Revert";
-        if($resulthistory)
-        {
+        $transHistory = TransactionHistory::where('transaction_id', '=', $transaction->id)->where('type', '=', 'withdraw')->first();
+        $resulthistory = $transHistory->delete();
+        $transaction->status = "Revert";
+        if ($resulthistory) {
             $transaction->update();
         }
 
         return redirect('/dashboard');
     }
-    function  cancelReverted(Request $req) {
-        $transaction=Transaction::find($req->cancelId);
-        $exchange=Exchange::find($transaction->exchange_id);
-        $transHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','Deposit')->first();
-        $exchange->amount = $exchange->amount - ( $transaction->amount + $transaction->bonus);
+    function  cancelReverted(Request $req)
+    {
+        $transaction = Transaction::find($req->cancelId);
+        $exchange = Exchange::find($transaction->exchange_id);
+        $transHistory = TransactionHistory::where('transaction_id', '=', $transaction->id)->where('type', '=', 'Deposit')->first();
+        $exchange->amount = $exchange->amount - ($transaction->amount + $transaction->bonus);
         $exchange->update();
-        $transhistoryResult= $transHistory->delete();
-        $transaction->status="Cancel";
-        if($transhistoryResult)
-        {
+        $transhistoryResult = $transHistory->delete();
+        $transaction->status = "Cancel";
+        if ($transhistoryResult) {
             $transaction->update();
         }
 
 
         return redirect('dashboard');
+    }
+
+
+    // import deposits
+    public function DepositImportFOrm()
+    {
+        return view('depositImport');
+    }
+    public function DepositImport(Request $req)
+    {
+        $file = $req->file('excel_file');
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file->path());
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($file->path());
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+        $entries = [];
+        $columnHeaders = array_shift($rows);
+        $clients=Client::pluck('ca_id', 'id')->map(function ($name) {
+            return trim($name);
+        })->toArray();
+        $exchanges = Exchange::pluck('name', 'id')->map(function ($name) {
+            return trim($name);
+        })->toArray();
+
+        foreach ($rows as $key=> $row) {
+            
+            $data = array_combine($columnHeaders, $row);
+            $leads_dateDateserialNumber =$data['Date']; // This is the serial number for the date "01/01/2021"
+            $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
+            $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
+            $leads_dateformattedDate = $leads_date->format('Y-m-d H:i:s');
+            //for leads_date
+            $exchnageID = array_search(strtolower(trim($data['Exchange Name'])), array_map('strtolower', $exchanges));
+            $clientID = array_search(strtolower(trim($data['Client'])), array_map('strtolower', $clients));
+            if(!$clientID)
+            {
+                continue;
+            }
+            $entry = [
+                'exchange_id' => $exchnageID??'',
+                'client_id' => $clientID,
+                'amount' => $data['Deposit'] ?? '',
+                'bonus' => $data['Bonus'] ?? '',
+                'type' => 'Deposit',
+                'created_at'=>$leads_dateformattedDate,
+            ];
+            TransactionHistory::create($entry);
+        }
     }
 }

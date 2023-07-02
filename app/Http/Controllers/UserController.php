@@ -359,10 +359,10 @@ class UserController extends Controller
             $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
         }
 
-        $activites = Transaction::where('client_id', '=', $id)
-            ->when($type !== 'null', function ($query) use ($type) {
-                $query->where('type', $type);
-            })
+        $activites = TransactionHistory::where('client_id', '=', $id)
+                ->when($type !== 'null', function ($query) use ($type) {
+                    $query->where('type', $type);
+                })
             ->whereDate('created_at', '>=', date('Y-m-d', strtotime($startDate)))
             ->whereDate('created_at', '<=', date('Y-m-d', strtotime($endDate)))
             ->get();

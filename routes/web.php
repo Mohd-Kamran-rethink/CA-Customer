@@ -210,3 +210,5 @@ Route::prefix('expense-type')->group(function () {
 });
 Route::get('/client/import', [UserController::class, 'clientImportFORM'])->name('clientImportFORM')->middleware('ValidateManager');
 Route::post('/client/import', [UserController::class, 'clientImport'])->name('clientImport')->middleware('ValidateManager');
+Route::get('/deposits/import', [TransactionController::class, 'DepositImportFOrm'])->name('DepositImportFOrm')->middleware('ValidateManager');
+Route::post('/deposits/import', [TransactionController::class, 'DepositImport'])->name('DepositImport')->middleware('ValidateManager');
