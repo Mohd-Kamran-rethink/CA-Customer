@@ -316,7 +316,7 @@ class UserController extends Controller
         if ($filterData === 'all' || !$filterData) {
             $clients = $clientsQuery->get();
         } elseif ($filterData === 'without_agent') {
-            $clients = $clientsQuery->whereNull('agent_id')->get();
+            $clients = $clientsQuery->whereNull('agent_id')->paginate(20);
         }
 
         foreach ($clients as $client) {
@@ -328,7 +328,7 @@ class UserController extends Controller
             $lastWithdrawal = Transaction::where('client_id', $client->id)
                 ->where('type', 'withdraw')
                 ->latest('created_at')
-                ->first();
+                ->first();  
 
             $client->lastDepositDate = $lastDeposit ? $lastDeposit->created_at : null;
             $client->lastWithdrawalDate = $lastWithdrawal ? $lastWithdrawal->created_at : null;

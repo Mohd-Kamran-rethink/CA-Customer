@@ -90,7 +90,9 @@
                                     </tbody>
                                 </table>
                             </div>
-
+                            <div class="card-footer clearfix">
+                                {{ $clients->links('pagination::bootstrap-4') }}
+                            </div>
                         </div>
                     </div>
                 </div>
