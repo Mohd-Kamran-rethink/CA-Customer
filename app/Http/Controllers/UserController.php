@@ -314,7 +314,7 @@ class UserController extends Controller
         $clientsQuery = Client::leftJoin('users', 'clients.agent_id', 'users.id')
             ->select('clients.*', "users.name as agent_name");
         if ($filterData === 'all' || !$filterData) {
-            $clients = $clientsQuery->get();
+            $clients = $clientsQuery->paginate(20);
         } elseif ($filterData === 'without_agent') {
             $clients = $clientsQuery->whereNull('agent_id')->paginate(20);
         }
