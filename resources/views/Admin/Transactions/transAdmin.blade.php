@@ -23,30 +23,10 @@
     <section class="content">
         <div class="card">
             <div class="card-body">
-                {{-- <form action="{{ url('dashboard') }}" method="POST">
+                <form action="{{ url($url) }}" method="post">
                     @csrf
                     <div class="row">
-                        <div class="col-2">
-                            <label for="" style="visibility: hidden">s</label>
-                            <input type="text" value="{{ isset($search) ? $search : '' }}" name="table_search"
-                                class="form-control float-right" placeholder="Search by UTR" id="searchInput">
-                        </div>
-                        <div class="col-2">
-                            <label for="" style="visibility: hidden">s</label>
-                            <input type="text" value="{{ isset($amount_search) ? $amount_search : '' }}"
-                                name="amount_search" class="form-control float-right" placeholder="Search by amount"
-                                id="searchInput">
-                        </div>
-                        <div class="col-2 ">
-                            <label for="" style="visibility: hidden">sdf</label>
-                            <select name="status_name" type="text" class="form-control">
-                                <option value="null">--Filter by status--</option>
-                                <option {{ $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
-                                <option {{ $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
-                                <option {{ $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
-                            </select>
-                        </div>
-                        <div class="col-2">
+                         <div class="col-2">
                             <label for="">From</label>
                             <input type="date" name="start_date" class="form-control" value="{{ $start_date }}">
                         </div>
@@ -54,8 +34,16 @@
                             <label for="">To</label>
                             <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
                         </div>
+                        
+                        <div class="col-2 pt-2 ">
+                            <div class="row d-flex justify-content-around">
+                                <button  class="btn btn-success mt-4">Filter</button>
+                               
+                            </div>
+
+                        </div>
                     </div>
-                </form> --}}
+                </form>
                 <div class="pt-2">
                     <form action="{{url('transaction/export')}}" method="POST">
                         @csrf
@@ -149,5 +137,7 @@
             $('#modal-default').modal('show')
             $('#deleteInput').val(id)
         }
+        
+           
     </script>
 @endsection

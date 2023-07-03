@@ -155,6 +155,10 @@ Route::get('/transactions/pending-deposit',[TransactionController::class,'listPe
 Route::get('/transactions/pending-withdraw',[TransactionController::class,'pendingWithdraw'])->name('pendingWithdraw')->middleware('ValidateManager');
 Route::get('/transactions/approved-deposits',[TransactionController::class,'approvedDeposit'])->name('approvedDeposit')->middleware('ValidateManager');
 Route::get('/transactions/approved-withdraws',[TransactionController::class,'approvedWithdraws'])->name('approvedWithdraws')->middleware('ValidateManager');
+Route::post('/transactions/pending-deposit',[TransactionController::class,'listPendingDeposit'])->name('listPendingDeposit')->middleware('ValidateManager');
+Route::post('/transactions/pending-withdraw',[TransactionController::class,'pendingWithdraw'])->name('pendingWithdraw')->middleware('ValidateManager');
+Route::post('/transactions/approved-deposits',[TransactionController::class,'approvedDeposit'])->name('approvedDeposit')->middleware('ValidateManager');
+Route::post('/transactions/approved-withdraws',[TransactionController::class,'approvedWithdraws'])->name('approvedWithdraws')->middleware('ValidateManager');
 
 Route::post('/transaction/export',[TransactionController::class,'exportPending'])->name('exportPending')->middleware('ValidateManager');
 Route::get('/clients/add',[UserController::class,'addClient'])->name('addClient');

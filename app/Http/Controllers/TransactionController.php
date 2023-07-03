@@ -571,44 +571,100 @@ class TransactionController extends Controller
     }
     public function listPendingDeposit(Request $req)
     {
+        $start_date = $req->start_date;
+        $end_date = $req->end_date;
+        if (empty($start_date)) {
+            $start_date = now()->toDateString();
+        }
+        // Default value if end date is not available
+        if (empty($end_date)) {
+            $end_date = now()->toDateString();
+        }
         $transactions = Transaction::leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
             ->where('transactions.type', 'Deposit')->where('transactions.status', 'Pending')
             ->select('transactions.*', 'bank_details.holder_name as holder_name')
+            ->when($start_date != null, function ($query) use ($start_date, $end_date) {
+                $query->whereDate('transactions.date', '>=', $start_date)
+                    ->whereDate('transactions.date', '<=', $end_date);
+            })
             ->get();
         $heading = "Pending Deposits";
-        return view('Admin.Transactions.transAdmin', compact('heading', 'transactions'));
+        $url='transactions/pending-deposit';
+        return view('Admin.Transactions.transAdmin', compact('heading', 'transactions','start_date','end_date','url'));
     }
-    public function pendingWithdraw()
+    public function pendingWithdraw(Request $req)
     {
-
+        $start_date = $req->start_date;
+        $end_date = $req->end_date;
+        if (empty($start_date)) {
+            $start_date = now()->toDateString();
+        }
+        // Default value if end date is not available
+        if (empty($end_date)) {
+            $end_date = now()->toDateString();
+        }
         $transactions = Transaction::leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
             ->where('transactions.type', 'Withdraw')
             ->where('transactions.status', 'Pending')
             ->select('transactions.*', 'bank_details.holder_name as holder_name')
+            ->when($start_date != null, function ($query) use ($start_date, $end_date) {
+                $query->whereDate('transactions.date', '>=', $start_date)
+                    ->whereDate('transactions.date', '<=', $end_date);
+            })
             ->get();
         $heading = "Pending Withdraw";
-        return view('Admin.Transactions.transAdmin', compact('heading', 'transactions'));
+        $url='transactions/pending-withdraw';
+        return view('Admin.Transactions.transAdmin', compact('heading', 'transactions','start_date','end_date','url'));
     }
     // approved withdraws
-    public function approvedWithdraws()
+    public function approvedWithdraws(Request $req)
     {
+        $start_date = $req->start_date;
+        $end_date = $req->end_date;
+        if (empty($start_date)) {
+            $start_date = now()->toDateString();
+        }
+        // Default value if end date is not available
+        if (empty($end_date)) {
+            $end_date = now()->toDateString();
+        }
 
         $transactions = Transaction::leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
             ->where('transactions.type', 'Withdraw')
             ->where('transactions.status', 'Approve')
             ->select('transactions.*', 'bank_details.holder_name as holder_name')
+            ->when($start_date != null, function ($query) use ($start_date, $end_date) {
+                $query->whereDate('transactions.date', '>=', $start_date)
+                    ->whereDate('transactions.date', '<=', $end_date);
+            })
             ->get();
         $heading = "Approved Withdraw";
-        return view('Admin.Transactions.transAdmin', compact('heading', 'transactions'));
+        
+        $url='transactions/approved-withdraws';
+        return view('Admin.Transactions.transAdmin', compact('heading', 'transactions','start_date','end_date','url'));
     }
     public function approvedDeposit(Request $req)
     {
+        $start_date = $req->start_date;
+        $end_date = $req->end_date;
+        if (empty($start_date)) {
+            $start_date = now()->toDateString();
+        }
+        // Default value if end date is not available
+        if (empty($end_date)) {
+            $end_date = now()->toDateString();
+        }
         $transactions = Transaction::leftjoin('bank_details', 'transactions.bank_account', '=', 'bank_details.id')
             ->where('transactions.type', 'Deposit')->where('transactions.status', 'Approve')
             ->select('transactions.*', 'bank_details.holder_name as holder_name')
+            ->when($start_date != null, function ($query) use ($start_date, $end_date) {
+                $query->whereDate('transactions.date', '>=', $start_date)
+                    ->whereDate('transactions.date', '<=', $end_date);
+            })
             ->get();
         $heading = "Approved Deposits";
-        return view('Admin.Transactions.transAdmin', compact('heading', 'transactions'));
+        $url='transactions/approved-deposits';
+        return view('Admin.Transactions.transAdmin', compact('heading', 'transactions','start_date','end_date','url'));
     }
     // canceled
     public function depsoiterCancel(Request $req)
