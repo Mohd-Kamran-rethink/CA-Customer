@@ -429,7 +429,7 @@
             giveclientHistory(selectedOption.value)
             if (exchangeId == 0) {
                 let exchanges ={!! json_encode($exchanges) !!};
-                let desiredExchange = exchanges.find(exchange => exchange.name == 'CricAdda F1');
+                let desiredExchange = exchanges.find(exchange => exchange.name == 'Cricadda F1');
                 for (let i = 0; i < exchangeSelect.options.length; i++) {
                     let option = exchangeSelect.options[i];
                     if (option.value == desiredExchange.id) {

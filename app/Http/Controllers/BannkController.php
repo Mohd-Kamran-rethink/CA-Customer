@@ -57,8 +57,10 @@ class BannkController extends Controller
                 ->where('type', '=', 'Transfer Out')
                 ->get()
                 ->sum('amount');
+            $totalExpense=TransactionHistory::where('bank_id', $bank->id)->where('type','=','Expense')->get()->sum('amount');
             $bank->totalTransferOut = $totalTransferOut ?? '';
             $bank->totalTransferIN = $totalTransferIN ?? '';
+            $bank->totalExpense = $totalExpense ?? '';
         }
 
         return view('Admin.BAccountData.list', compact('banks'));
