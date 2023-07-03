@@ -203,6 +203,9 @@
                                                             <a href="{{ url('transactions/edit/' . $item->id) }}"
                                                                 title="Edit" class="btn btn-primary"><i
                                                                     class="fa fa-pen"></i></a>
+                                                                    <a href="{{ url('transactions/remove/' . $item->id) }}"
+                                                                title="Edit" class="btn btn-primary"><i
+                                                                    class="fa fa-trash"></i></a>
                                                             {{-- @if ($item->status == 'Approve')
                                                                 <button onclick="cancelDeposit({{ $item->id }})"
                                                                     title="Change Status" class="btn btn-danger"

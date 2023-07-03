@@ -177,7 +177,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-12">
+                           <!--  <div class="col-12">
                                 <div class="form-group">
                                     <label>Bank Account<span style="color:red">*</span></label>
                                     <select name="bank_account" class="form-control">
@@ -194,7 +194,7 @@
                                         </span>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>UTR No <span style="color:red">*</span></label>
@@ -461,7 +461,7 @@
                 url: BASE_URL +
                     "/getClientHistory/?clientID=" + id,
                 success: function(data) {
-                    $("#transDetails").html(data);
+                 //   $("#transDetails").html(data);
 
                 },
             });

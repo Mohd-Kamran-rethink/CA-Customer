@@ -302,8 +302,17 @@ class TransactionController extends Controller
         $transaction = Transaction::find($id);
         $transaction->status = 'Cancel';
         $transaction->save();
+        $bank=BankDetail::find($transaction->bank_account);
+        $bank->amount=$bank->amount-$transaction->amount;
+        $bank->update();
+        $transactiHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','Deposit')->first();
+        if($transactiHistory)
+        {
+            $transactiHistory->delete();
+        }
         return redirect('/dashboard')->with(['msg-success' => 'Transaction updated successfully']);
     }
+
     public function acceptPendingDepositForm($id)
     {
 
