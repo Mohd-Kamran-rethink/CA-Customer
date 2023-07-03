@@ -266,18 +266,19 @@ class TransactionController extends Controller
         $bankoldAmount = $bank->amount - $transaction->amount;
         $bank->amount = ($bank->amount - $transaction->amount) + $req->amount;
         $bank->save();
-        $req->validate([
+       /* $req->validate([
             'date' => 'required',
             'amount' => 'required',
             'utr' => 'required',
             'total' => 'required',
-        ]);
+        ]);*/
         $deposit_banker = session('user');
         $transaction->date = $req->date;
         $transaction->amount = $req->amount;
         $transaction->bonus = $req->bonus;
         $transaction->utr_no = $req->utr;
         $transaction->total = $req->total;
+        //$transaction->bank_account = $req->bank_account;
         $transaction->deposit_banker_id = $deposit_banker->id;
         $transaction->type = 'Deposit';
         $transaction->status = 'Pending';
@@ -294,6 +295,14 @@ class TransactionController extends Controller
         } else {
             return redirect('/dashboard')->with(['msg-error' => 'Something went wrong']);
         }
+    }
+
+    public function remove($id)
+    {
+        $transaction = Transaction::find($id);
+        $transaction->status = 'Cancel';
+        $transaction->save();
+        return redirect('/dashboard')->with(['msg-success' => 'Transaction updated successfully']);
     }
     public function acceptPendingDepositForm($id)
     {
@@ -377,7 +386,7 @@ class TransactionController extends Controller
             $todaysdate = Carbon::now()->startOfDay()->toDateString();
             $currentDateTime = Carbon::now()->startOfDay();
             $banks = BankDetail::whereNotNull('customer_id')->get();
-            $exchanges = Exchange::get();
+            $exchanges = Exchange::orderby('id','desc')->get();
             return view('Admin.Transactions.addWithdrawRequest', compact('exchanges', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
         } else return redirect()->back();
     }
@@ -403,7 +412,7 @@ class TransactionController extends Controller
         $transaction->status = 'Pending';
         $transaction->save();
         // add moeny to exchange
-        $exchange = Exchange::find($req->exchange_id);
+        $exchange = Exchange::orderBy('id','desc')->find($req->exchange_id);
 
         // add transaction history for this exhange transaction
         $transHistory = new TransactionHistory();
@@ -421,7 +430,7 @@ class TransactionController extends Controller
         $exchange->amount = $exchange->amount + $req->amount + $req->bonus;
         $result = $exchange->update();
         // send sms
-        $client = Client::find($req->client);
+        /*$client = Client::find($req->client);
         $curl = curl_init();
         $receiverNumber = $client->number;
         $message = "hello";
@@ -445,7 +454,7 @@ class TransactionController extends Controller
         ));
 
         $response = curl_exec($curl);
-        curl_close($curl);
+        curl_close($curl);*/
 
         if ($result) {
             return redirect()->back()->with(['msg-success' => 'Withdraw Request added successfully']);

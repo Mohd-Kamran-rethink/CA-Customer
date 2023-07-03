@@ -30,7 +30,7 @@
                         <div class="col-xs-12 col-md-6">
                             <div class="form-group">
                                 <label>Bank Account<span style="color:red">*</span></label>
-                                <select {{isset($transaction)?'disabled':''}} name="bank_account" class="form-control searchOptions" tabindex="1">
+                                <select name="bank_account" class="form-control searchOptions" tabindex="1">
                                     <option value="">--Choose--</option>
                                     @foreach ($banks as $item)
                                         <option

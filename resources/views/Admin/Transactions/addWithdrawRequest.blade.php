@@ -53,7 +53,7 @@
                                             {{ isset($transaction) && $transaction->client_id == $item->id ? 'selected' : '' }}
                                             value="{{ $item->id }}" data-number="{{ $item->number }}"
                                             data-client="{{ $item->id }}" data-exchange-id="{{ $item->exchange_id }}">
-                                            {{ $item->number }} - {{ $item->name }}</option>
+                                            {{ $item->number }} - {{ $item->ca_id }}</option>
                                     @endforeach
                                 </select>
                                 @error('client')
@@ -286,13 +286,13 @@
         function giveclientHistory(id)
 
         {
-            $.ajax({
+            /*$.ajax({
                 url: BASE_URL +
                     "/getClientHistory/?clientID=" + id,
                 success: function(data) {
                     $("#transDetails").html(data);
                 },
-            });
+            });*/
         }
 
         function openBankModal() {

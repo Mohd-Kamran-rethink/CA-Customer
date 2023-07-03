@@ -51,7 +51,7 @@
                                             @foreach ($clients as $item)
                                                 <option value="{{ $item->id }}"
                                                     data-exchange-id="{{ $item->exchange_id }}">
-                                                    {{ $item->number }} - {{ $item->name }}
+                                                    {{ $item->number }} - {{ $item->ca_id }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -180,7 +180,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Bank Account<span style="color:red">*</span></label>
-                                    <select disabled readonly name="bank_account" class="form-control">
+                                    <select name="bank_account" class="form-control">
                                         <option value="">--Choose--</option>
                                         @foreach ($banks as $item)
                                             <option
@@ -410,6 +410,7 @@
                             inputElement.next('.invalid-feedback').html(value[0]);
                         });
                     } else {
+                        alert("Error occured, might be duplicate number");
                         // Handle other error cases
                     }
                 }
