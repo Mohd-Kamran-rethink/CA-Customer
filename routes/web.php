@@ -109,6 +109,7 @@ Route::middleware('CommonMiddleware')->prefix('transactions')->group(function ()
     Route::post('/add',[TransactionController::class,'add'])->name('add');
     Route::post('/delete',[TransactionController::class,'delete'])->name('delete');
     Route::get('/edit/{id}',[TransactionController::class,'editForm'])->name('editForm');
+    Route::get('/remove/{id}',[TransactionController::class,'remove'])->name('remove');
     Route::post('/edit',[TransactionController::class,'edit'])->name('edit');
     Route::get('/change-status/{id}',[TransactionController::class,'acceptPendingDepositForm'])->name('acceptPendingDepositForm');
     Route::post('/change-status',[TransactionController::class,'changeStatus'])->name('changeStatus');

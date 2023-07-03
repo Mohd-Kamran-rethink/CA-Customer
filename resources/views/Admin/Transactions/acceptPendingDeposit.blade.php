@@ -422,18 +422,33 @@
         function handleClientChange(selectElement) {
 
             let selectedOption = selectElement.options[selectElement.selectedIndex];
-            console.log(selectedOption)
             let exchangeId = selectedOption.getAttribute('data-exchange-id');
             let exchangeSelect = document.querySelector('select[name="exchange_id"]');
+            
 
             giveclientHistory(selectedOption.value)
-            // Loop through each option in the exchange select dropdown
-            for (let i = 0; i < exchangeSelect.options.length; i++) {
-                let option = exchangeSelect.options[i];
-                if (option.value === exchangeId) {
-                    // Set the selected attribute for the option with the given exchange ID
-                    option.selected = true;
-                    break;
+            if (exchangeId == 0) {
+                let exchanges ={!! json_encode($exchanges) !!};
+                let desiredExchange = exchanges.find(exchange => exchange.name == 'CricAdda F1');
+                for (let i = 0; i < exchangeSelect.options.length; i++) {
+                    let option = exchangeSelect.options[i];
+                    if (option.value == desiredExchange.id) {
+                        // Set the selected attribute for the option with the given exchange ID
+                        option.selected = true;
+                        break;
+                    }
+
+                }
+            } else {
+                // Loop through each option in the exchange select dropdown
+                for (let i = 0; i < exchangeSelect.options.length; i++) {
+                    let option = exchangeSelect.options[i];
+                    if (option.value === exchangeId) {
+                        // Set the selected attribute for the option with the given exchange ID
+                        option.selected = true;
+                        break;
+                    }
+
                 }
             }
 
