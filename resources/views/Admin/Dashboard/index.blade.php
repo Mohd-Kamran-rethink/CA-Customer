@@ -215,13 +215,20 @@
                                                             <a href="{{ url('transactions/change-status/' . $item->id) }}"
                                                                 title="Change Status" class="btn btn-primary">Change
                                                                 Status</a>
+                                                                
                                                         @endif
                                                         {{-- for withdrawal functionality --}}
                                                         @if (session('user')->role === 'withdrawrer')
+                                                        @if($item->status=="Pending")
+                                                        <a href="{{ url('transactions/remove/' . $item->id) }}"
+                                                            title="Edit" class="btn btn-primary"><i
+                                                                class="fa fa-trash"></i></a>
+                                                        @endif
                                                             @if ($item->status == 'Revert')
                                                                 <button onclick="WithdrawCancel({{ $item->id }})"
                                                                     title="Edit" class="btn btn-primary">Complete
                                                                     Refund</button>
+                                                                   
                                                             @endif
                                                             {{-- @if ($item->status == 'Approve')
                                                                 <button onclick="cancelDeposit({{ $item->id }})"

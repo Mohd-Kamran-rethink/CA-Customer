@@ -299,13 +299,18 @@ class TransactionController extends Controller
 
     public function remove($id)
     {
+        $transactiHistory=null;
         $transaction = Transaction::find($id);
         $transaction->status = 'Cancel';
         $transaction->save();
-        $bank=BankDetail::find($transaction->bank_account);
-        $bank->amount=$bank->amount-$transaction->amount;
-        $bank->update();
-        $transactiHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','Deposit')->first();
+        if($transaction->type=='Deposit')
+        {
+
+            $bank=BankDetail::find($transaction->bank_account);
+            $bank->amount=$bank->amount-$transaction->amount;
+            $bank->update();
+            $transactiHistory=TransactionHistory::where('transaction_id','=',$transaction->id)->where('type','=','Deposit')->first();
+        }
         if($transactiHistory)
         {
             $transactiHistory->delete();
