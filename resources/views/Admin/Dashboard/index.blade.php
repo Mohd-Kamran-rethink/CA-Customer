@@ -594,7 +594,7 @@
 
                 if (countdown === 0) {
                     clearInterval(countdownInterval);
-                    location.reload(); // Reload the page when countdown reaches 0
+                    //location.reload();  Reload the page when countdown reaches 0
                 }
 
                 countdown--;

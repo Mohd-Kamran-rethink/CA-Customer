@@ -42,7 +42,7 @@
                         </div>
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
-                                <label>Total Amount <span style="color:red">*</span></label>
+                                <label>Opening Amount <span style="color:red">*</span></label>
                                 <input step="any" type="number" name="total_coins" value="{{isset($exchange)?$exchange->total_coins:old('total_coins')}}" id="phone"
                                      class="form-control"
                                     data-validation="required">

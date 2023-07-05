@@ -26,6 +26,9 @@
             <div class="card-body">
                 <div class="mb-3 d-flex justify-content-between align-items-centers  flex-row">
                     <form action="{{ url('clients') }}" method="GET" id="search-form" class="d-flex" >
+                        <div class="form-group mr-2">
+                            <input value="{{isset($searchTerm)?$searchTerm:''}}" type="text" class="form-control" name="table_search" placeholder="search">
+                        </div>
                         <div class="form-group">
                             <select name="filterData" id="filterData" class="form-control">
                                 <option {{isset($filterData)&&$filterData=='all'?'selected':''}} value="all">All</option>

@@ -187,16 +187,18 @@ class TransactionController extends Controller
                 ->whereDate('transactions.created_at', '>=', date('Y-m-d', strtotime($agentstartDate)))
                 ->whereDate('transactions.created_at', '<=', date('Y-m-d', strtotime($agentEndDate)))
                 ->get();
-        }
+        } 
         return view('Admin.Dashboard.index', compact('totalWithdrawRevert', 'todaysApproed', 'totalApprovedForAgent', 'amount_search', 'transactions', 'status', 'search', 'start_date', 'end_date'));
     }
     // deposit work functions
-    public function addForm()
+    public function addForm(Request $req)
     {
+
         if (session('user')->role == 'deposit_banker') {
 
             $todaysdate = Carbon::now()->startOfDay()->toDateString();
             $currentDateTime = Carbon::now()->startOfDay();
+                $todaysdate=$req->query('date');
             $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'Yes')->get();
             return view('Admin.Transactions.add', compact('todaysdate', 'currentDateTime', 'banks'));
         } else return redirect()->back();
@@ -834,41 +836,203 @@ class TransactionController extends Controller
         })->toArray();
 
         foreach ($rows as $key=> $row) {
-            
+
             $data = array_combine($columnHeaders, $row);
+           
+//            print_r($data);
+
+
+            if($row[2]!= null){
+                $bank_number = explode('[',$row[2]);
+                if(count($bank_number)>2){
+                    $bank_account_number = (str_replace(']','',$bank_number[3]));
+                    if($bank_account_number)
+                    {
+                        $bank=BankDetail::where('account_number','=',$bank_account_number)->first();
+
+                    }
+                }
+//                 exit;
+
+
+
+
             $leads_dateDateserialNumber =$data['Date']; // This is the serial number for the date "01/01/2021"
             $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
             $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
             $leads_dateformattedDate = $leads_date->format('Y-m-d H:i:s');
             //for leads_date
             $exchnageID = array_search(strtolower(trim($data['Exchange Name'])), array_map('strtolower', $exchanges));
+
             $clientID = array_search(strtolower(trim($data['Client'])), array_map('strtolower', $clients));
             if(!$clientID)
             {
                 continue;
             }
             $transaction=new Transaction();
-            $transaction->client_id;
-            $transaction->amount=$data['Deposit'] ?? '';
-            $transaction->bonus=$data['Bonus'] ?? '';
+            $transaction->client_id=$clientID;
+            $transaction->amount=$data['Deposit'];
+            $transaction->bonus=$data['Bonus'];
             $transaction->utr_no=$data['UTR No'];
             $transaction->type='Deposit';
             $transaction->status='Approve';
+            $transaction->bank_account=$bank->id??'';
             $transaction->exchange_id=$exchnageID;
             $transaction->date=$leads_dateformattedDate;
-            $transaction->created_at=$leads_dateformattedDate;
             $transaction->save();
+            $transactiHistory=new TransactionHistory();
+            $transactiHistory->bank_id=$bank->id??'';
+            $transactiHistory->amount=$data['Deposit'];
+            $transactiHistory->bonus=$data['Bonus'];
+            $transactiHistory->type='Deposit';
+            $transactiHistory->amount = $data['Deposit'];
+            $transactiHistory->opening_balance = $bank->amount;
+            $transactiHistory->current_balance = $bank->amount + $data['Deposit'];
+            $transactiHistory->client_id=$clientID;
+            $transactiHistory->created_at=$leads_dateformattedDate;
+            $transactiHistory->save();
+            $bank->amount = $bank->amount + $data['Deposit'];
+            $bank->save();
+            if($exchnageID)
+            {
 
-            $entry = [
-                'exchange_id' => $exchnageID??'',
-                'client_id' => $clientID,
-                'amount' => $data['Deposit'] ?? '',
-                'bonus' => $data['Bonus'] ?? '',
-                'type' => 'Deposit',
-                'transaction_id' => $transaction->id??'',
-                'created_at'=>$leads_dateformattedDate,
-            ];
-            TransactionHistory::create($entry);
+            $exchange = Exchange::find($exchnageID);
+        // for exchange tranasactin history
+        $ExchnagedepositHistory = new TransactionHistory();
+        $ExchnagedepositHistory->type = "Withdraw";
+        $ExchnagedepositHistory->transaction_id = $transaction->id;
+        $ExchnagedepositHistory->exchange_id = $exchnageID;
+        $ExchnagedepositHistory->agent_id = session('user')->id;
+        $ExchnagedepositHistory->client_id = $clientID;
+        $ExchnagedepositHistory->amount = $data['Deposit'];
+        $ExchnagedepositHistory->opening_balance = $exchange->amount;
+        $ExchnagedepositHistory->bonus = $data['Bonus'];
+         $ExchnagedepositHistory->created_at=$leads_dateformattedDate;
+        $ExchnagedepositHistory->save();
+
+        //increase exchnage total
+        $exchange->amount = $exchange->amount - $data['Total'];
+        $result = $exchange->update();
         }
+
+
+        }
+    }
+        exit;
+    }
+     public function WithdrawImportFOrm()
+    {
+        return view('withdrawImport');
+    }
+   public function WithdrawImport(Request $req)
+    {
+        $file = $req->file('excel_file');
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file->path());
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($file->path());
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+        $entries = [];
+        $columnHeaders = array_shift($rows);
+        $clients=Client::pluck('ca_id', 'id')->map(function ($name) {
+            return trim($name);
+        })->toArray();
+        $exchanges = Exchange::pluck('name', 'id')->map(function ($name) {
+            return trim($name);
+        })->toArray();
+
+        foreach ($rows as $key=> $row) {
+
+            $data = array_combine($columnHeaders, $row);
+//echo "<pre>";
+// print_r($data);
+//continue;
+
+            if($row[2]!= null){
+                $bank_number = explode('[',$row[2]);
+                if(count($bank_number)>2){
+                    $bank_account_number = (str_replace(']','',$bank_number[3]));
+                    if($bank_account_number)
+                    {
+                        $bank=BankDetail::where('account_number','=',$bank_account_number)->first();
+
+                    }
+                    else
+                    {
+                    print_r($data);
+                    exit;
+                    }
+
+                }
+                else {print_r($data);exit;
+                }
+
+
+
+
+
+            $leads_dateDateserialNumber =$data['Date']; // This is the serial number for the date "01/01/2021"
+            $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
+            $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
+            $leads_dateformattedDate = $leads_date->format('Y-m-d H:i:s');
+            //for leads_date
+            $exchnageID = array_search(strtolower(trim($data['Exchange Name'])), array_map('strtolower', $exchanges));
+
+            $clientID = array_search(strtolower(trim($data['Client'])), array_map('strtolower', $clients));
+            if(!$clientID)
+            {
+                continue;
+            }
+            $amount = $data['Deposit'];
+            $transaction=new Transaction();
+            $transaction->client_id=$clientID;
+            $transaction->amount=$data['Deposit'];
+            $transaction->bonus=$data['Bonus'];
+            $transaction->utr_no=$data['UTR No'];
+            $transaction->type='Withdraw';
+            $transaction->status='Approve';
+            $transaction->bank_account=$bank->id??'';
+            $transaction->exchange_id=$exchnageID;
+            $transaction->date=$leads_dateformattedDate;
+            $transaction->save();
+            $transactiHistory=new TransactionHistory();
+            $transactiHistory->bank_id=$bank->id??'';
+            $transactiHistory->amount=$amount;
+            $transactiHistory->bonus=$data['Bonus'];
+            $transactiHistory->type='Withdraw';
+            $transactiHistory->amount = $amount;
+            $transactiHistory->opening_balance = $bank->amount;
+            $transactiHistory->current_balance = $bank->amount - $data['Deposit'];
+            $transactiHistory->client_id=$clientID??'';
+            $transactiHistory->created_at=$leads_dateformattedDate;
+            $transactiHistory->save();
+            $bank->amount = $bank->amount - $data['Deposit'];
+            $bank->save();
+            if($exchnageID)
+            {
+
+            $exchange = Exchange::find($exchnageID);
+        // for exchange tranasactin history
+        $ExchnagedepositHistory = new TransactionHistory();
+        $ExchnagedepositHistory->type = "Deposit";
+        $ExchnagedepositHistory->transaction_id = $transaction->id;
+        $ExchnagedepositHistory->exchange_id = $exchnageID;
+        $ExchnagedepositHistory->agent_id = session('user')->id;
+        $ExchnagedepositHistory->client_id = $clientID;
+        $ExchnagedepositHistory->amount = $data['Deposit'];
+        $ExchnagedepositHistory->opening_balance = $exchange->amount;
+        $ExchnagedepositHistory->bonus = $data['Bonus'];
+        $ExchnagedepositHistory->created_at=$leads_dateformattedDate;
+        $ExchnagedepositHistory->save();
+
+        //increase exchnage total
+        $exchange->amount = $exchange->amount + $data['Total'];
+        $result = $exchange->update();
+        }
+
+
+        }
+    }
+        exit;
     }
 }

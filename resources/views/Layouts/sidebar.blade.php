@@ -39,7 +39,7 @@
                                 class="nav-link {{ Request::is('deposit-banker') || Request::is('withdrawal-banker') || Request::is('depositers') || Request::is('withdrawrers') ? 'active' : '' }}">
                                 <i class="nav-icon fa fa-credit-card"></i>
                                 <p>
-                                Transactions
+                                    Transactions
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
@@ -49,7 +49,7 @@
                                     <a href="{{ url('/transactions/approved-deposits') }}"
                                         class="nav-link {{ Request::is('transactions/approved-deposits') ? 'active' : '' }}">
                                         <p>
-                                           Approved Deposit
+                                            Approved Deposit
                                         </p>
                                         <span class="badge badge-info right">{{ $approvedDeposit ?? 0 }}</span>
                                     </a>
@@ -68,7 +68,7 @@
                                     <a href="{{ url('/transactions/approved-withdraws') }}"
                                         class="nav-link {{ Request::is('transactions/approved-withdraws') ? 'active' : '' }}">
                                         <p>
-                                           Approved Withdraws
+                                            Approved Withdraws
                                         </p>
                                         <span class="badge badge-info right">{{ $approvedWithdraw ?? 0 }}</span>
                                     </a>
@@ -226,7 +226,7 @@
                             </p>
                         </a>
                     </li>
-                    <li class="nav-item  ">
+                    {{-- <li class="nav-item  ">
                         <a href="{{ url('expense-users/debitors') }}"
                             class="nav-link {{ Request::is('debitors') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-users"></i>
@@ -243,8 +243,8 @@
                                 Creditors
                             </p>
                         </a>
-                    </li>
-                    @if (session('user')->role === 'customer_care_manager')
+                    </li> --}}
+                    {{-- @if (session('user')->role === 'customer_care_manager')
                         <li class="nav-item">
                             <a href="{{ url('/expense-type') }}"
                                 class="nav-link {{ Request::is('expense-type')||Request::is('expense-type/add') ? 'active' : '' }}">
@@ -253,21 +253,35 @@
                                     Expense Types
 
                                 </p>
-                                {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
-
+                          
                             </a>
                         </li>
-                    @endif
+                    @endif --}}
                     <li class="nav-item">
-                        <a href="{{ url('/expenses') }}"
+                        <a href="{{ url('expenses') }}"
                             class="nav-link {{ Request::is('expenses') || Request::is('expenses/add') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-columns"></i>
+                            <p>
+                                Expenses
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('ledgers-groups') }}"
+                            class="nav-link {{ Request::is('ledgers-groups') || Request::is('ledgers-groups/add') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-columns"></i>
+                            <p>
+                                Ledger Group
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('/ledgers') }}"
+                            class="nav-link {{ Request::is('ledger') || Request::is('ledger/add') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-credit-card"></i>
                             <p>
-                                Payment Types
-
+                                Ledger
                             </p>
-                            {{-- <span class="badge badge-info right">{{ $franchiese ?? 0 }}</span> --}}
-
                         </a>
                     </li>
                 @endif

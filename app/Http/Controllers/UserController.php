@@ -311,7 +311,14 @@ class UserController extends Controller
     {
         $filterData = $req->query('filterData');
         $clients = [];
+        $searchTerm = $req->query('table_search');
         $clientsQuery = Client::leftJoin('users', 'clients.agent_id', 'users.id')
+                        ->when($searchTerm, function ($query, $searchTerm) {
+                            $query->where(function ($query) use ($searchTerm) {
+                                $query->where('clients.ca_id', 'like', '%' . $searchTerm . '%')
+                                    ->orWhere('clients.number', 'like', '%' . $searchTerm . '%');
+                            });
+                        })
             ->select('clients.*', "users.name as agent_name");
         if ($filterData === 'all' || !$filterData) {
             $clients = $clientsQuery->paginate(20);
@@ -341,7 +348,7 @@ class UserController extends Controller
             }
         }
         $agents = User::where('role', '=', 'agent')->get();
-        return view('Admin.Client.list', compact('clients', 'agents', 'filterData'));
+        return view('Admin.Client.list', compact('clients', 'agents', 'filterData','searchTerm'));
     }
 
     // show client transadction details

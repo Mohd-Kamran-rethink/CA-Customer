@@ -29,7 +29,7 @@ class BannkController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->select('current_balance')
                 ->first();
-            $bank->closginYesterday = $lastEntery->current_balance ?? '';
+            $bank->closginYesterday = $lastEntery->current_balance ?? 0;
         }
         foreach ($banks as $bank) {
             $totaldeposit = Transaction::where('bank_account', $bank->id)
@@ -98,6 +98,7 @@ class BannkController extends Controller
         $bank->email = $req->email;
         $bank->amount = $req->amount;
         $bank->address = $req->address;
+        $bank->old_opening = $req->old_opening;
         $bank->provider_id = $req->provider;
         $bank->type = $req->bank_type;
         $bankresult = $bank->save();
@@ -140,6 +141,7 @@ class BannkController extends Controller
         $bank->email = $req->email;
         $bank->amount = $req->amount;
         $bank->address = $req->address;
+         $bank->old_opening = $req->old_opening;
         $bank->provider_id = $req->provider;
         $bank->type = $req->bank_type;
         $result = $bank->save();

@@ -5,6 +5,7 @@ use App\Http\Controllers\BannkController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\franchises;
+use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\User;
@@ -217,3 +218,33 @@ Route::get('/client/import', [UserController::class, 'clientImportFORM'])->name(
 Route::post('/client/import', [UserController::class, 'clientImport'])->name('clientImport')->middleware('ValidateManager');
 Route::get('/deposits/import', [TransactionController::class, 'DepositImportFOrm'])->name('DepositImportFOrm')->middleware('ValidateManager');
 Route::post('/deposits/import', [TransactionController::class, 'DepositImport'])->name('DepositImport')->middleware('ValidateManager');
+
+Route::get('/withdraw/import', [TransactionController::class, 'WithdrawImportFOrm'])->name('WithdrawImportFOrm')->middleware('ValidateManager');
+Route::post('/withdraw/import', [TransactionController::class, 'WithdrawImport'])->name('WithdrawImport')->middleware('ValidateManager');
+
+
+
+
+
+
+
+
+// legder work
+Route::prefix('ledgers-groups')->group(function () {
+    Route::get('', [LedgerController::class, 'listgroup'])->name('listgroup');
+    Route::post('/delete', [LedgerController::class, 'groupdelete'])->name('groupdelete');
+    Route::get('/edit', [LedgerController::class, 'groupaddForm'])->name('groupaddForm');
+    Route::post('/edit', [LedgerController::class, 'groupedit'])->name('groupedit');
+    Route::get('/add', [LedgerController::class, 'groupaddForm'])->name('groupaddForm');
+    Route::post('/add', [LedgerController::class, 'groupadd'])->name('groupadd');
+});
+
+Route::prefix('ledgers')->group(function () {
+    Route::get('', [LedgerController::class, 'list'])->name('list');
+    Route::post('/delete', [LedgerController::class, 'delete'])->name('delete');
+    Route::get('/edit', [LedgerController::class, 'addForm'])->name('addForm');
+    Route::post('/edit', [LedgerController::class, 'edit'])->name('edit');
+    Route::get('/add', [LedgerController::class, 'addForm'])->name('addForm');
+    Route::post('/add', [LedgerController::class, 'add'])->name('add');
+    Route::get('/add-entery', [LedgerController::class, 'addEnteryFrom'])->name('addEnteryFrom');
+});

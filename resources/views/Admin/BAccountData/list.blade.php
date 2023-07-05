@@ -49,6 +49,8 @@
                                         <tr>
                                             <th>S.No.</th>
                                             <th>Bank</th>
+                                            <th>Type</th>
+                                            <th>First Opening Balance</th>
                                             <th>Opening Balance</th>
                                             <th>Total Deposit</th>
                                             <th>Total Withdraw</th>
@@ -64,6 +66,8 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>[{{ $item->holder_name }}]-[{{ $item->bank_name }}]-[{{ $item->account_number }}]-[{{ $item->ifsc }}]</td>
+                                                <td>{{ $item->type??'--' }}</td>
+                                                <td>{{ $item->old_opening??'--' }}</td>
                                                 <td>{{ $item->closginYesterday??'--' }}</td>
                                                 <td>{{ $item->totalDeposit??0 }}</td>
                                                 <td>{{ $item->totalWithdraw??0 }}</td>

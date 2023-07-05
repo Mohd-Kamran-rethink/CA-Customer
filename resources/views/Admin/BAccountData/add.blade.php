@@ -110,6 +110,20 @@
                         </div>
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
+                                <label>Old Opening</label>
+                                <input type="number" step="any" name="old_opening"
+                                    value="{{ isset($bank) ? $bank->old_opening : old('old_opening') }}" id="email"
+                                    class="form-control" data-validation="required">
+                                @error('old_opening')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
                                 <label>Initial Amount <span style="color:red">*</span> </label>
                                 <input type="number" step="any" name="amount"
                                     value="{{ isset($bank) ? $bank->amount : old('amount') }}" id="email"
@@ -129,7 +143,7 @@
                                     <option value="0">--Choose--</option>
                                     <option {{isset($bank)&&$bank->type=="deposit"?'selected':''}} value="deposit">Deposit</option>
                                     <option {{isset($bank)&&$bank->type=="withdraw"?'selected':''}} value="withdraw">Withdraw</option>
-                                    {{-- <option value="both">Both</option> --}}
+                                    <option value="both">Both</option>
                                 
                                 </select>
 
