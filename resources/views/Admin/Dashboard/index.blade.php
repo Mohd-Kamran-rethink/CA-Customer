@@ -245,9 +245,10 @@
                                                                 <a href="{{ url('transactions/withdraw-banker/edit/' . $item->id) }}"
                                                                     title="Edit" class="btn btn-danger"><i
                                                                         class="fa fa-pen"></i></a>
-                                                                <button onclick="revertWithdraw({{ $item->id }})"
-                                                                    title="revert" class="btn btn-danger">Revert</button>
                                                             @endif
+                                                            <button onclick="revertWithdraw({{ $item->id }})"
+                                                                title="revert" class="btn btn-danger">Revert</button>
+                                                               
                                                         @endif
                                                     </td>
                                                 </tr>
