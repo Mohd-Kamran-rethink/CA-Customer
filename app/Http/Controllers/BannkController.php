@@ -25,7 +25,7 @@ class BannkController extends Controller
         // Retrieve last transaction history for each bank from yesterday
         foreach ($banks as $bank) {
             $lastEntery = TransactionHistory::where('bank_id', $bank->id)
-                ->whereDate('created_at', $yesterday)
+                // ->whereDate('created_at', $yesterday)
                 ->orderBy('created_at', 'desc')
                 ->select('current_balance')
                 ->first();

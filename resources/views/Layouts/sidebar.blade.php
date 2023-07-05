@@ -260,7 +260,7 @@
                     <li class="nav-item">
                         <a href="{{ url('expenses') }}"
                             class="nav-link {{ Request::is('expenses') || Request::is('expenses/add') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-columns"></i>
+                            <i class="nav-icon fa fa-credit-card"></i>
                             <p>
                                 Expenses
                             </p>
