@@ -354,7 +354,7 @@ class TransactionController extends Controller
         // before save update lead status
         $client = Client::find($req->client);
         $status = LeadStatusOption::where('name', '=', 'Deposited')->first();
-        $client_lead = Lead::where('number', '=', $client->number)->latest()->first();
+        $client_lead = Lead::where('number', '=', intval($client->number))->latest()->first();
         if ($client_lead) {
             $client->agent_id = $client_lead->agent_id;
             $client->deposit_amount = $req->total;
