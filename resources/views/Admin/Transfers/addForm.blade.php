@@ -30,11 +30,60 @@
                         <input type="hidden" name="hiddenid" value="{{ isset($transfers) ? $transfers->id : '' }}">
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
-                                <label>From Bank<span style="color:red">*</span></label>
-                                <select tabindex="1" name="from_bank" class="form-control">
+                                <label>Transfer Type<span style="color:red">*</span></label>
+                                <select onchange="transferType(this.value)" tabindex="1" name="transfer_type"
+                                    class="form-control">
+                                    <option value="0">--Choose--</option>
+                                    <option value="internal">Internal</option>
+                                    <option value="external">Third Party</option>
+                                </select>
+                                @error('from_bank')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4 external-types-inputs" style="display: none">
+                            <div class="form-group">
+                                <label>Accounting Type<span style="color:red">*</span></label>
+                                <select tabindex="1" name="accounting_type" class="form-control">
+                                    <option value="0">--Choose--</option>
+                                    <option value="Debit">Debit</option>
+                                    <option value="Credit">Credit</option>
+                                </select>
+                                @error('from_bank')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4 external-types-inputs" style="display: none">
+                            <div class="form-group">
+                                <label>Payment Type<span style="color:red">*</span></label>
+                                <select onchange="payemntType(this.value)" tabindex="1" name="payment_type"
+                                    class="form-control">
+                                    <option value="0">--Choose--</option>
+                                    <option value="bank">Bank</option>
+                                    <option value="cash">Cash</option>
+                                </select>
+                                @error('from_bank')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-4 to-bank-input">
+                            <div class="form-group">
+                                <label>Bank<span style="color:red">*</span></label>
+                                <select tabindex="1" name="sender_bank" class="form-control searchOptions">
                                     <option value="0">--Choose--</option>
                                     @foreach ($banks as $item)
-                                        <option value="{{$item->id}}">{{ $item->holder_name }} - {{ $item->bank_name }} -
+                                        <option value="{{ $item->id }}">{{ $item->holder_name }} -
+                                            {{ $item->bank_name }} -
                                             {{ $item->account_number }}</option>
                                     @endforeach
                                 </select>
@@ -46,15 +95,33 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-4">
+                        <div class="col-4 external-types-inputs" style="display: none;" >
+                            <div class="form-group">
+                                <label>Ledger<span style="color:red">*</span></label>
+                                <select tabindex="1" name="ledger_id" class="form-control searchOptions" style="width: 100%">
+                                    <option value="0">--Choose--</option>
+                                    @foreach ($ledgers as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+
+                                @error('ledger_id')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4 internal-types-inputs">
                             <div class="form-group">
                                 <label>To Bank <span style="color:red">*</span></label>
-                                <select tabindex="2" name="to_bank" class="form-control">
+                                <select tabindex="2" name="receiver_bank" class="form-control searchOptions">
                                     <option value="0">--Choose--</option>
                                     @foreach ($banks as $item)
-                                    <option value="{{$item->id}}">{{ $item->holder_name }} - {{ $item->bank_name }} -
-                                        {{ $item->account_number }}</option>
-                                @endforeach
+                                        <option value="{{ $item->id }}">{{ $item->holder_name }} -
+                                            {{ $item->bank_name }} -
+                                            {{ $item->account_number }}</option>
+                                    @endforeach
                                 </select>
                                 @error('to_bank')
                                     <span class="text-danger">
@@ -68,7 +135,8 @@
                             <div class="form-group">
                                 <label>Amount<span style="color:red">*</span></label>
                                 <input tabindex="3" type="number" step="any" name="amount"
-                                    value="{{ isset($transfer) ? $transfer->amount : old('amount') }}" class="form-control">
+                                    value="{{ isset($transfer) ? $transfer->amount : old('amount') }}"
+                                    class="form-control">
                                 @error('amount')
                                     <span class="text-danger">
                                         {{ $message }}
@@ -82,7 +150,8 @@
                             <div class="form-group">
                                 <label>Remark</label>
                                 <input tabindex="4" type="text" name="remark"
-                                    value="{{ isset($transfer) ? $transfer->remark : old('remark') }}" class="form-control">
+                                    value="{{ isset($transfer) ? $transfer->remark : old('remark') }}"
+                                    class="form-control">
                                 @error('remark')
                                     <span class="text-danger">
                                         {{ $message }}
@@ -101,4 +170,26 @@
             </div>
         </div>
     </section>
+    <script>
+        function transferType(value) {
+            if (value == "internal") {
+                $('.internal-types-inputs').show();
+                $('.external-types-inputs').hide()
+            } else {
+                $('.external-types-inputs').show()
+                $('.internal-types-inputs').hide()
+
+            }
+        }
+
+        function payemntType(value) {
+            if (value == 'cash') {
+                $('.to-bank-input').hide()
+            } else {
+                $('.to-bank-input').show()
+
+            }
+
+        }
+    </script>
 @endsection

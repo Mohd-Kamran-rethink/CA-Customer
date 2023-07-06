@@ -53,8 +53,10 @@
                                     <thead>
                                         <tr>
                                             <th>S.No.</th>
+                                            <th>Transfer Type</th>
                                             <th>From Bank</th>
                                             <th>To Bank</th>
+                                            <th>Payment Type</th>
                                             <th>Total Amount</th>
                                             <th>Remark</th>
                                             <th>Transfer Date:Time</th>
@@ -64,8 +66,10 @@
                                         @forelse($transfers as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->from_bank }}</td>
-                                                <td>{{ $item->to_bank }}</td>
+                                                <td style="text-transform: capitalize">{{ $item->transfer_type }}</td>
+                                                <td>{{ $item->bank_from??'--' }}</td>
+                                                <td>{{ $item->bank_to??'--' }}</td>
+                                                <td style="text-transform: capitalize">{{ $item->payment_type=='0'?'--':$item->payment_type }}</td>
                                                 <td>{{ $item->amount }}</td>
                                                 <td>{{ $item->remark }}</td>
                                                 <td>{{ $item->created_at }}</td>

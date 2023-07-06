@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Ledger</h1>
+                    <h1>Ledger Details</h1>
                 </div>
             </div>
             @if (session()->has('msg-success'))
@@ -24,22 +24,25 @@
     <section class="content">
         <div class="card">
             <div class="card-body">
-                <div class="mb-3 d-flex justify-content-between align-items-centers">
-                    <form action="{{ url('ledgers') }}" method="GET" id="search-form">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" value="{{ isset($searchTerm) ? $searchTerm : '' }}" name="table_search"
-                                class="form-control float-right" placeholder="Search" id="searchInput">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default" onclick="searchData()" id="search-button">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                <form action="{{ url('ledgers/view-details?id=' . $id) }}" method="post" class="my-4">
+                    @csrf
+                    <div class="row">
+                        <div class="col-2">
+                            <label for="">From</label>
+                            <input type="date" name="start_date" class="form-control" value="{{ $startDate ?? '' }}">
+                        </div>
+                        <div class="col-2">
+                            <label for="">To</label>
+                            <input type="date" name="end_date" class="form-control" value="{{ $endDate ?? '' }}">
+                        </div>
+                        <div class="col-2 pt-2 ">
+                            <div class="row d-flex justify-content-around">
+                                <button type="submit" class="btn btn-success mt-4">Filter</button>
+
                             </div>
                         </div>
-                    </form>
-                    <div>
-                        <a href="{{ url('ledgers/add') }}" class="btn btn-primary">Add Ledger</a>
                     </div>
-                </div>
+                </form>
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -48,37 +51,35 @@
                                     <thead>
                                         <tr>
                                             <th>S.No.</th>
-                                            <th>Name</th>
-                                            <th>Group</th>
-                                            <th>Actions</th>
+                                            <th>Remark</th>
+                                            <th>Type</th>
+                                            <th>Amount Transfer</th>
+                                            <th>Opening Balance</th>
+                                            <th>Closing Balance</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($ledgers as $item)
+                                        @forelse($details as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->name }}</td>
-                                                <td>{{ $item->group_name }}</td>
-                                                <td>
-                                                    <a href="{{ url('ledgers/edit?id=' . $item->id) }}" title="Edit"
-                                                        class="btn btn-primary"><i class="fa fa-pen"></i></a>
-                                                    <button title="Delete" onclick="manageModal({{ $item->id }})"
-                                                        class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                                                    <a href="{{url('ledgers/view-details?id='. $item->id)}}"
-                                                        class="btn btn-warning">View Details</a>
-                                                </td>
+                                                <td>{{ $item->remark }}</td>
+                                                <td>{{ $item->type }}</td>
+                                                <td>{{ $item->amount }}</td>
+                                                <td>{{ $item->opening_balance }}</td>
+                                                <td>{{ $item->closing_balance }}</td>
                                             </tr>
                                         @empty
                                             <tr>
                                                 <td colspan="10" class="text-center">No data</td>
                                             </tr>
                                         @endforelse
-
                                     </tbody>
                                 </table>
                             </div>
+
+
                             <div class="card-footer clearfix">
-                                {{ $ledgers->links('pagination::bootstrap-4') }}
+                                {{ $details->links('pagination::bootstrap-4') }}
                             </div>
                         </div>
                     </div>

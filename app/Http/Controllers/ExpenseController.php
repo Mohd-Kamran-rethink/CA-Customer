@@ -6,6 +6,8 @@ use App\BankDetail;
 use App\Department;
 use App\Expense;
 use App\ExpenseType;
+use App\LadgerHistory;
+use App\Ledger;
 use App\Transaction;
 use App\TransactionHistory;
 use App\Transfer;
@@ -16,7 +18,7 @@ use Illuminate\Http\Request;
 class ExpenseController extends Controller
 {
     // expesesses
-public function listMyExpenses(Request $req)
+    public function listMyExpenses(Request $req)
     {
         $startDate = $req->query('from_date') ?? null;
         $endDate = $req->query('to_date') ?? null;
@@ -154,6 +156,10 @@ public function listMyExpenses(Request $req)
                     $trnascationForFromBank->save();
                     $bankFrom->amount = $bankFrom->amount + $req->amount;
                     $bankFrom->save();
+                    
+                    
+                    
+
                 } else if ($req->accounting_type == "Credit") {
                     $bankFrom = BankDetail::find($req->sender_bank);
                     $trnascationForFromBank = new TransactionHistory();
@@ -166,9 +172,21 @@ public function listMyExpenses(Request $req)
                     $trnascationForFromBank->save();
                     $bankFrom->amount = $bankFrom->amount - $req->amount;
                     $bankFrom->save();
+
+                    // find lereger and manage money
+                    $ledger=Ledger::find($req->ledger_id);
+                    $ledger->amout=$ledger->amount+$req->amount;
+                    $ladgerHistory=new LadgerHistory();
+                    $ladgerHistory->user_id=session('user')->id;
+                    $ladgerHistory->amount=$req->amount;
+                    $ladgerHistory->opening_balance=$ledger->amount;
+                    $ladgerHistory->closing_balance=$ledger->amount+$req->amount;
+                    $ladgerHistory->save();
+                    $ledger->update();
                 }
             }
         }
+
         if ($req->main_type == 'Expense' && $req->transactionType == 'Bank') {
             $bankFrom = BankDetail::find($req->from_bank);
             $trnascationForFromBank = new TransactionHistory();
@@ -223,59 +241,7 @@ public function listMyExpenses(Request $req)
 
 
 
-    // transfers
-    public function TransferList(Request $req)
-    {
-        $startDate = $req->query('from_date') ?? null;
-        $endDate = $req->query('to_date') ?? null;
-        if (!$startDate) {
-            $startDate = Carbon::now()->startOfDay();
-            $endDate = Carbon::now()->endOfDay();
-        } else {
-            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
-            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
-        }
-        $transfers = Transfer::whereDate('created_at', '>=', date('Y-m-d', strtotime($startDate)))
-            ->whereDate('created_at', '<=', date('Y-m-d', strtotime($endDate)))
-            ->get();
-        $startDate = $startDate->toDateString();
-        $endDate = $endDate->toDateString();
-        return view('Admin.Transfers.list', compact('transfers', 'startDate', 'endDate'));
-    }
-    public function addTransferForm()
-    {
-        $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'yes')->get();
-        return view('Admin.Transfers.addForm', compact('banks'));
-    }
-
-    public function addTransfer(Request $req)
-    {
-        $req->validate([
-            'from_bank' => 'required|not_in:0',
-            'to_bank' => 'required|not_in:0',
-            'amount' => 'required',
-        ]);
-        $transfer = new Transfer();
-        $transfer->user_id = session('user')->id;
-        $transfer->from_bank = $req->from_bank;
-        $transfer->to_bank = $req->to_bank;
-        $transfer->amount = $req->amount;
-        $transfer->remark = $req->remark;
-        $transfer->save();
-
-        // now manage transaction in both the banks and give the type transfer IN and Transfer Out
-        //show transaction history in transactin history table one will be deposit and another is withdraws
-
-        // first get from bank details and enter a trans entery with opening banale=current abalance
-        //after entery deduct the money from bank
-
-
-
-
-
-
-
-    }
+   
 
 
 
@@ -347,63 +313,63 @@ public function listMyExpenses(Request $req)
 
 
     //expense type controller
-     // list expense type
-     public function list(Request $req)
-     {
-         $expenses = ExpenseType::orderBy('name', 'asc')->get();
-         $department = Department::where('user_id', session('user')->id)->first();
-         return view('Admin.ExpenseType.list', compact('expenses', 'department'));
-     }
-     // delelte expense type
-     public function delete(Request $req)
-     {
-         $expese = ExpenseType::find($req->deleteId);
-         $result = $expese->delete();
-         if ($result) {
-             return redirect('/expense-type')->with(['msg-success' => 'Expense type has been deleted.']);
-         } else {
-             return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not delete source.']);
-         }
-     }
-     // add form expense type
-     public function addForm()
-     {
-         $department = Department::where('user_id', session('user')->id)->first();
-         return view('Admin.ExpenseType.add', compact('department'));
-     }
-     // edit form expense type 
-     public function editForm(Request $req)
-     {
-         $id = $req->query('id');
-         $department = Department::where('user_id', session('user')->id)->first();
-         $expenseType = ExpenseType::find($id);
-         return view('Admin.ExpenseType.add', compact('expenseType', 'department'));
-     }
-     // add expense-type
-     public function add(Request $req)
-     {
-            $department=Department::where('user_id','=',session('user')->id)->first();
-         
-         $expenseTYpe = new ExpenseType();
-         $expenseTYpe->name = $req->name;
-         $expenseTYpe->department_id = $department->id;
-         $result = $expenseTYpe->save();
-         if ($result) {
-             return redirect('/expense-type')->with(['msg-success' => 'Expense type has been added.']);
-         } else {
-             return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not add expense type.']);
-         }
-     }
-     // edit expense types
-     public function edit(Request $req)
-     {
-         $expenseTYpe = ExpenseType::find($req->expenseTypeId);
-         $expenseTYpe->name = $req->name;
-         $result = $expenseTYpe->save();
-         if ($result) {
-             return redirect('/expense-type')->with(['msg-success' => 'Expense type has been updated.']);
-         } else {
-             return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not update expense type.']);
-         }
-     }
+    // list expense type
+    public function list(Request $req)
+    {
+        $expenses = ExpenseType::orderBy('name', 'asc')->get();
+        $department = Department::where('user_id', session('user')->id)->first();
+        return view('Admin.ExpenseType.list', compact('expenses', 'department'));
+    }
+    // delelte expense type
+    public function delete(Request $req)
+    {
+        $expese = ExpenseType::find($req->deleteId);
+        $result = $expese->delete();
+        if ($result) {
+            return redirect('/expense-type')->with(['msg-success' => 'Expense type has been deleted.']);
+        } else {
+            return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not delete source.']);
+        }
+    }
+    // add form expense type
+    public function addForm()
+    {
+        $department = Department::where('user_id', session('user')->id)->first();
+        return view('Admin.ExpenseType.add', compact('department'));
+    }
+    // edit form expense type 
+    public function editForm(Request $req)
+    {
+        $id = $req->query('id');
+        $department = Department::where('user_id', session('user')->id)->first();
+        $expenseType = ExpenseType::find($id);
+        return view('Admin.ExpenseType.add', compact('expenseType', 'department'));
+    }
+    // add expense-type
+    public function add(Request $req)
+    {
+        $department = Department::where('user_id', '=', session('user')->id)->first();
+
+        $expenseTYpe = new ExpenseType();
+        $expenseTYpe->name = $req->name;
+        $expenseTYpe->department_id = $department->id;
+        $result = $expenseTYpe->save();
+        if ($result) {
+            return redirect('/expense-type')->with(['msg-success' => 'Expense type has been added.']);
+        } else {
+            return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not add expense type.']);
+        }
+    }
+    // edit expense types
+    public function edit(Request $req)
+    {
+        $expenseTYpe = ExpenseType::find($req->expenseTypeId);
+        $expenseTYpe->name = $req->name;
+        $result = $expenseTYpe->save();
+        if ($result) {
+            return redirect('/expense-type')->with(['msg-success' => 'Expense type has been updated.']);
+        } else {
+            return redirect('/expense-type')->with(['msg-error' => 'Something went wrong could not update expense type.']);
+        }
+    }
 }

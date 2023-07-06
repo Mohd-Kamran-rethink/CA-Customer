@@ -258,6 +258,15 @@
                         </li>
                     @endif --}}
                     <li class="nav-item">
+                        <a href="{{ url('transfers') }}"
+                            class="nav-link {{ Request::is('transfers') || Request::is('transfers/add') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-credit-card"></i>
+                            <p>
+                                Transfer
+                            </p>
+                        </a>
+                    </li>
+                    {{-- <li class="nav-item">
                         <a href="{{ url('expenses') }}"
                             class="nav-link {{ Request::is('expenses') || Request::is('expenses/add') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-credit-card"></i>
@@ -265,7 +274,7 @@
                                 Expenses
                             </p>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a href="{{ url('ledgers-groups') }}"
                             class="nav-link {{ Request::is('ledgers-groups') || Request::is('ledgers-groups/add') ? 'active' : '' }}">

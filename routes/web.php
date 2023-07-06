@@ -7,6 +7,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\franchises;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\UserController;
 use App\User;
 use Illuminate\Support\Facades\Route;
@@ -186,10 +187,10 @@ Route::prefix('expenses')->group(function () {
     Route::get('/download/attatchement/{id}', [ExpenseController::class, 'downloadAttatchment'])->name('downloadAttatchment');
 });
 // transfers functions are in expense controller
-Route::middleware('ValidateManager')->prefix('transfers')->group(function () {
-    Route::get('',[ExpenseController::class,'TransferList'])->name('TransferList');
-    Route::get('/add',[ExpenseController::class,'addTransferForm'])->name('addTransferForm');
-    Route::post('/add',[ExpenseController::class,'addTransfer'])->name('addTransfer');
+Route::prefix('transfers')->group(function () {
+    Route::get('',[TransferController::class,'TransferList'])->name('TransferList');
+    Route::get('/add',[TransferController::class,'addTransferForm'])->name('addTransferForm');
+    Route::post('/add',[TransferController::class,'addTransfer'])->name('addTransfer');
 });
 
 
@@ -247,4 +248,6 @@ Route::prefix('ledgers')->group(function () {
     Route::get('/add', [LedgerController::class, 'addForm'])->name('addForm');
     Route::post('/add', [LedgerController::class, 'add'])->name('add');
     Route::get('/add-entery', [LedgerController::class, 'addEnteryFrom'])->name('addEnteryFrom');
+    Route::get('/view-details', [LedgerController::class, 'viewDetails'])->name('viewDetails');
+    Route::post('/view-details', [LedgerController::class, 'viewDetails'])->name('viewDetails');
 });

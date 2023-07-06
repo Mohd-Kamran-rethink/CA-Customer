@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\LadgerHistory;
 use App\Ledger;
 use App\LedgerGroup;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LedgerController extends Controller
@@ -127,6 +129,24 @@ class LedgerController extends Controller
     function addEnteryFrom(Request $req) 
     {
         return view('Admin.Ledger.addEntery');
-    }  
+    } 
+    function viewDetails(Request $req) {
+        $id=$req->query('id');
+        $startDate = $req->start_date ?? null;
+        $endDate = $req->end_date ?? null;
+        if (!$startDate) {
+            $startDate = Carbon::now()->startOfDay();
+            $endDate = Carbon::now()->endOfDay();
+        } else {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+        }
+        $details=LadgerHistory::whereDate('created_at', '>=', date('Y-m-d', strtotime($startDate)))
+        ->whereDate('created_at', '<=', date('Y-m-d', strtotime($endDate)))->where('ledger_id','=',$id)->paginate();
+        $startDate = $startDate->toDateString();
+        $endDate = $endDate->toDateString();
+        return view('Admin.Ledger.viewDetails',compact('details','id','startDate','endDate'));
+    }
+
         
 }

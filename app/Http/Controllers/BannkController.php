@@ -17,6 +17,7 @@ class BannkController extends Controller
     {
 
         $yesterday = Carbon::yesterday();
+        $today = Carbon::today();
         $banks = BankDetail::leftjoin('users', 'bank_details.provider_id', '=', 'users.id')
             ->select('bank_details.*', 'users.name as provider_name')
             ->whereNull('customer_id')
@@ -25,11 +26,16 @@ class BannkController extends Controller
         // Retrieve last transaction history for each bank from yesterday
         foreach ($banks as $bank) {
             $lastEntery = TransactionHistory::where('bank_id', $bank->id)
-                // ->whereDate('created_at', $yesterday)
+                ->whereDate('created_at', $yesterday)
                 ->orderBy('created_at', 'desc')
                 ->select('current_balance')
                 ->first();
-            $bank->closginYesterday = $lastEntery->current_balance ?? 0;
+            $todaysFirstEntery= TransactionHistory::where('bank_id', $bank->id)
+                                ->whereDate('created_at', $today)
+                                ->orderBy('created_at', 'asc')
+                                ->first();
+            $todaysFirstEnteryOpening=$todaysFirstEntery->opening_balance??0;                
+            $bank->closginYesterday = $lastEntery->current_balance ?? $todaysFirstEnteryOpening;
         }
         foreach ($banks as $bank) {
             $totaldeposit = Transaction::where('bank_account', $bank->id)
