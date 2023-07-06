@@ -970,7 +970,7 @@ class TransactionController extends Controller
 
                 $clientID = array_search(strtolower(trim($data['Client'])), array_map('strtolower', $clients));
                 if (!$clientID) {
-                    continue;
+                    $clientID = 0;
                 }
                 $amount = $data['Deposit'];
                 $transaction = new Transaction();
@@ -997,6 +997,7 @@ class TransactionController extends Controller
                 $transactiHistory->save();
                 $bank->amount = $bank->amount - $data['Deposit'];
                 $bank->save();
+                
                 if ($exchnageID) {
 
                     $exchange = Exchange::find($exchnageID);
