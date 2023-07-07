@@ -973,8 +973,6 @@ class TransactionController extends Controller
                     $clientID = 0;
                     
                 }
-                $amout=0;
-                $amout=$amout+$data['Withdraw'];
                 $transaction = new Transaction();
                 $transaction->client_id = $clientID;
                 $transaction->amount = $data['Withdraw'];
@@ -1021,8 +1019,6 @@ class TransactionController extends Controller
                 }
             }
         }
-            echo "<pre>";
-            print_r($amout);
         exit;
     }
 }
