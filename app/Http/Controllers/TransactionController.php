@@ -973,7 +973,8 @@ class TransactionController extends Controller
                     $clientID = 0;
                     
                 }
-                $amount = $data['Withdraw'];
+                $amout=0;
+                $amout=$amout+$data['Withdraw'];
                 $transaction = new Transaction();
                 $transaction->client_id = $clientID;
                 $transaction->amount = $data['Withdraw'];
@@ -987,10 +988,9 @@ class TransactionController extends Controller
                 $transaction->save();
                 $transactiHistory = new TransactionHistory();
                 $transactiHistory->bank_id = $bank->id ?? '';
-                $transactiHistory->amount = $amount;
+                $transactiHistory->amount = $data['Withdraw'];
                 $transactiHistory->bonus = $data['Bonus'];
                 $transactiHistory->type = 'Withdraw';
-                $transactiHistory->amount = $amount;
                 $transactiHistory->opening_balance = $bank->amount;
                 $transactiHistory->current_balance = $bank->amount - $data['Withdraw'];
                 $transactiHistory->client_id = $clientID ?? '';
@@ -1021,6 +1021,8 @@ class TransactionController extends Controller
                 }
             }
         }
+            echo "<pre>";
+            print_r($amout);
         exit;
     }
 }
