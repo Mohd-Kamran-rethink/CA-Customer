@@ -71,14 +71,14 @@ class TransactionController extends Controller
             // todays
             $today = now()->format('Y-m-d');
             $ApproveDepoistTranToday = Transaction::where('type', 'Deposit')->where('status', 'Approve')->whereDate('created_at', $today)->get();
-            $ApprovedDepoistToday = $ApproveDepoistTranToday->sum('amount');
+            $ApprovedDepoistToday = $ApproveDepoistTranToday->sum('amount')??0;
             $ApprovewithTranToday = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->whereDate('created_at', $today)->get();
-            $ApprovedWithdrawToday = $ApprovewithTranToday->sum('amount');
+            $ApprovedWithdrawToday = $ApprovewithTranToday->sum('amount')??0;
             // total
             $ApproveDepoistTranTotal = Transaction::where('type', 'Deposit')->get();
-            $ApprovedDepoistTotal = $ApproveDepoistTranTotal->sum('amount');
+            $ApprovedDepoistTotal = $ApproveDepoistTranTotal->sum('amount')??0;
             $ApprovewithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->get();
-            $ApprovedWithdrawTotal = $ApprovewithTranTotal->sum('amount');
+            $ApprovedWithdrawTotal = $ApprovewithTranTotal->sum('amount')??0;
 
             // pending 
             $PendingDepoistTranTotal = Transaction::where('type', 'Deposit')->where('status', 'Pending')->get();
