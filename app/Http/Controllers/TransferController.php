@@ -32,11 +32,11 @@ class TransferController extends Controller
         foreach ($transfers as $transfer) {
             if ($transfer->from_bank) {
                 $bank = BankDetail::find($transfer->from_bank);
-                $transfer['bank_from'] = $bank->account_number;
+                $transfer['bank_from'] = $bank->account_number.'['.$bank->bank_name.']';
             }
             if ($transfer->to_bank) {
                 $bank = BankDetail::find($transfer->to_bank);
-                $transfer['bank_to'] = $bank->account_number;
+                $transfer['bank_to'] = $bank->account_number.'['.$bank->bank_name.']';
             }
         }
         $startDate = $startDate->toDateString();
@@ -167,6 +167,37 @@ class TransferController extends Controller
                 $result = $ledger->update();
             }
         }
+        if($req->transfer_type=='general')
+        {
+            $Fromledger = Ledger::find($req->from_ledger);
+           
+            $ladgerHistory = new LadgerHistory();
+            $ladgerHistory->user_id = session('user')->id;
+            $ladgerHistory->amount = $req->amount;
+            $ladgerHistory->opening_balance = $Fromledger->amount;
+            $ladgerHistory->closing_balance = $Fromledger->amount - $req->amount;
+            $ladgerHistory->ledger_id = $req->from_ledger;
+            $ladgerHistory->type = 'Debit';
+            $ladgerHistory->remark = $req->remark;
+            $Fromledger->amount = $Fromledger->amount - $req->amount;
+            $ladgerHistory->to_ledger = $req->to_ledger;
+            $ladgerHistory->save();
+            $result = $Fromledger->update();
+
+            $ToLedger = Ledger::find($req->to_ledger);
+            $ladgerHistory = new LadgerHistory();
+            $ladgerHistory->user_id = session('user')->id;
+            $ladgerHistory->amount = $req->amount;
+            $ladgerHistory->opening_balance = $ToLedger->amount;
+            $ladgerHistory->closing_balance = $ToLedger->amount +$req->amount;
+            $ladgerHistory->ledger_id = $req->to_ledger;
+            $ladgerHistory->type = 'Credit';
+            $ladgerHistory->remark = $req->remark;
+            $ladgerHistory->from_ledger = $Fromledger->id;
+            $ToLedger->amount = $ToLedger->amount + $req->amount;
+            $ladgerHistory->save();
+            $result = $ToLedger->update();
+        }
 
 
         return redirect('/transfers')->with(['msg-success' => 'Transfered successfully']);
@@ -200,8 +231,10 @@ class TransferController extends Controller
                 $bank_numberFrom = explode('[', $row[2]);
                 if (count($bank_numberFrom) > 2) {
                     $bank_account_numberFrom = (str_replace(']', '', $bank_numberFrom[3]));
+                    
                     if ($bank_account_numberFrom) {
                         $bankFrom = BankDetail::where('account_number', '=', $bank_account_numberFrom)->first();
+                        
                     } else {
                         print_r($data);
                         exit;
@@ -210,11 +243,15 @@ class TransferController extends Controller
                     print_r($data);
                     exit;
                 }
-                $bank_numberTo = explode('[', $row[3]);
-                if (count($bank_numberTo) > 2) {
+                $bank_numberTo = explode('[', $row[5]);
+                if (count($bank_numberTo)>2) {
                     $bank_account_numberTo = (str_replace(']', '', $bank_numberTo[3]));
+                    
+                    
+                    
                     if ($bank_account_numberTo) {
                         $bankTo = BankDetail::where('account_number', '=', $bank_account_numberTo)->first();
+                        
                     } else {
                         print_r($data);
                         exit;
@@ -224,20 +261,19 @@ class TransferController extends Controller
                     exit;
                 }
                 
-                $leads_dateDateserialNumber = $data['Date']; // This is the serial number for the date "01/01/2021"
-                $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
-                $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
-                $leads_dateformattedDate = $leads_date->format('Y-m-d H:i:s');
+                // $leads_dateDateserialNumber = $data['Date']; // This is the serial number for the date "01/01/2021"
+                // $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
+                // $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
+                // $leads_dateformattedDate = $leads_date->format('Y-m-d H:i:s');
                 //for leads_date
                 $transfer = new Transfer();
                 $transfer->user_id = session('user')->id;
                 $transfer->from_bank = $bankFrom->id;
                 $transfer->transfer_type = "Internal Transfer";
-                $transfer->payment_type = 'payment type';
                 $transfer->to_bank = $bankTo->id;
                 $transfer->amount = $data['Amount'];
                 $transfer->remark = 'internal transfer';
-                $transfer->created_at = $leads_dateformattedDate;
+                // $transfer->created_at = $leads_dateformattedDate;
                 $transfer->save();
 
                 $trnascationForFromBank = new TransactionHistory();
@@ -248,7 +284,7 @@ class TransferController extends Controller
                 $trnascationForFromBank->opening_balance = $bankFrom->amount;
                 $trnascationForFromBank->type = "Transfer Out";
                 $trnascationForFromBank->current_balance = $bankFrom->amount - $data['Amount'];
-                $trnascationForFromBank->created_at = $leads_dateformattedDate;;
+                // $trnascationForFromBank->created_at = $leads_dateformattedDate;
                 $trnascationForFromBank->save();
                 $bankFrom->amount = $bankFrom->amount - $data['Amount'];
 
@@ -263,7 +299,7 @@ class TransferController extends Controller
                 $trnascationForToBank->opening_balance = $bankTo->amount;
                 $trnascationForToBank->type = "Transfer In";
                 $trnascationForToBank->current_balance = $bankTo->amount  +  $data['Amount'];
-                $trnascationForToBank->created_at = $leads_dateformattedDate;
+                // $trnascationForToBank->created_at = $leads_dateformattedDate;
                 $trnascationForToBank->save();
                 $bankTo->amount = $bankTo->amount  +  $data['Amount'];
 

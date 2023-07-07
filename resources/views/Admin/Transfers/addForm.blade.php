@@ -38,6 +38,7 @@
                                     <option value="0">--Choose--</option>
                                     <option value="internal">Internal</option>
                                     <option value="external">Third Party</option>
+                                    <option value="general">General</option>
                                 </select>
                                 @error('from_bank')
                                     <span class="text-danger">
@@ -133,6 +134,40 @@
 
                             </div>
                         </div>
+                        <div class="col-4 general" style="display: none;" >
+                            <div class="form-group">
+                                <label>From Ledger<span style="color:red">*</span></label>
+                                <select  tabindex="1" name="from_ledger" class="form-control searchOptions" style="width: 100%">
+                                    <option value="0">--Choose--</option>
+                                    @foreach ($ledgers as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+    
+                                @error('from_ledger')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-4 general" style="display: none;" >
+                            <div class="form-group">
+                                <label>To Ledger<span style="color:red">*</span></label>
+                                <select  tabindex="1" name="to_ledger" class="form-control searchOptions" style="width: 100%">
+                                    <option value="0">--Choose--</option>
+                                    @foreach ($ledgers as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+    
+                                @error('to_ledger')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
                                 <label>Amount<span style="color:red">*</span></label>
@@ -147,6 +182,7 @@
 
                             </div>
                         </div>
+                        
                         {{-- remark --}}
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">
@@ -162,6 +198,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="row mt-2">
                         <div class="col-12">
                             <button tabindex="5" type="submit" class="btn btn-info">Save</button>
@@ -177,11 +214,20 @@
             if (value == "internal") {
                 $('.internal-types-inputs').show();
                 $('.external-types-inputs').hide()
-            } else {
+            } 
+            else if(value=='general')
+            {
+                $('.general').show();
+                $('.internal-types-inputs').hide();
+                $('.external-types-inputs').hide()
+                $('.to-bank-input').hide();
+            }
+            else {
                 $('.external-types-inputs').show()
                 $('.internal-types-inputs').hide()
-
             }
+        
+
         }
 
         function payemntType(value) {

@@ -53,6 +53,8 @@
                                             <th>S.No.</th>
                                             <th>Remark</th>
                                             <th>Type</th>
+                                            <th>From Ledger</th>
+                                            <th>To Ledger</th>
                                             <th>Amount Transfer</th>
                                             <th>Opening Balance</th>
                                             <th>Closing Balance</th>
@@ -64,6 +66,8 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item->remark }}</td>
                                                 <td>{{ $item->type }}</td>
+                                                <td>{{ $item->fromLedger }}</td>
+                                                <td>{{ $item->toLedger }}</td>
                                                 <td>{{ $item->amount }}</td>
                                                 <td>{{ $item->opening_balance }}</td>
                                                 <td>{{ $item->closing_balance }}</td>

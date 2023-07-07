@@ -143,6 +143,14 @@ class LedgerController extends Controller
         }
         $details=LadgerHistory::whereDate('created_at', '>=', date('Y-m-d', strtotime($startDate)))
         ->whereDate('created_at', '<=', date('Y-m-d', strtotime($endDate)))->where('ledger_id','=',$id)->paginate();
+        foreach ($details as $key => $value) {
+            $fromLEdger=Ledger::find($value->from_ledger);
+            $value['fromLedger']=$fromLEdger->name??'';
+
+            $toLEdger=Ledger::find($value->to_ledger);
+            $value['toLedger']=$toLEdger->name??'';
+        }
+
         $startDate = $startDate->toDateString();
         $endDate = $endDate->toDateString();
         return view('Admin.Ledger.viewDetails',compact('details','id','startDate','endDate'));
