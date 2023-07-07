@@ -251,3 +251,6 @@ Route::prefix('ledgers')->group(function () {
     Route::get('/view-details', [LedgerController::class, 'viewDetails'])->name('viewDetails');
     Route::post('/view-details', [LedgerController::class, 'viewDetails'])->name('viewDetails');
 });
+
+Route::get('/transfer/import', [TransferController::class, 'transfoerImportForm'])->name('transfoerImportForm');
+Route::post('/transfer/import', [TransferController::class, 'transfoerImport'])->name('transfoerImport');

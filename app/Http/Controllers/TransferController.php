@@ -10,6 +10,8 @@ use App\Transfer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use function Ramsey\Uuid\v1;
+
 class TransferController extends Controller
 {
     // transfers
@@ -44,8 +46,8 @@ class TransferController extends Controller
     public function addTransferForm()
     {
         $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'yes')->get();
-        $ledgers= Ledger::where('status', '=', 'active')->get();
-        return view('Admin.Transfers.addForm', compact('banks','ledgers'));
+        $ledgers = Ledger::where('status', '=', 'active')->get();
+        return view('Admin.Transfers.addForm', compact('banks', 'ledgers'));
     }
 
     public function addTransfer(Request $req)
@@ -101,8 +103,7 @@ class TransferController extends Controller
         }
         if ($req->transfer_type == "external") {
             if ($req->accounting_type == "Debit") {
-                if($req->payment_type == 'bank')
-                {
+                if ($req->payment_type == 'bank') {
 
                     $bankFrom = BankDetail::find($req->sender_bank);
                     $trnascationForFromBank = new TransactionHistory();
@@ -119,23 +120,22 @@ class TransferController extends Controller
                 }
 
                 // find lereger and manage money
-                $ledger=Ledger::find($req->ledger_id);
+                $ledger = Ledger::find($req->ledger_id);
 
-                
-                $ladgerHistory=new LadgerHistory();
-                $ladgerHistory->user_id=session('user')->id;
-                $ladgerHistory->amount=$req->amount;
-                $ladgerHistory->opening_balance=$ledger->amount;
-                $ladgerHistory->closing_balance=$ledger->amount-$req->amount;
-                $ladgerHistory->ledger_id=$req->ledger_id;
-                $ladgerHistory->type='Transfer In';
-                $ladgerHistory->remark=$req->remark;
-                $ledger->amount=$ledger->amount-$req->amount;
+
+                $ladgerHistory = new LadgerHistory();
+                $ladgerHistory->user_id = session('user')->id;
+                $ladgerHistory->amount = $req->amount;
+                $ladgerHistory->opening_balance = $ledger->amount;
+                $ladgerHistory->closing_balance = $ledger->amount - $req->amount;
+                $ladgerHistory->ledger_id = $req->ledger_id;
+                $ladgerHistory->type = 'Transfer In';
+                $ladgerHistory->remark = $req->remark;
+                $ledger->amount = $ledger->amount - $req->amount;
                 $ladgerHistory->save();
                 $result = $ledger->update();
             } else if ($req->accounting_type == "Credit") {
-                if($req->payment_type == 'bank')
-                {
+                if ($req->payment_type == 'bank') {
 
                     $bankFrom = BankDetail::find($req->sender_bank);
                     $trnascationForFromBank = new TransactionHistory();
@@ -150,27 +150,133 @@ class TransferController extends Controller
                     $bankFrom->amount = $bankFrom->amount - $req->amount;
                     $result = $bankFrom->save();
                 }
-                
-                $ledger=Ledger::find($req->ledger_id);
 
-                
-                $ladgerHistory=new LadgerHistory();
-                $ladgerHistory->user_id=session('user')->id;
-                $ladgerHistory->amount=$req->amount;
-                $ladgerHistory->opening_balance=$ledger->amount;
-                $ladgerHistory->closing_balance=$ledger->amount+$req->amount;
-                $ladgerHistory->type='Transfer Out';
-                $ladgerHistory->ledger_id=$req->ledger_id;
-                $ladgerHistory->remark=$req->remark;
-                $ledger->amount=$ledger->amount+$req->amount;
+                $ledger = Ledger::find($req->ledger_id);
+
+
+                $ladgerHistory = new LadgerHistory();
+                $ladgerHistory->user_id = session('user')->id;
+                $ladgerHistory->amount = $req->amount;
+                $ladgerHistory->opening_balance = $ledger->amount;
+                $ladgerHistory->closing_balance = $ledger->amount + $req->amount;
+                $ladgerHistory->type = 'Transfer Out';
+                $ladgerHistory->ledger_id = $req->ledger_id;
+                $ladgerHistory->remark = $req->remark;
+                $ledger->amount = $ledger->amount + $req->amount;
                 $ladgerHistory->save();
                 $result = $ledger->update();
             }
         }
-       
-       
-            return redirect('/transfers')->with(['msg-success' => 'Transfered successfully']);
-        
+
+
+        return redirect('/transfers')->with(['msg-success' => 'Transfered successfully']);
     }
-    
+    public function transfoerImportForm()
+    {
+        return view('transfer');
+    }
+    public function transfoerImport(Request $req)
+    {
+
+
+        $file = $req->file('excel_file');
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file->path());
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($file->path());
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+        $entries = [];
+        $columnHeaders = array_shift($rows);
+
+
+        foreach ($rows as $key => $row) {
+
+            $data = array_combine($columnHeaders, $row);
+            //echo "<pre>";
+            // print_r($data);
+            //continue;
+
+            if ($row[2] != null) {
+                $bank_numberFrom = explode('[', $row[2]);
+                if (count($bank_numberFrom) > 2) {
+                    $bank_account_numberFrom = (str_replace(']', '', $bank_numberFrom[3]));
+                    if ($bank_account_numberFrom) {
+                        $bankFrom = BankDetail::where('account_number', '=', $bank_account_numberFrom)->first();
+                    } else {
+                        print_r($data);
+                        exit;
+                    }
+                } else {
+                    print_r($data);
+                    exit;
+                }
+                $bank_numberTo = explode('[', $row[3]);
+                if (count($bank_numberTo) > 2) {
+                    $bank_account_numberTo = (str_replace(']', '', $bank_numberTo[3]));
+                    if ($bank_account_numberTo) {
+                        $bankTo = BankDetail::where('account_number', '=', $bank_account_numberTo)->first();
+                    } else {
+                        print_r($data);
+                        exit;
+                    }
+                } else {
+                    print_r($data);
+                    exit;
+                }
+                
+                $leads_dateDateserialNumber = $data['Date']; // This is the serial number for the date "01/01/2021"
+                $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
+                $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
+                $leads_dateformattedDate = $leads_date->format('Y-m-d H:i:s');
+                //for leads_date
+                $transfer = new Transfer();
+                $transfer->user_id = session('user')->id;
+                $transfer->from_bank = $bankFrom->id;
+                $transfer->transfer_type = "Internal Transfer";
+                $transfer->payment_type = 'payment type';
+                $transfer->to_bank = $bankTo->id;
+                $transfer->amount = $data['Amount'];
+                $transfer->remark = 'internal transfer';
+                $transfer->created_at = $leads_dateformattedDate;
+                $transfer->save();
+
+                $trnascationForFromBank = new TransactionHistory();
+                $trnascationForFromBank->agent_id = session('user')->id;
+                $trnascationForFromBank->bank_id = $bankFrom->id;
+                $trnascationForFromBank->transfer_id = $transfer->id;
+                $trnascationForFromBank->amount = $data['Amount'];
+                $trnascationForFromBank->opening_balance = $bankFrom->amount;
+                $trnascationForFromBank->type = "Transfer Out";
+                $trnascationForFromBank->current_balance = $bankFrom->amount - $data['Amount'];
+                $trnascationForFromBank->created_at = $leads_dateformattedDate;;
+                $trnascationForFromBank->save();
+                $bankFrom->amount = $bankFrom->amount - $data['Amount'];
+
+                // now do the same for to bank will add money here
+
+
+                $trnascationForToBank = new TransactionHistory();
+                $trnascationForToBank->agent_id = session('user')->id;
+                $trnascationForToBank->bank_id = $bankTo->id;
+                $trnascationForToBank->transfer_id = $transfer->id;
+                $trnascationForToBank->amount =  $data['Amount'];
+                $trnascationForToBank->opening_balance = $bankTo->amount;
+                $trnascationForToBank->type = "Transfer In";
+                $trnascationForToBank->current_balance = $bankTo->amount  +  $data['Amount'];
+                $trnascationForToBank->created_at = $leads_dateformattedDate;
+                $trnascationForToBank->save();
+                $bankTo->amount = $bankTo->amount  +  $data['Amount'];
+
+                $resultbank1 = $bankTo->save();
+                $resultbank2 = $bankFrom->save();
+
+
+
+
+
+
+            }
+        }
+        exit;
+    }
 }
