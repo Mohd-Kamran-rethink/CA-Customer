@@ -7,6 +7,8 @@
                     <h1>{{ isset($transfer) ? 'Edit Transfer' : 'Add Transfer' }}</h1>
                     <h6 class="text-danger">* Items marked with an asterisk are required fields and must be completed</h6>
                 </div>
+                <h3>Credit means goes out</h3>
+                <h3>Debit  means come IN</h3>
             </div>
             @if (session()->has('msg-success'))
                 <div class="alert alert-success" role="alert">

@@ -971,11 +971,12 @@ class TransactionController extends Controller
                 $clientID = array_search(strtolower(trim($data['Client'])), array_map('strtolower', $clients));
                 if (!$clientID) {
                     $clientID = 0;
+                    
                 }
-                $amount = $data['Deposit'];
+                $amount = $data['Withdraw'];
                 $transaction = new Transaction();
                 $transaction->client_id = $clientID;
-                $transaction->amount = $data['Deposit'];
+                $transaction->amount = $data['Withdraw'];
                 $transaction->bonus = $data['Bonus'];
                 $transaction->utr_no = $data['UTR No'];
                 $transaction->type = 'Withdraw';
@@ -991,11 +992,11 @@ class TransactionController extends Controller
                 $transactiHistory->type = 'Withdraw';
                 $transactiHistory->amount = $amount;
                 $transactiHistory->opening_balance = $bank->amount;
-                $transactiHistory->current_balance = $bank->amount - $data['Deposit'];
+                $transactiHistory->current_balance = $bank->amount - $data['Withdraw'];
                 $transactiHistory->client_id = $clientID ?? '';
                 $transactiHistory->created_at = $leads_dateformattedDate;
                 $transactiHistory->save();
-                $bank->amount = $bank->amount - $data['Deposit'];
+                $bank->amount = $bank->amount - $data['Withdraw'];
                 $bank->save();
                 
                 if ($exchnageID) {
@@ -1008,7 +1009,7 @@ class TransactionController extends Controller
                     $ExchnagedepositHistory->exchange_id = $exchnageID;
                     $ExchnagedepositHistory->agent_id = session('user')->id;
                     $ExchnagedepositHistory->client_id = $clientID;
-                    $ExchnagedepositHistory->amount = $data['Deposit'];
+                    $ExchnagedepositHistory->amount = $data['Withdraw'];
                     $ExchnagedepositHistory->opening_balance = $exchange->amount;
                     $ExchnagedepositHistory->bonus = $data['Bonus'];
                     $ExchnagedepositHistory->created_at = $leads_dateformattedDate;
