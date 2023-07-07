@@ -79,7 +79,7 @@ class TransactionController extends Controller
             $ApprovewithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Approve')->get();
             $ApprovedWithdrawTotal = $ApprovewithTranTotal->sum('amount');
 
-            // pending
+            // pending 
             $PendingDepoistTranTotal = Transaction::where('type', 'Deposit')->where('status', 'Pending')->get();
             $PendinhwithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Pending')->get();
 
@@ -985,39 +985,39 @@ class TransactionController extends Controller
                 $transaction->date = $leads_dateformattedDate;
                 $transaction->save();
                 
-                $transactiHistory = new TransactionHistory();
-                $transactiHistory->bank_id = $bank->id ?? '';
-                $transactiHistory->amount = $data['Withdraw'];
-                $transactiHistory->bonus = $data['Bonus'];
-                $transactiHistory->type = 'Withdraw';
-                $transactiHistory->opening_balance = $bank->amount;
-                $transactiHistory->current_balance = $bank->amount - $data['Withdraw'];
-                $transactiHistory->client_id = $clientID ?? '';
-                $transactiHistory->created_at = $leads_dateformattedDate;
-                $transactiHistory->save();
-                $bank->amount = $bank->amount - $data['Withdraw'];
-                $bank->save();
+                // $transactiHistory = new TransactionHistory();
+                // $transactiHistory->bank_id = $bank->id ?? '';
+                // $transactiHistory->amount = $data['Withdraw'];
+                // $transactiHistory->bonus = $data['Bonus'];
+                // $transactiHistory->type = 'Withdraw';
+                // $transactiHistory->opening_balance = $bank->amount;
+                // $transactiHistory->current_balance = $bank->amount - $data['Withdraw'];
+                // $transactiHistory->client_id = $clientID ?? '';
+                // $transactiHistory->created_at = $leads_dateformattedDate;
+                // $transactiHistory->save();
+                // $bank->amount = $bank->amount - $data['Withdraw'];
+                // $bank->save();
                 
-                if ($exchnageID) {
+                // if ($exchnageID) {
 
-                    $exchange = Exchange::find($exchnageID);
-                    // for exchange tranasactin history
-                    $ExchnagedepositHistory = new TransactionHistory();
-                    $ExchnagedepositHistory->type = "Deposit";
-                    $ExchnagedepositHistory->transaction_id = $transaction->id;
-                    $ExchnagedepositHistory->exchange_id = $exchnageID;
-                    $ExchnagedepositHistory->agent_id = session('user')->id;
-                    $ExchnagedepositHistory->client_id = $clientID;
-                    $ExchnagedepositHistory->amount = $data['Withdraw'];
-                    $ExchnagedepositHistory->opening_balance = $exchange->amount;
-                    $ExchnagedepositHistory->bonus = $data['Bonus'];
-                    $ExchnagedepositHistory->created_at = $leads_dateformattedDate;
-                    $ExchnagedepositHistory->save();
+                //     $exchange = Exchange::find($exchnageID);
+                //     // for exchange tranasactin history
+                //     $ExchnagedepositHistory = new TransactionHistory();
+                //     $ExchnagedepositHistory->type = "Deposit";
+                //     $ExchnagedepositHistory->transaction_id = $transaction->id;
+                //     $ExchnagedepositHistory->exchange_id = $exchnageID;
+                //     $ExchnagedepositHistory->agent_id = session('user')->id;
+                //     $ExchnagedepositHistory->client_id = $clientID;
+                //     $ExchnagedepositHistory->amount = $data['Withdraw'];
+                //     $ExchnagedepositHistory->opening_balance = $exchange->amount;
+                //     $ExchnagedepositHistory->bonus = $data['Bonus'];
+                //     $ExchnagedepositHistory->created_at = $leads_dateformattedDate;
+                //     $ExchnagedepositHistory->save();
 
-                    //increase exchnage total
-                    $exchange->amount = $exchange->amount + $data['Total'];
-                    $result = $exchange->update();
-                }
+                //     //increase exchnage total
+                //     $exchange->amount = $exchange->amount + $data['Total'];
+                //     $result = $exchange->update();
+                // }
             }
         }
         exit;
