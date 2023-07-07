@@ -38,7 +38,7 @@
                                     <option value="0">--Choose--</option>
                                     <option value="internal">Internal</option>
                                     <option value="external">Third Party</option>
-                                    <option value="general">General</option>
+                                    <option value="journal">Journal</option>
                                 </select>
                                 @error('from_bank')
                                     <span class="text-danger">

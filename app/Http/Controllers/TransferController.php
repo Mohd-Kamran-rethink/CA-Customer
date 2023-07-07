@@ -229,7 +229,10 @@ class TransferController extends Controller
 
             if ($row[2] != null) {
                 $bank_numberFrom = explode('[', $row[2]);
+                
+                
                 if (count($bank_numberFrom) > 2) {
+                    
                     $bank_account_numberFrom = (str_replace(']', '', $bank_numberFrom[3]));
                     
                     if ($bank_account_numberFrom) {

@@ -67,6 +67,7 @@ class TransactionController extends Controller
             $depositBanker = User::where('role', '=', 'depositer')->get()->count();
             $withdraweres = User::where('role', '=', 'withdrawrer')->get()->count();
             $withdrawrerBanker = User::where('role', '=', 'withdrawal_banker')->get()->count();
+            
             // todays
             $today = now()->format('Y-m-d');
             $ApproveDepoistTranToday = Transaction::where('type', 'Deposit')->where('status', 'Approve')->whereDate('created_at', $today)->get();
@@ -84,15 +85,15 @@ class TransactionController extends Controller
             $PendinhwithTranTotal = Transaction::where('type', 'Withdraw')->where('status', 'Pending')->get();
 
             // todays deposit bonus
-            $todaysDepositBonus = $ApproveDepoistTranToday->sum('bonus');
-            $totalDepositBonus = $ApproveDepoistTranTotal->sum('bonus');
+            $todaysDepositBonus = $ApproveDepoistTranToday->sum('bonus')??0;
+            $totalDepositBonus = $ApproveDepoistTranTotal->sum('bonus')??0;
 
             // total withdraw bonus
-            $todaysWithdrawBonus = $ApprovewithTranTotal->sum('bonus');
-            $totalWithdrawBonus = $ApprovewithTranTotal->sum('bonus');
+            $todaysWithdrawBonus = $ApprovewithTranTotal->sum('bonus')??0;
+            $totalWithdrawBonus = $ApprovewithTranTotal->sum('bonus')??0;
 
-            $todaysBonus = $todaysDepositBonus - $todaysWithdrawBonus;
-            $totalBonus = $totalDepositBonus - $totalWithdrawBonus;
+            $todaysBonus = $todaysDepositBonus - $todaysWithdrawBonus??0;
+            $totalBonus = $totalDepositBonus - $totalWithdrawBonus??0;
 
             $clients = Client::get()->count();
             return view('Admin.Dashboard.index', compact('clients', 'PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
