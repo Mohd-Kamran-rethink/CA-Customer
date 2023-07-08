@@ -264,10 +264,10 @@ class TransferController extends Controller
                     exit;
                 }
                 
-                // $leads_dateDateserialNumber = $data['Date']; // This is the serial number for the date "01/01/2021"
-                // $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
-                // $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
-                // $leads_dateformattedDate = $leads_date->format('Y-m-d H:i:s');
+                $leads_dateDateserialNumber = $data['Date']; // This is the serial number for the date "01/01/2021"
+                $leads_dateunixTimestamp = ($leads_dateDateserialNumber - 25569) * 86400; // adjust for Unix epoch and convert to seconds
+                $leads_date = \Carbon\Carbon::createFromTimestamp($leads_dateunixTimestamp);
+                $leads_dateformattedDate = $leads_date->format('Y-m-d H:i:s');
                 //for leads_date
                 $transfer = new Transfer();
                 $transfer->user_id = session('user')->id;
@@ -287,7 +287,7 @@ class TransferController extends Controller
                 $trnascationForFromBank->opening_balance = $bankFrom->amount;
                 $trnascationForFromBank->type = "Transfer Out";
                 $trnascationForFromBank->current_balance = $bankFrom->amount - $data['Amount'];
-                // $trnascationForFromBank->created_at = $leads_dateformattedDate;
+                $trnascationForFromBank->created_at = $leads_dateformattedDate;
                 $trnascationForFromBank->save();
                 $bankFrom->amount = $bankFrom->amount - $data['Amount'];
 
@@ -302,7 +302,7 @@ class TransferController extends Controller
                 $trnascationForToBank->opening_balance = $bankTo->amount;
                 $trnascationForToBank->type = "Transfer In";
                 $trnascationForToBank->current_balance = $bankTo->amount  +  $data['Amount'];
-                // $trnascationForToBank->created_at = $leads_dateformattedDate;
+                $trnascationForToBank->created_at = $leads_dateformattedDate;
                 $trnascationForToBank->save();
                 $bankTo->amount = $bankTo->amount  +  $data['Amount'];
 

@@ -90,6 +90,7 @@ class LedgerController extends Controller
         $ledger=new Ledger();
         $ledger->name=$req->name;
         $ledger->ledger_group=$req->group;
+        $ledger->amount=$req->amount;
         $result=$ledger->save();
         if ($result) {
             return redirect('ledgers')->with(['msg-success' => 'Added successfully']);
@@ -107,6 +108,7 @@ class LedgerController extends Controller
         $ledger=Ledger::find($req->hiddenid);
         $ledger->name=$req->name;
         $ledger->ledger_group=$req->group;
+        $ledger->amount=$req->amount;
         $result=$ledger->update();
         if ($result) {
             return redirect('ledgers')->with(['msg-success' => 'updated successfully']);

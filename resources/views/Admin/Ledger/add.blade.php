@@ -59,6 +59,12 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="col-4">
+                            <div class="form-ledger">
+                                <label for="">Amount</label>
+                                <input type="text" name="amount" class="form-control">
+                            </div>
+                        </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">

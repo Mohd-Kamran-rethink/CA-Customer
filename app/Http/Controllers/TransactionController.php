@@ -865,7 +865,7 @@ class TransactionController extends Controller
 
                 $clientID = array_search(strtolower(trim($data['Client'])), array_map('strtolower', $clients));
                 if (!$clientID) {
-                    continue;
+                    $clientID = 0;
                 }
                 $transaction = new Transaction();
                 $transaction->client_id = $clientID;
