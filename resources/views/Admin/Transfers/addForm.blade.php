@@ -215,9 +215,9 @@
                 $('.internal-types-inputs').show();
                 $('.external-types-inputs').hide()
             } 
-            else if(value=='general')
+            else if(value=='journal')
             {
-                $('.general').show();
+                $('.journal').show();
                 $('.internal-types-inputs').hide();
                 $('.external-types-inputs').hide()
                 $('.to-bank-input').hide();
