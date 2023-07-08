@@ -182,7 +182,20 @@
 
                             </div>
                         </div>
-                        
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label>Date<span style="color:red">*</span></label>
+                                <input  type="date" step="any" name="date"
+                                    value="{{ isset($transfer) ? $transfer->date : old('date') }}"
+                                    class="form-control">
+                                @error('date')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+
+                            </div>
+                        </div>
                         {{-- remark --}}
                         <div class="col-xs-12 col-md-4">
                             <div class="form-group">

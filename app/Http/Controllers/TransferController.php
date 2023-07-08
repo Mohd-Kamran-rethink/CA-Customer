@@ -52,6 +52,7 @@ class TransferController extends Controller
 
     public function addTransfer(Request $req)
     {
+        $req->validate(['amount'=>'required','date'=>'required']);
 
         $transfer = new Transfer();
         $transfer->user_id = session('user')->id;
@@ -61,6 +62,7 @@ class TransferController extends Controller
         $transfer->to_bank = $req->receiver_bank;
         $transfer->amount = $req->amount;
         $transfer->remark = $req->remark;
+        $transfer->created_at=$req->date;
         $transfer->save();
 
         if ($req->transfer_type == "internal") {
@@ -167,7 +169,7 @@ class TransferController extends Controller
                 $result = $ledger->update();
             }
         }
-        if($req->transfer_type=='general')
+        if($req->transfer_type=='journal')
         {
             $Fromledger = Ledger::find($req->from_ledger);
            
@@ -181,6 +183,7 @@ class TransferController extends Controller
             $ladgerHistory->remark = $req->remark;
             $Fromledger->amount = $Fromledger->amount - $req->amount;
             $ladgerHistory->to_ledger = $req->to_ledger;
+            $ladgerHistory->created_at = $req->date;
             $ladgerHistory->save();
             $result = $Fromledger->update();
 
@@ -194,6 +197,7 @@ class TransferController extends Controller
             $ladgerHistory->type = 'Credit';
             $ladgerHistory->remark = $req->remark;
             $ladgerHistory->from_ledger = $Fromledger->id;
+            $ladgerHistory->created_at = $req->date;
             $ToLedger->amount = $ToLedger->amount + $req->amount;
             $ladgerHistory->save();
             $result = $ToLedger->update();
