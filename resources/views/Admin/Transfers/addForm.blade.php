@@ -134,7 +134,7 @@
 
                             </div>
                         </div>
-                        <div class="col-4 general" style="display: none;" >
+                        <div class="col-4 journal" style="display: none;" >
                             <div class="form-group">
                                 <label>From Ledger<span style="color:red">*</span></label>
                                 <select  tabindex="1" name="from_ledger" class="form-control searchOptions" style="width: 100%">
@@ -151,7 +151,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-4 general" style="display: none;" >
+                        <div class="col-4 journal" style="display: none;" >
                             <div class="form-group">
                                 <label>To Ledger<span style="color:red">*</span></label>
                                 <select  tabindex="1" name="to_ledger" class="form-control searchOptions" style="width: 100%">
