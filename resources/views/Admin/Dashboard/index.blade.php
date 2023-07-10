@@ -18,12 +18,11 @@
             @endif
         </div>
     </section>
-    @php
+    @if (session('user')->role != 'customer_care_manager')
+        @if (isset($totalApprovedForAgent))
+            @php
                 $sum = 0;
             @endphp
-    @if (session('user')->role != 'customer_care_manager'||session('user')->role != 'super_manager')
-        @if (isset($totalApprovedForAgent))
-            
             @foreach ($totalApprovedForAgent as $transaction)
                 @php
                     $type = $transaction->type;
@@ -101,7 +100,7 @@
     @endif
     {{-- cards --}}
     {{-- transactions for deposit_banker --}}
-    @if (session('user')->role != 'customer_care_manager' || session('user')->role != 'super_manager' )
+    @if (session('user')->role != 'customer_care_manager')
         <section class="content">
             <div class="card">
                 <div class="card-body">
@@ -123,11 +122,11 @@
                                 <label for="" style="visibility: hidden">sdf</label>
                                 <select {{-- {{ session('user')->role === 'deposit_banker' || session('user')->role === 'withdrawrer' ? '' : 'disabled' }} --}} name="status_name" type="text" class="form-control">
                                     <option value="null">--Filter by status--</option>
-                                    <option {{ isset($status) && $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
-                                    <option {{ isset($status) && $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
-                                    <option {{ isset($status) && $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
+                                    <option {{ $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
+                                    <option {{ $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
+                                    <option {{ $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
                                     @if (session('user')->role == 'withdrawrer')
-                                        <option {{ isset($status)&&$status == 'Revert' ? 'selected' : '' }} value="Revert">Revert</option>
+                                        <option {{ $status == 'Revert' ? 'selected' : '' }} value="Revert">Revert</option>
                                     @endif
                                 </select>
                             </div>
@@ -135,11 +134,11 @@
 
                             <div class="col-2">
                                 <label for="">From</label>
-                                <input type="date" name="start_date" class="form-control" value="{{ isset($start_date)?$start_date:'' }}">
+                                <input type="date" name="start_date" class="form-control" value="{{ $start_date }}">
                             </div>
                             <div class="col-2">
                                 <label for="">To</label>
-                                <input type="date" name="end_date" class="form-control" value="{{ isset($end_date)?$end_date:'' }}">
+                                <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
                             </div>
                             <div class="col-1">
                                 <label for="">Amount</label>
@@ -380,7 +379,7 @@
 
 
     {{-- for customercar manager --}}
-    @if (session('user')->role == 'customer_care_manager' ||session('user')->role == 'super_manager')
+    @if (session('user')->role == 'customer_care_manager')
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -604,7 +603,7 @@
         }
 
         // Call the function to start the timer if the user role is not "manager"
-        @if (session('user')->role != 'customer_care_manager'|| session('user')->role != 'super_manager')
+        @if (session('user')->role != 'customer_care_manager')
             window.onload = updateTimer;
         @endif
     </script>

@@ -62,7 +62,7 @@ class TransactionController extends Controller
         $totalApprovedForAgent = [];
         $totalWithdrawRevert = 0;
         // conditional data rendereing
-        if ($user->role == 'customer_care_manager' || $user->role == 'super_manager') {
+        if ($user->role == 'customer_care_manager') {
             $depositers = User::where('role', '=', 'deposit_banker')->get()->count();
             $depositBanker = User::where('role', '=', 'depositer')->get()->count();
             $withdraweres = User::where('role', '=', 'withdrawrer')->get()->count();
@@ -96,8 +96,7 @@ class TransactionController extends Controller
             $totalBonus = $totalDepositBonus - $totalWithdrawBonus??0;
 
             $clients = Client::get()->count();
-            $transactions=Transaction::paginate();
-            return view('Admin.Dashboard.index', compact('transactions','clients', 'PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
+            return view('Admin.Dashboard.index', compact('clients', 'PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
             // ends
         } else if ($user->role == 'deposit_banker' || $user->role == 'depositer') {
             $transactions = DB::table('transactions')->where('transactions.type', '=', 'Deposit')
