@@ -62,7 +62,7 @@ class TransactionController extends Controller
         $totalApprovedForAgent = [];
         $totalWithdrawRevert = 0;
         // conditional data rendereing
-        if ($user->role == 'customer_care_manager') {
+        if ($user->role == 'customer_care_manager' || $user->role == 'super_manager') {
             $depositers = User::where('role', '=', 'deposit_banker')->get()->count();
             $depositBanker = User::where('role', '=', 'depositer')->get()->count();
             $withdraweres = User::where('role', '=', 'withdrawrer')->get()->count();
