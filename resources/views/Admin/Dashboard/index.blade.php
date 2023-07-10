@@ -18,7 +18,7 @@
             @endif
         </div>
     </section>
-    @if (session('user')->role != 'customer_care_manager')
+    @if (session('user')->role != 'customer_care_manager'||session('user')->role != 'super_manager')
         @if (isset($totalApprovedForAgent))
             @php
                 $sum = 0;
@@ -603,7 +603,7 @@
         }
 
         // Call the function to start the timer if the user role is not "manager"
-        @if (session('user')->role != 'customer_care_manager')
+        @if (session('user')->role != 'customer_care_manager'|| session('user')->role != 'super_manager')
             window.onload = updateTimer;
         @endif
     </script>
