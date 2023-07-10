@@ -96,7 +96,8 @@ class TransactionController extends Controller
             $totalBonus = $totalDepositBonus - $totalWithdrawBonus??0;
 
             $clients = Client::get()->count();
-            return view('Admin.Dashboard.index', compact('clients', 'PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
+            $transactions=[];
+            return view('Admin.Dashboard.index', compact('transactions','clients', 'PendinhwithTranTotal', 'PendingDepoistTranTotal', 'totalBonus', 'todaysBonus', 'ApprovedWithdrawTotal', 'ApprovedDepoistTotal', 'ApprovedWithdrawToday', 'ApprovedDepoistToday', 'depositers', 'depositBanker', 'withdraweres', 'withdrawrerBanker'));
             // ends
         } else if ($user->role == 'deposit_banker' || $user->role == 'depositer') {
             $transactions = DB::table('transactions')->where('transactions.type', '=', 'Deposit')
