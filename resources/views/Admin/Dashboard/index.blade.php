@@ -135,11 +135,11 @@
 
                             <div class="col-2">
                                 <label for="">From</label>
-                                <input type="date" name="start_date" class="form-control" value="{{ $start_date }}">
+                                <input type="date" name="start_date" class="form-control" value="{{ isset($start_date)?$start_date:'' }}">
                             </div>
                             <div class="col-2">
                                 <label for="">To</label>
-                                <input type="date" name="end_date" class="form-control" value="{{ $end_date }}">
+                                <input type="date" name="end_date" class="form-control" value="{{ isset($end_date)?$end_date:'' }}">
                             </div>
                             <div class="col-1">
                                 <label for="">Amount</label>
