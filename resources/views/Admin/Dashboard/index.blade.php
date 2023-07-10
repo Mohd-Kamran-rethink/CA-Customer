@@ -123,9 +123,9 @@
                                 <label for="" style="visibility: hidden">sdf</label>
                                 <select {{-- {{ session('user')->role === 'deposit_banker' || session('user')->role === 'withdrawrer' ? '' : 'disabled' }} --}} name="status_name" type="text" class="form-control">
                                     <option value="null">--Filter by status--</option>
-                                    <option {{ isset('$status') && $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
-                                    <option {{ isset('$status') && $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
-                                    <option {{ isset('$status') && $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
+                                    <option {{ isset($status) && $status == 'Approve' ? 'selected' : '' }} value="Approve">Approved</option>
+                                    <option {{ isset($status) && $status == 'Cancel' ? 'selected' : '' }} value="Cancel">Canceled</option>
+                                    <option {{ isset($status) && $status == 'Pending' ? 'selected' : '' }} value="Pending">Pending</option>
                                     @if (session('user')->role == 'withdrawrer')
                                         <option {{ isset($status)&&$status == 'Revert' ? 'selected' : '' }} value="Revert">Revert</option>
                                     @endif
