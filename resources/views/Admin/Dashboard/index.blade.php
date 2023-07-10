@@ -100,7 +100,7 @@
     @endif
     {{-- cards --}}
     {{-- transactions for deposit_banker --}}
-    @if (session('user')->role != 'customer_care_manager')
+    @if (session('user')->role != 'customer_care_manager'||session('user')->role != 'super_manager' )
         <section class="content">
             <div class="card">
                 <div class="card-body">
