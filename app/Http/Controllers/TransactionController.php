@@ -6,9 +6,11 @@ use App\BankDetail;
 use App\Client;
 use App\Exchange;
 use App\Exports\TransactionsExport;
+use App\LadgerHistory;
 use App\Lead;
 use App\LeadStatus;
 use App\LeadStatusOption;
+use App\Ledger;
 use App\Transaction;
 use App\TransactionHistory;
 use App\User;
@@ -520,7 +522,8 @@ class TransactionController extends Controller
         $todaysdate = Carbon::now()->startOfDay()->toDateString();
         $currentDateTime = Carbon::now()->startOfDay();
         $banks = BankDetail::whereNull('customer_id')->where('is_active', '=', 'Yes')->get();
-        return view('Admin.Transactions.acceptPendingWithdraw', compact('transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
+        $ledgers=Ledger::get();
+        return view('Admin.Transactions.acceptPendingWithdraw', compact('ledgers','transaction', 'clients', 'todaysdate', 'currentDateTime', 'banks'));
     }
     // chaneg status for withdraw
     public function changeWithdrawStatus(Request $req)
@@ -529,7 +532,6 @@ class TransactionController extends Controller
             'date' => 'required',
             'amount' => 'required',
             'utr' => 'required|unique:transactions,utr_no',
-            'bank_account' => 'required|not_in:0',
         ]);
         $withdrawal_banker = session('user');
         $transaction =  Transaction::find($req->hiddenid);
@@ -538,28 +540,46 @@ class TransactionController extends Controller
         $transaction->utr_no = $req->utr;
         $transaction->total = $req->total;
         $transaction->bank_account = $req->bank_account;
+        $transaction->ledger = $req->ledger;
         $transaction->withdrawal_banker_id = $withdrawal_banker->id;
         $transaction->type = 'Withdraw';
         $transaction->status = 'Approve';
 
-        $bankDetails = BankDetail::find($transaction->bank_account);
+        if($req->bank_account!=0)
+        {
+            $bankDetails = BankDetail::find($transaction->bank_account);
+            //bank transaction history
+            $deposit = new TransactionHistory();
+            $deposit->agent_id = session('user')->id;
+            $deposit->bank_id = $req->bank_account;
+            $deposit->transaction_id = $transaction->id;
+            $deposit->client_id = $transaction->client_id;
+            $deposit->amount = $req->amount;
+            $deposit->opening_balance = $bankDetails->amount;
+            $deposit->current_balance = $bankDetails->amount - $req->amount;
+            $deposit->type = "withdraw";
+            $deposit->save();
+            $bankDetails->amount = $bankDetails->amount - $req->amount;
+            $bankDetails->update();
+        }
+        else
+        {
+            $ledeger=Ledger::find($req->ledger);
+            $ledgerHistory=new LadgerHistory();
+            $ledgerHistory->opening_balance=$ledeger->amount;
+            $ledgerHistory->user_id=session('user')->id;
+            $ledgerHistory->closing_balance=$ledeger->amount-$req->amount;
+            $ledgerHistory->amount=$req->amount;
+            $ledgerHistory->type='Transfer Out';
+            $ledgerHistory->save();
+        }
+
+            
 
 
 
 
-        //bank transaction history
-        $deposit = new TransactionHistory();
-        $deposit->agent_id = session('user')->id;
-        $deposit->bank_id = $req->bank_account;
-        $deposit->transaction_id = $transaction->id;
-        $deposit->client_id = $transaction->client_id;
-        $deposit->amount = $req->amount;
-        $deposit->opening_balance = $bankDetails->amount;
-        $deposit->current_balance = $bankDetails->amount - $req->amount;
-        $deposit->type = "withdraw";
-        $deposit->save();
-        $bankDetails->amount = $bankDetails->amount - $req->amount;
-        $bankDetails->update();
+
         $result = $transaction->save();
         if ($result) {
             return redirect('/dashboard')->with(['msg-success' => 'Withdraw approved successfully']);

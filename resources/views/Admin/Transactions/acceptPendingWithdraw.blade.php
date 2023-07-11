@@ -113,13 +113,33 @@
                                 class="form-control">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label>Bank Account<span style="color:red">*</span></label>
+                                    <label>Bank Account</label>
                                     <select tabindex="2" name="bank_account" class="form-control searchOptions">
                                         <option value="">--Choose--</option>
                                         @foreach ($banks as $item)
                                             <option
                                                 {{ isset($transaction) && $transaction->bank_account == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }}
                                                 value="{{ $item->id }}">{{ $item->holder_name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    @error('bank_account')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Ledgers</label>
+                                    <select tabindex="2" name="ledger" class="form-control searchOptions">
+                                        <option value="">--Choose--</option>
+                                        @foreach ($ledgers as $item)
+                                            <option
+                                                {{ isset($transaction) && $transaction->ledger_id == $item->id ? 'selected' : (old('bank_account') == $item->id ? 'selected' : '') }}
+                                                value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
 
