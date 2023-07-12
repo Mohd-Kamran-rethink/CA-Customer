@@ -309,7 +309,7 @@ class TransactionController extends Controller
         $transaction->status = 'Cancel';
         $transaction->save();
         if ($transaction->type == 'Deposit') {
-
+            
             $bank = BankDetail::find($transaction->bank_account);
             $bank->amount = $bank->amount - $transaction->amount;
             $bank->update();
@@ -570,7 +570,7 @@ class TransactionController extends Controller
             $ledgerHistory->user_id=session('user')->id;
             $ledgerHistory->closing_balance=$ledeger->amount-$req->amount;
             $ledgerHistory->amount=$req->amount;
-            $ledgerHistory->type='Transfer Out';
+            $ledgerHistory->type='Withdraw';
             $ledgerHistory->ledger_id=$req->ledger;
             $ledgerHistory->save();
             $ledeger->amount=$ledeger->amount-$req->amount;
