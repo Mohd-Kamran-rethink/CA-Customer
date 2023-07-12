@@ -571,6 +571,7 @@ class TransactionController extends Controller
             $ledgerHistory->closing_balance=$ledeger->amount-$req->amount;
             $ledgerHistory->amount=$req->amount;
             $ledgerHistory->type='Transfer Out';
+            $ledgerHistory->ledger_id=$req->ledger;
             $ledgerHistory->save();
             $ledeger->amount=$ledeger->amount-$req->amount;
             $ledeger->update();
