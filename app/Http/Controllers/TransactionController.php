@@ -545,7 +545,7 @@ class TransactionController extends Controller
         $transaction->type = 'Withdraw';
         $transaction->status = 'Approve';
 
-        if($req->bank_account!=0)
+        if($req->bank_account!=0||$req->bank_account!=null)
         {
             $bankDetails = BankDetail::find($transaction->bank_account);
             //bank transaction history
@@ -562,7 +562,7 @@ class TransactionController extends Controller
             $bankDetails->amount = $bankDetails->amount - $req->amount;
             $bankDetails->update();
         }
-        else
+        if($req->ledger)
         {
             $ledeger=Ledger::find($req->ledger);
             $ledgerHistory=new LadgerHistory();
@@ -572,6 +572,8 @@ class TransactionController extends Controller
             $ledgerHistory->amount=$req->amount;
             $ledgerHistory->type='Transfer Out';
             $ledgerHistory->save();
+            $ledeger->amount=$ledeger->amount-$req->amount;
+            $ledeger->update();
         }
 
             
