@@ -60,6 +60,7 @@
                                             <th>Total Amount</th>
                                             <th>Remark</th>
                                             <th>Transfer Date:Time</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -73,6 +74,9 @@
                                                 <td>{{ $item->amount }}</td>
                                                 <td>{{ $item->remark }}</td>
                                                 <td>{{ $item->created_at }}</td>
+                                                <td>
+                                                    <a href="{{url('transfers/edit/'.$item->id})}}"></a>
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>

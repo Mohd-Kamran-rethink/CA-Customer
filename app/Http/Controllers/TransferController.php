@@ -322,4 +322,9 @@ class TransferController extends Controller
         }
         exit;
     }
+
+    public function editForm($id) {
+        $transfer=Transfer::find($id);
+        
+    }
 }

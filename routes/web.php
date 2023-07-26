@@ -191,6 +191,7 @@ Route::prefix('transfers')->group(function () {
     Route::get('',[TransferController::class,'TransferList'])->name('TransferList');
     Route::get('/add',[TransferController::class,'addTransferForm'])->name('addTransferForm');
     Route::post('/add',[TransferController::class,'addTransfer'])->name('addTransfer');
+    Route::get('/edit/{id}',[TransferController::class,'editForm'])->name('editForm');
 });
 
 
